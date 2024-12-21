@@ -13,10 +13,9 @@
 
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   </head>
-  <body>
+  <body class="font-sans">
     <div
       class="relative flex size-full min-h-screen flex-col bg-[#F9FAFA] group/design-root overflow-x-hidden"
-      style="font-family: 'Work Sans', 'Noto Sans', sans-serif"
     >
       <div class="layout-container flex h-full grow flex-col">
         <div class="flex flex-1 w-full">
@@ -372,76 +371,64 @@
                     </p>
                   </div>
 
-                  <ol
-                    class="flex items-center w-full p-3 space-x-2 text-sm font-medium text-center text-gray-500 border border-gray-50 rounded-lg shadow-sm dark:text-gray-400 sm:text-base dark:bg-gray-800 dark:border-gray-700 sm:p-4 sm:space-x-4 rtl:space-x-reverse"
-                  >
+                  <ol class="flex items-center w-full mb-4 sm:mb-5">
                     <li
-                      class="flex items-center text-blue-600 dark:text-blue-500"
+                      class="flex w-full items-center text-blue-600 dark:text-blue-500 after:content-[''] after:w-full after:h-1 after:border-b after:border-blue-100 after:border-4 after:inline-block dark:after:border-blue-800"
                     >
-                      <span
-                        class="flex items-center justify-center w-5 h-5 me-2 text-xs border border-blue-600 rounded-full shrink-0 dark:border-blue-500"
+                      <div
+                        class="flex items-center justify-center w-10 h-10 bg-blue-100 rounded-full lg:h-12 lg:w-12 dark:bg-blue-800 shrink-0"
                       >
-                        1
-                      </span>
-                      Company
-                      <span class="hidden sm:inline-flex sm:ms-2">Info</span>
-                      <svg
-                        class="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180"
-                        aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 12 10"
-                      >
-                        <path
-                          stroke="currentColor"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="m7 9 4-4-4-4M1 9l4-4-4-4"
-                        />
-                      </svg>
+                        <svg
+                          class="w-4 h-4 text-blue-600 lg:w-6 lg:h-6 dark:text-blue-300"
+                          aria-hidden="true"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="currentColor"
+                          viewBox="0 0 20 16"
+                        >
+                          <path
+                            d="M18 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2ZM6.5 3a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3.014 13.021l.157-.625A3.427 3.427 0 0 1 6.5 9.571a3.426 3.426 0 0 1 3.322 2.805l.159.622-6.967.023ZM16 12h-3a1 1 0 0 1 0-2h3a1 1 0 0 1 0 2Zm0-3h-3a1 1 0 1 1 0-2h3a1 1 0 1 1 0 2Zm0-3h-3a1 1 0 1 1 0-2h3a1 1 0 1 1 0 2Z"
+                          />
+                        </svg>
+                      </div>
                     </li>
-                    <li class="flex items-center">
-                      <span
-                        class="flex items-center justify-center w-5 h-5 me-2 text-xs border border-gray-500 rounded-full shrink-0 dark:border-gray-400"
+                    <li
+                      class="flex w-full items-center after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-100 after:border-4 after:inline-block dark:after:border-gray-700"
+                    >
+                      <div
+                        class="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-full lg:h-12 lg:w-12 dark:bg-gray-700 shrink-0"
                       >
-                        2
-                      </span>
-                      Job
-                      <span class="hidden sm:inline-flex sm:ms-2">Details</span>
-                      <svg
-                        class="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180"
-                        aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 12 10"
-                      >
-                        <path
-                          stroke="currentColor"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="m7 9 4-4-4-4M1 9l4-4-4-4"
-                        />
-                      </svg>
+                        <svg
+                          class="w-4 h-4 text-blue-600 lg:w-6 lg:h-6 dark:text-blue-300"
+                          aria-hidden="true"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="currentColor"
+                          viewBox="0 0 20 14"
+                        >
+                          <path
+                            d="M18 0H2a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2ZM2 12V6h16v6H2Z"
+                          />
+                          <path
+                            d="M6 8H4a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2Zm8 0H9a1 1 0 0 0 0 2h5a1 1 0 1 0 0-2Z"
+                          />
+                        </svg>
+                      </div>
                     </li>
-                    <li class="flex items-center">
-                      <span
-                        class="flex items-center justify-center w-5 h-5 me-2 text-xs border border-gray-500 rounded-full shrink-0 dark:border-gray-400"
+                    <li class="flex items-center w-full">
+                      <div
+                        class="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-full lg:h-12 lg:w-12 dark:bg-gray-700 shrink-0"
                       >
-                        3
-                      </span>
-                      Skills &amp;
-                      <span class="hidden sm:inline-flex sm:ms-2">Traits</span>
-                    </li>
-                    <li class="flex items-center">
-                      <span
-                        class="flex items-center justify-center w-5 h-5 me-2 text-xs border border-gray-500 rounded-full shrink-0 dark:border-gray-400"
-                      >
-                        4
-                      </span>
-                      View
-                      <span class="hidden sm:inline-flex sm:ms-2">ICP</span>
+                        <svg
+                          class="w-4 h-4 text-blue-600 lg:w-6 lg:h-6 dark:text-blue-300"
+                          aria-hidden="true"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="currentColor"
+                          viewBox="0 0 18 20"
+                        >
+                          <path
+                            d="M16 1h-3.278A1.992 1.992 0 0 0 11 0H7a1.993 1.993 0 0 0-1.722 1H2a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2ZM7 2h4v3H7V2Zm5.7 8.289-3.975 3.857a1 1 0 0 1-1.393 0L5.3 12.182a1.002 1.002 0 1 1 1.4-1.436l1.328 1.289 3.28-3.181a1 1 0 1 1 1.392 1.435Z"
+                          />
+                        </svg>
+                      </div>
                     </li>
                   </ol>
                 </div>
@@ -450,25 +437,25 @@
                 >
                   <label class="flex flex-col min-w-40 flex-1">
                     <p
-                      class="text-[#1C1D22] text-base font-medium leading-normal pb-2"
+                      class="text-[#1C1D22] text-sm font-medium leading-normal pb-2"
                     >
-                      Your name
+                      Enter Name
                     </p>
                     <input
                       placeholder="Elon Musk"
-                      class="form-input text-sm flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#1C1D22] focus:outline-0 focus:ring-0 border-none bg-[#EEEFF2] focus:border-none h-10 placeholder:text-[#3C3F4A] p-4 text-base font-normal leading-normal"
+                      class="form-input text-sm flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#1C1D22] focus:outline-0 focus:ring-0 border-none bg-[#EEEFF2] focus:border-none h-10 placeholder:text-[#3C3F4A] p-4 text-sm font-normal leading-normal"
                       value=""
                     />
                   </label>
                   <label class="flex flex-col min-w-40 flex-1">
                     <p
-                      class="text-[#1C1D22] text-base font-medium leading-normal pb-2"
+                      class="text-[#1C1D22] text-sm font-medium leading-normal pb-2"
                     >
-                      Your email
+                      Enter Email
                     </p>
                     <input
                       placeholder="you@example.com"
-                      class="form-input text-sm flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#1C1D22] focus:outline-0 focus:ring-0 border-none bg-[#EEEFF2] focus:border-none h-10 placeholder:text-[#3C3F4A] p-4 text-base font-normal leading-normal"
+                      class="form-input text-sm flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#1C1D22] focus:outline-0 focus:ring-0 border-none bg-[#EEEFF2] focus:border-none h-10 placeholder:text-[#3C3F4A] p-4 text-sm font-normal leading-normal"
                       value=""
                     />
                   </label>
@@ -478,25 +465,25 @@
                 >
                   <label class="flex flex-col min-w-40 flex-1">
                     <p
-                      class="text-[#1C1D22] text-base font-medium leading-normal pb-2"
+                      class="text-[#1C1D22] text-sm font-medium leading-normal pb-2"
                     >
-                      Company name
+                      Company Name
                     </p>
                     <input
                       placeholder="Acme Co"
-                      class="form-input text-sm flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#1C1D22] focus:outline-0 focus:ring-0 border-none bg-[#EEEFF2] focus:border-none h-10 placeholder:text-[#3C3F4A] p-4 text-base font-normal leading-normal"
+                      class="form-input text-sm flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#1C1D22] focus:outline-0 focus:ring-0 border-none bg-[#EEEFF2] focus:border-none h-10 placeholder:text-[#3C3F4A] p-4 text-sm font-normal leading-normal"
                       value=""
                     />
                   </label>
                   <label class="flex flex-col min-w-40 flex-1">
                     <p
-                      class="text-[#1C1D22] text-base font-medium leading-normal pb-2"
+                      class="text-[#1C1D22] text-sm font-medium leading-normal pb-2"
                     >
-                      Company size
+                      Company Size
                     </p>
                     <input
                       placeholder="1-50 employees"
-                      class="form-input text-sm flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#1C1D22] focus:outline-0 focus:ring-0 border-none bg-[#EEEFF2] focus:border-none h-10 placeholder:text-[#3C3F4A] p-4 text-base font-normal leading-normal"
+                      class="form-input text-sm flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#1C1D22] focus:outline-0 focus:ring-0 border-none bg-[#EEEFF2] focus:border-none h-10 placeholder:text-[#3C3F4A] p-4 text-sm font-normal leading-normal"
                       value=""
                     />
                   </label>
@@ -507,25 +494,25 @@
                 >
                   <label class="flex flex-col min-w-40 flex-1">
                     <p
-                      class="text-[#1C1D22] text-base font-medium leading-normal pb-2"
+                      class="text-[#1C1D22] text-sm font-medium leading-normal pb-2"
                     >
                       Company Region
                     </p>
                     <input
                       placeholder="Sanfrancisco, CA"
-                      class="form-input text-sm flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#1C1D22] focus:outline-0 focus:ring-0 border-none bg-[#EEEFF2] focus:border-none h-10 placeholder:text-[#3C3F4A] p-4 text-base font-normal leading-normal"
+                      class="form-input text-sm flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#1C1D22] focus:outline-0 focus:ring-0 border-none bg-[#EEEFF2] focus:border-none h-10 placeholder:text-[#3C3F4A] p-4 text-sm font-normal leading-normal"
                       value=""
                     />
                   </label>
                   <label class="flex flex-col min-w-40 flex-1">
                     <p
-                      class="text-[#1C1D22] text-base font-medium leading-normal pb-2"
+                      class="text-[#1C1D22] text-sm font-medium leading-normal pb-2"
                     >
                       Company Location
                     </p>
                     <input
                       placeholder="Bay Area 11, CA"
-                      class="form-input text-sm flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#1C1D22] focus:outline-0 focus:ring-0 border-none bg-[#EEEFF2] focus:border-none h-10 placeholder:text-[#3C3F4A] p-4 text-base font-normal leading-normal"
+                      class="form-input text-sm flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#1C1D22] focus:outline-0 focus:ring-0 border-none bg-[#EEEFF2] focus:border-none h-10 placeholder:text-[#3C3F4A] p-4 text-sm font-normal leading-normal"
                       value=""
                     />
                   </label>
@@ -535,13 +522,13 @@
                 >
                   <label class="flex flex-col min-w-40 flex-1">
                     <p
-                      class="text-[#1C1D22] text-base font-medium leading-normal pb-2"
+                      class="text-[#1C1D22] text-sm font-medium leading-normal pb-2"
                     >
                       Description
                     </p>
                     <textarea
                       placeholder="Provide a detailed description of the job. What will the new hire be working on? What are the main responsibilities?"
-                      class="form-input text-sm flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#1C1D22] focus:outline-0 focus:ring-0 border-none bg-[#EEEFF2] focus:border-none min-h-32 placeholder:text-[#3C3F4A] p-4 text-base font-normal leading-normal"
+                      class="form-input text-sm flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#1C1D22] focus:outline-0 focus:ring-0 border-none bg-[#EEEFF2] focus:border-none min-h-32 placeholder:text-[#3C3F4A] p-4 text-sm font-normal leading-normal"
                     ></textarea>
                   </label>
                 </div>
