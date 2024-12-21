@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+    <link
+      rel="stylesheet"
+      as="style"
+      onload="this.rel='stylesheet'"
+      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Work+Sans%3Awght%40400%3B500%3B700%3B900"
+    />
+
+    <title>TalentTua Design</title>
+    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  </head>
+  <body class="dark:bg-neutral-900">
+    <!-- ========== MAIN CONTENT ========== -->
+    <main id="content">
+      <!-- Content -->
+      <div class="relative h-screen">
+        <div class="max-w-4xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
+          <!-- Title -->
+          <div class="text-center">
+            <div
+              class="flex items-center justify-center mb-6 gap-2 text-[#1C1D22]"
+            >
+              <div class="size-6 text-[#2563eb]">
+                <svg
+                  viewBox="0 0 48 48"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    d="M39.475 21.6262C40.358 21.4363 40.6863 21.5589 40.7581 21.5934C40.7876 21.655 40.8547 21.857 40.8082 22.3336C40.7408 23.0255 40.4502 24.0046 39.8572 25.2301C38.6799 27.6631 36.5085 30.6631 33.5858 33.5858C30.6631 36.5085 27.6632 38.6799 25.2301 39.8572C24.0046 40.4502 23.0255 40.7407 22.3336 40.8082C21.8571 40.8547 21.6551 40.7875 21.5934 40.7581C21.5589 40.6863 21.4363 40.358 21.6262 39.475C21.8562 38.4054 22.4689 36.9657 23.5038 35.2817C24.7575 33.2417 26.5497 30.9744 28.7621 28.762C30.9744 26.5497 33.2417 24.7574 35.2817 23.5037C36.9657 22.4689 38.4054 21.8562 39.475 21.6262ZM4.41189 29.2403L18.7597 43.5881C19.8813 44.7097 21.4027 44.9179 22.7217 44.7893C24.0585 44.659 25.5148 44.1631 26.9723 43.4579C29.9052 42.0387 33.2618 39.5667 36.4142 36.4142C39.5667 33.2618 42.0387 29.9052 43.4579 26.9723C44.1631 25.5148 44.659 24.0585 44.7893 22.7217C44.9179 21.4027 44.7097 19.8813 43.5881 18.7597L29.2403 4.41187C27.8527 3.02428 25.8765 3.02573 24.2861 3.36776C22.6081 3.72863 20.7334 4.58419 18.8396 5.74801C16.4978 7.18716 13.9881 9.18353 11.5858 11.5858C9.18354 13.988 7.18717 16.4978 5.74802 18.8396C4.58421 20.7334 3.72865 22.6081 3.36778 24.2861C3.02574 25.8765 3.02429 27.8527 4.41189 29.2403Z"
+                    fill="currentColor"
+                  ></path>
+                </svg>
+              </div>
+              <h2 class="text-xl font-bold text-[#2563eb] dark:text-white">
+                TalentTua
+              </h2>
+            </div>
+
+            <h1
+              class="text-3xl font-bold text-gray-800 sm:text-4xl dark:text-white"
+            >
+              Welcome to TalentTua AI
+            </h1>
+            <p class="mt-3 text-gray-600 dark:text-neutral-400">
+              Your AI-powered skilled based hiring for the web
+            </p>
+          </div>
+          <!-- End Title -->
+
+          <ul class="mt-16 space-y-5">
+            <!-- Chat Bubble -->
+            <li class="flex gap-x-2 sm:gap-x-4">
+              <svg
+                class="shrink-0 size-[38px] rounded-full"
+                width="38"
+                height="38"
+                viewBox="0 0 38 38"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect width="38" height="38" rx="6" fill="#2563EB" />
+                <path
+                  d="M10 28V18.64C10 13.8683 14.0294 10 19 10C23.9706 10 28 13.8683 28 18.64C28 23.4117 23.9706 27.28 19 27.28H18.25"
+                  stroke="white"
+                  stroke-width="1.5"
+                />
+                <path
+                  d="M13 28V18.7552C13 15.5104 15.6863 12.88 19 12.88C22.3137 12.88 25 15.5104 25 18.7552C25 22 22.3137 24.6304 19 24.6304H18.25"
+                  stroke="white"
+                  stroke-width="1.5"
+                />
+                <ellipse cx="19" cy="18.6554" rx="3.75" ry="3.6" fill="white" />
+              </svg>
+
+              <!-- Card -->
+              <div
+                class="bg-white border border-gray-200 rounded-lg p-4 space-y-3 dark:bg-neutral-900 dark:border-neutral-700"
+              >
+                <h2 class="font-medium text-gray-800 dark:text-white">
+                  What role are you looking to hire?
+                </h2>
+                <div class="space-y-1.5">
+                  <p class="mb-1.5 text-sm text-gray-800 dark:text-white">
+                    You can ask questions like:
+                  </p>
+                  <ul class="list-disc list-outside space-y-1.5 ps-3.5">
+                    <li class="text-sm text-gray-800 dark:text-white">
+                      What skills are required for a Frontend Developer?
+                    </li>
+                    <li class="text-sm text-gray-800 dark:text-white">
+                      How do I find a skilled Backend Developer?
+                    </li>
+                    <li class="text-sm text-gray-800 dark:text-white">
+                      Can you help me with a job description for a Data
+                      Scientist?
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <!-- End Card -->
+            </li>
+            <!-- End Chat Bubble -->
+
+            <!-- Chat Bubble -->
+            <li class="max-w-2xl ms-auto flex justify-end gap-x-2 sm:gap-x-4">
+              <div class="grow text-end space-y-3">
+                <!-- Card -->
+                <div class="inline-block bg-blue-600 rounded-lg p-4 shadow-sm">
+                  <p class="text-sm text-white">
+                    I need a skilled Frontend Developer.
+                  </p>
+                </div>
+                <!-- End Card -->
+              </div>
+
+              <span
+                class="shrink-0 inline-flex items-center justify-center size-[38px] rounded-full bg-gray-600"
+              >
+                <span class="text-sm font-medium text-white leading-none"
+                  >R</span
+                >
+              </span>
+            </li>
+            <!-- End Chat Bubble -->
+
+            <!-- Chat Bubble -->
+            <li class="flex gap-x-2 sm:gap-x-4">
+              <svg
+                class="shrink-0 size-[38px] rounded-full"
+                width="38"
+                height="38"
+                viewBox="0 0 38 38"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect width="38" height="38" rx="6" fill="#2563EB" />
+                <path
+                  d="M10 28V18.64C10 13.8683 14.0294 10 19 10C23.9706 10 28 13.8683 28 18.64C28 23.4117 23.9706 27.28 19 27.28H18.25"
+                  stroke="white"
+                  stroke-width="1.5"
+                />
+                <path
+                  d="M13 28V18.7552C13 15.5104 15.6863 12.88 19 12.88C22.3137 12.88 25 15.5104 25 18.7552C25 22 22.3137 24.6304 19 24.6304H18.25"
+                  stroke="white"
+                  stroke-width="1.5"
+                />
+                <ellipse cx="19" cy="18.6554" rx="3.75" ry="3.6" fill="white" />
+              </svg>
+
+              <div class="grow max-w-[90%] md:max-w-2xl w-full space-y-3">
+                <!-- Card -->
+                <div
+                  class="bg-white border border-gray-200 rounded-lg p-4 space-y-3 dark:bg-neutral-900 dark:border-neutral-700"
+                >
+                  <p class="text-sm text-gray-800 dark:text-white">
+                    A skilled Frontend Developer should have experience with
+                    HTML, CSS, JavaScript, and frameworks like React or Angular.
+                    They should also be proficient in responsive design and have
+                    a good understanding of user experience principles.
+                  </p>
+                </div>
+                <!-- End Card -->
+              </div>
+            </li>
+            <!-- End Chat Bubble -->
+
+            <!-- Chat Bubble -->
+            <li class="max-w-2xl ms-auto flex justify-end gap-x-2 sm:gap-x-4">
+              <div class="grow text-end space-y-3">
+                <!-- Card -->
+                <div class="inline-block bg-blue-600 rounded-lg p-4 shadow-sm">
+                  <p class="text-sm text-white">
+                    Can you provide a sample job description for this role?
+                  </p>
+                </div>
+                <!-- End Card -->
+              </div>
+
+              <span
+                class="shrink-0 inline-flex items-center justify-center size-[38px] rounded-full bg-gray-600"
+              >
+                <span class="text-sm font-medium text-white leading-none"
+                  >R</span
+                >
+              </span>
+            </li>
+            <!-- End Chat Bubble -->
+
+            <!-- Chat Bubble -->
+            <li class="flex gap-x-2 sm:gap-x-4">
+              <svg
+                class="shrink-0 size-[38px] rounded-full"
+                width="38"
+                height="38"
+                viewBox="0 0 38 38"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect width="38" height="38" rx="6" fill="#2563EB" />
+                <path
+                  d="M10 28V18.64C10 13.8683 14.0294 10 19 10C23.9706 10 28 13.8683 28 18.64C28 23.4117 23.9706 27.28 19 27.28H18.25"
+                  stroke="white"
+                  stroke-width="1.5"
+                />
+                <path
+                  d="M13 28V18.7552C13 15.5104 15.6863 12.88 19 12.88C22.3137 12.88 25 15.5104 25 18.7552C25 22 22.3137 24.6304 19 24.6304H18.25"
+                  stroke="white"
+                  stroke-width="1.5"
+                />
+                <ellipse cx="19" cy="18.6554" rx="3.75" ry="3.6" fill="white" />
+              </svg>
+
+              <div class="grow max-w-[90%] md:max-w-2xl w-full space-y-3">
+                <!-- Card -->
+                <div
+                  class="bg-white border border-gray-200 rounded-lg p-4 space-y-3 dark:bg-neutral-900 dark:border-neutral-700"
+                >
+                  <p class="text-sm text-gray-800 dark:text-white">
+                    Sure! Here is a sample job description for a Frontend
+                    Developer:
+                  </p>
+                  <div class="space-y-1.5">
+                    <p class="text-sm text-gray-800 dark:text-white">
+                      Job Title: Frontend Developer
+                    </p>
+                    <ul class="list-disc list-outside space-y-1.5 ps-3.5">
+                      <li class="text-sm text-gray-800 dark:text-white">
+                        Develop and maintain user-facing features using HTML,
+                        CSS, and JavaScript.
+                      </li>
+                      <li class="text-sm text-gray-800 dark:text-white">
+                        Build reusable code and libraries for future use.
+                      </li>
+                      <li class="text-sm text-gray-800 dark:text-white">
+                        Ensure the technical feasibility of UI/UX designs.
+                      </li>
+                      <li class="text-sm text-gray-800 dark:text-white">
+                        Optimize applications for maximum speed and scalability.
+                      </li>
+                      <li class="text-sm text-gray-800 dark:text-white">
+                        Collaborate with other team members and stakeholders.
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <!-- End Card -->
+              </div>
+            </li>
+            <!-- End Chat Bubble -->
+
+            <!-- Chat Bubble -->
+            <li class="max-w-2xl ms-auto flex justify-end gap-x-2 sm:gap-x-4">
+              <div class="grow text-end space-y-3">
+                <!-- Card -->
+                <div class="inline-block bg-blue-600 rounded-lg p-4 shadow-sm">
+                  <p class="text-sm text-white">
+                    Thank you! This is very helpful.
+                  </p>
+                </div>
+                <!-- End Card -->
+              </div>
+
+              <span
+                class="shrink-0 inline-flex items-center justify-center size-[38px] rounded-full bg-gray-600"
+              >
+                <span class="text-sm font-medium text-white leading-none"
+                  >R</span
+                >
+              </span>
+            </li>
+            <!-- End Chat Bubble -->
+          </ul>
+        </div>
+
+        <div
+          class="max-w-4xl mx-auto sticky bottom-0 z-10 bg-white border-t border-gray-200 pt-2 pb-4 sm:pt-4 sm:pb-6 px-4 sm:px-6 lg:px-0 dark:bg-neutral-900 dark:border-neutral-700"
+        >
+          <!-- Textarea -->
+          <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center mb-3">
+              <button
+                type="button"
+                class="inline-flex justify-center items-center gap-x-2 rounded-lg font-medium text-gray-800 hover:text-blue-600 focus:outline-none focus:text-blue-600 text-xs sm:text-sm dark:text-neutral-200 dark:hover:text-blue-500 dark:focus:text-blue-500"
+              >
+                <svg
+                  class="shrink-0 size-4"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M5 12h14" />
+                  <path d="M12 5v14" />
+                </svg>
+                New chat
+              </button>
+
+              <button
+                type="button"
+                class="py-1.5 px-2 inline-flex items-center gap-x-2 text-xs font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+              >
+                <svg
+                  class="size-3"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    d="M5 3.5h6A1.5 1.5 0 0 1 12.5 5v6a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11V5A1.5 1.5 0 0 1 5 3.5z"
+                  />
+                </svg>
+                Stop generating
+              </button>
+            </div>
+
+            <!-- Input -->
+            <div class="relative">
+              <textarea
+                class="p-4 pb-12 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+                placeholder="Ask me anything..."
+              ></textarea>
+
+              <!-- Toolbar -->
+              <div
+                class="absolute bottom-px inset-x-px p-2 rounded-b-lg bg-white dark:bg-neutral-900"
+              >
+                <div class="flex justify-between items-center">
+                  <!-- Button Group -->
+                  <div class="flex items-center">
+                    <!-- Mic Button -->
+                    <button
+                      type="button"
+                      class="inline-flex shrink-0 justify-center items-center size-8 rounded-lg text-gray-500 hover:bg-gray-100 focus:z-10 focus:outline-none focus:bg-gray-100 dark:text-neutral-500 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+                    >
+                      <svg
+                        class="shrink-0 size-4"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <rect width="18" height="18" x="3" y="3" rx="2" />
+                        <line x1="9" x2="15" y1="15" y2="9" />
+                      </svg>
+                    </button>
+                    <!-- End Mic Button -->
+
+                    <!-- Attach Button -->
+                    <button
+                      type="button"
+                      class="inline-flex shrink-0 justify-center items-center size-8 rounded-lg text-gray-500 hover:bg-gray-100 focus:z-10 focus:outline-none focus:bg-gray-100 dark:text-neutral-500 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+                    >
+                      <svg
+                        class="shrink-0 size-4"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path
+                          d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"
+                        />
+                      </svg>
+                    </button>
+                    <!-- End Attach Button -->
+                  </div>
+                  <!-- End Button Group -->
+
+                  <!-- Button Group -->
+                  <div class="flex items-center gap-x-1">
+                    <!-- Mic Button -->
+                    <button
+                      type="button"
+                      class="inline-flex shrink-0 justify-center items-center size-8 rounded-lg text-gray-500 hover:bg-gray-100 focus:z-10 focus:outline-none focus:bg-gray-100 dark:text-neutral-500 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+                    >
+                      <svg
+                        class="shrink-0 size-4"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path
+                          d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"
+                        />
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                        <line x1="12" x2="12" y1="19" y2="22" />
+                      </svg>
+                    </button>
+                    <!-- End Mic Button -->
+
+                    <!-- Send Button -->
+                    <button
+                      type="button"
+                      class="inline-flex shrink-0 justify-center items-center size-8 rounded-lg text-white bg-blue-600 hover:bg-blue-500 focus:z-10 focus:outline-none focus:bg-blue-500"
+                    >
+                      <svg
+                        class="shrink-0 size-3.5"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        viewBox="0 0 16 16"
+                      >
+                        <path
+                          d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083l6-15Zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471-.47 1.178Z"
+                        />
+                      </svg>
+                    </button>
+                    <!-- End Send Button -->
+                  </div>
+                  <!-- End Button Group -->
+                </div>
+              </div>
+              <!-- End Toolbar -->
+            </div>
+            <!-- End Input -->
+          </div>
+          <!-- End Textarea -->
+        </div>
+      </div>
+      <!-- End Content -->
+    </main>
+    <!-- ========== END MAIN CONTENT ========== -->
+
+    <div
+      class="fixed bottom-2 sm:bottom-4 end-2 sm:end-4 ms-2 z-[70] bg-neutral-900 border border-neutral-800 rounded-lg dark:bg-neutral-800"
+    >
+      <!-- Button Group -->
+      <div class="flex items-center gap-px">
+        <div class="hs-tooltip inline-block">
+          <p
+            class="hs-tooltip-toggle inline-flex gap-x-2 text-xs text-white py-1 px-2 relative before:absolute before:top-1/2 before:-start-0.5 before:z-10 before:w-px before:h-4 before:bg-white/20 before:-translate-y-1/2 first:before:hidden"
+          >
+            <svg
+              class="shrink-0 mt-0.5 size-3.5"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 16v-4" />
+              <path d="M12 8h.01" />
+            </svg>
+          </p>
+          <span
+            class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 inline-block absolute invisible z-20 py-1.5 px-2.5 bg-neutral-900 text-xs text-white rounded-lg whitespace-nowrap dark:bg-neutral-800"
+            role="tooltip"
+          >
+            This is the Preline UI template preview mode.
+          </span>
+        </div>
+
+        <!-- Templates Dropdown -->
+        <div
+          class="hs-dropdown relative inline-flex [--strategy:absolute] [--placement:bottom-right] before:absolute before:top-1/2 before:-start-px before:z-10 before:w-px before:h-4 before:bg-white/20 before:-translate-y-1/2 first:before:hidden"
+        >
+          <button
+            id="hs-dropdown-preview"
+            type="button"
+            class="py-1.5 px-2 inline-flex justify-center items-center gap-x-2 text-xs rounded-e-lg border border-transparent bg-neutral-900 text-white hover:bg-neutral-950 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-neutral-900 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+            aria-haspopup="menu"
+            aria-expanded="false"
+            aria-label="Dropdown"
+          >
+            Templates
+            <svg
+              class="hs-dropdown-open:rotate-180 shrink-0 size-3.5"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="m18 15-6-6-6 6" />
+            </svg>
+          </button>
+
+          <!-- Dropdown -->
+          <div
+            class="hs-dropdown-menu hs-dropdown-open:opacity-100 w-48 transition-[opacity,margin] duration opacity-0 hidden z-10 overflow-hidden border border-neutral-800 bg-neutral-900 rounded-lg shadow-[0_10px_40px_10px_rgba(0,0,0,0.08)] dark:shadow-[0_10px_40px_10px_rgba(0,0,0,0.2)] dark:bg-neutral-800"
+            role="menu"
+            aria-orientation="vertical"
+            aria-labelledby="hs-dropdown-preview"
+          >
+            <div
+              class="max-h-[30rem] overflow-y-auto relative z-20 after:sticky after:inset-x-0 after:bottom-0 after:z-10 after:block after:w-full after:rounded-b-lg after:pointer-events-none after:bg-gradient-to-t after:from-neutral-900 after:via-neutral-900/95 dark:after:from-neutral-800 dark:after:via-neutral-800/95 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-800 [&::-webkit-scrollbar-thumb]:bg-neutral-500 dark:[&::-webkit-scrollbar-track]:bg-neutral-700 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500"
+            >
+              <div class="p-1 space-y-0.5">
+                <span
+                  class="block p-2 pb-1 text-[11px] uppercase text-neutral-400 dark:text-neutral-400"
+                  >Main Pages</span
+                >
+
+                <a
+                  class="group flex items-center gap-x-1.5 py-1.5 px-2 rounded-md text-[13px] text-gray-200 hover:bg-neutral-800 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+                  href="../../index.html"
+                >
+                  Preline UI
+                  <svg
+                    class="shrink-0 size-3.5 ms-auto opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M5 12h14" />
+                    <path d="m12 5 7 7-7 7" />
+                  </svg>
+                </a>
+
+                <a
+                  class="group flex items-center gap-x-1.5 py-1.5 px-2 rounded-md text-[13px] text-gray-200 hover:bg-neutral-800 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+                  href="../../docs/index.html"
+                >
+                  Components (640+)
+                  <svg
+                    class="shrink-0 size-3.5 ms-auto opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M5 12h14" />
+                    <path d="m12 5 7 7-7 7" />
+                  </svg>
+                </a>
+
+                <a
+                  class="group flex items-center gap-x-1.5 py-1.5 px-2 rounded-md text-[13px] text-gray-200 hover:bg-neutral-800 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+                  href="../../examples.html"
+                >
+                  Examples (200+<!-- 202 -->)
+                  <svg
+                    class="shrink-0 size-3.5 ms-auto opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M5 12h14" />
+                    <path d="m12 5 7 7-7 7" />
+                  </svg>
+                </a>
+
+                <a
+                  class="group flex items-center gap-x-1.5 py-1.5 px-2 rounded-md text-[13px] text-gray-200 hover:bg-neutral-800 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+                  href="../../templates.html"
+                >
+                  Templates (5)
+                  <svg
+                    class="shrink-0 size-3.5 ms-auto opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M5 12h14" />
+                    <path d="m12 5 7 7-7 7" />
+                  </svg>
+                </a>
+
+                <a
+                  class="group flex items-center gap-x-1.5 py-1.5 px-2 rounded-md text-[13px] text-gray-200 hover:bg-neutral-800 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+                  href="../../plugins.html"
+                >
+                  Plugins (25<!-- 25 -->)
+                  <svg
+                    class="shrink-0 size-3.5 ms-auto opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M5 12h14" />
+                    <path d="m12 5 7 7-7 7" />
+                  </svg>
+                </a>
+
+                <a
+                  class="group flex items-center gap-x-1.5 py-1.5 px-2 rounded-md text-[13px] text-gray-200 hover:bg-neutral-800 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+                  href="../../figma.html"
+                >
+                  Figma
+                  <svg
+                    class="shrink-0 size-3.5 ms-auto opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M5 12h14" />
+                    <path d="m12 5 7 7-7 7" />
+                  </svg>
+                </a>
+
+                <a
+                  class="group flex items-center gap-x-1.5 py-1.5 px-2 rounded-md text-[13px] text-gray-200 hover:bg-neutral-800 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+                  href="../../pro/index.html"
+                >
+                  Preline Pro
+                  <svg
+                    class="shrink-0 size-3.5 ms-auto opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M5 12h14" />
+                    <path d="m12 5 7 7-7 7" />
+                  </svg>
+                </a>
+
+                <div
+                  class="border-b border-neutral-800 dark:border-neutral-700 pt-1"
+                ></div>
+                <span
+                  class="block p-2 pb-1 text-[11px] uppercase text-neutral-400 dark:text-neutral-400"
+                  >Template Previews</span
+                >
+
+                <a
+                  class="group flex items-center gap-x-1.5 py-1.5 px-2 rounded-md text-[13px] text-gray-200 hover:bg-neutral-800 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+                  href="../../templates/agency/index.html"
+                >
+                  Agency
+                  <svg
+                    class="shrink-0 size-3.5 ms-auto opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M5 12h14" />
+                    <path d="m12 5 7 7-7 7" />
+                  </svg>
+                </a>
+                <a
+                  class="group flex items-center gap-x-1.5 py-1.5 px-2 rounded-md text-[13px] text-gray-200 hover:bg-neutral-800 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+                  href="../../templates/personal/index.html"
+                >
+                  Personal
+                  <span class="text-green-400">New</span>
+                  <svg
+                    class="shrink-0 size-3.5 ms-auto opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M5 12h14" />
+                    <path d="m12 5 7 7-7 7" />
+                  </svg>
+                </a>
+                <a
+                  class="group flex items-center gap-x-1.5 py-1.5 px-2 rounded-md text-[13px] text-gray-200 hover:bg-neutral-800 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+                  href="../../templates/creative-agency/index.html"
+                >
+                  Creative Agency
+                  <svg
+                    class="shrink-0 size-3.5 ms-auto opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M5 12h14" />
+                    <path d="m12 5 7 7-7 7" />
+                  </svg>
+                </a>
+                <a
+                  class="group flex items-center gap-x-1.5 py-1.5 px-2 rounded-md text-[13px] text-gray-200 hover:bg-neutral-800 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+                  href="../../templates/admin/index.html"
+                >
+                  Admin
+                  <svg
+                    class="shrink-0 size-3.5 ms-auto opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M5 12h14" />
+                    <path d="m12 5 7 7-7 7" />
+                  </svg>
+                </a>
+                <a
+                  class="group flex items-center gap-x-1.5 py-1.5 px-2 rounded-md text-[13px] text-gray-200 hover:bg-neutral-800 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 bg-neutral-800 dark:bg-neutral-700"
+                  href="../../templates/ai-prompt/ai-with-sidebar.html"
+                >
+                  AI Prompt
+                  <svg
+                    class="shrink-0 size-3.5 ms-auto opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M5 12h14" />
+                    <path d="m12 5 7 7-7 7" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+          <!-- End Dropdown -->
+        </div>
+        <!-- End Templates Dropdown -->
+      </div>
+      <!-- End Button Group -->
+    </div>
+
+    <!-- JS Implementing Plugins -->
+
+    <!-- JS PLUGINS -->
+    <!-- Required plugins -->
+    <script src="../../assets/vendor/preline/dist/index.js?v=1.0.0"></script>
+    <script src="../../assets/vendor/prism/prism.js"></script>
+
+    <!-- JS THIRD PARTY PLUGINS -->
+    <!-- Google Analytics. Global site tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-B73TDMXKF5"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+
+      gtag("js", new Date());
+      gtag("config", "G-B73TDMXKF5");
+    </script>
+  </body>
+</html>
