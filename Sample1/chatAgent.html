@@ -1,5 +1,7 @@
 <html>
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
     <link
       rel="stylesheet"
@@ -19,7 +21,9 @@
     >
       <div class="layout-container flex h-full grow flex-col">
         <div class="flex flex-1">
-          <div class="layout-content-container flex flex-col w-60 shadow-sm">
+          <div
+            class="layout-content-container flex flex-col w-60 xs:w-full sm-w-full shadow-sm"
+          >
             <div
               class="flex h-full max-h-screen sticky top-0 flex-col justify-between bg-[#F9FAFA] p-4 border-r"
             >
@@ -243,7 +247,7 @@
             </div>
           </div>
           <div
-            class="layout-content-container flex flex-col max-w-[1160px] flex-1"
+            class="layout-content-container flex flex-col max-w-[1160px] flex-1 sm-w-full"
           >
             <header
               class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#EEEFF2] px-10 py-3 shadow-sm"
