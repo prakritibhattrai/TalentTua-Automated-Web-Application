@@ -4,9 +4,8 @@ import cors from "cors"
 import bodyParser from "body-parser"
 import db from "./config/db.js"
 import dotenv from "dotenv"
-
-
-
+import jobRoutes from "./routes/jobRoutes.js"
+import userRoutes from "./routes/userRoutes.js"
 dotenv.config()
 const app = express()
 
@@ -16,9 +15,12 @@ app.use(bodyParser.json())
 
 app.use(bodyParser.urlencoded({ extended: true }))
 
-app.get("/", (req, res) => {
-    res.send("Hello World!")
+app.use("/users", userRoutes)
+app.use("/jobs", jobRoutes)
+app.post("/generateICP", (req, res) => {
+
 })
+
 
 const server = http.createServer(app)
 
