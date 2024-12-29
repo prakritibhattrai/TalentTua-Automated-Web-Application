@@ -13,7 +13,7 @@ function SideBar() {
         <div className="flex items-center justify-between pt-4 pe-4 ps-7">
           {/* Logo */}
           <div className="flex items-center justify-center gap-2 text-[#1C1D22]">
-            <div className="size-6 text-[#2563eb]">
+            <div className="size-6 text-blue-600 dark:text-white">
               <svg
                 viewBox="0 0 48 48"
                 fill="none"
@@ -29,7 +29,7 @@ function SideBar() {
             </div>
             <Link
               to="/"
-              className="text-xl font-bold text-[#2563eb] dark:text-white"
+              className="text-xl font-bold text-blue-600 dark:text-white"
             >
               TalentTua
             </Link>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 function ChatPage() {
   const [userAnswer, setUserAnswer] = useState("");
@@ -100,7 +101,7 @@ function ChatPage() {
                   </span>
                   <div className="grow mt-2 space-y-3">
                     <p className="text-gray-800 dark:text-neutral-200">
-                      What job-title are you looking for?
+                      I am looking to hire for Software Engineer!
                     </p>
                   </div>
                 </div>
@@ -130,47 +131,30 @@ function ChatPage() {
                 />
                 <ellipse cx={19} cy="18.6554" rx="3.75" ry="3.6" fill="white" />
               </svg>
-              <div className="grow max-w-[90%] md:max-w-2xl w-full space-y-3">
-                {/* Card */}
-                <div className="space-y-3">
-                  <p className="text-sm text-gray-800 dark:text-white">
-                    We are looking for a Frontend Developer.
-                  </p>
-                </div>
-                {/* End Card */}
-              </div>
-            </li>
-            {/* End Chat Bubble */}
-            {/* Chat Bubble */}
-            <li className="max-w-4xl py-2 px-4 sm:px-6 lg:px-8 mx-auto flex gap-x-2 sm:gap-x-4">
-              <svg
-                className="shrink-0 size-[38px] rounded-full"
-                width={38}
-                height={38}
-                viewBox="0 0 38 38"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <rect width={38} height={38} rx={6} fill="#2563EB" />
-                <path
-                  d="M10 28V18.64C10 13.8683 14.0294 10 19 10C23.9706 10 28 13.8683 28 18.64C28 23.4117 23.9706 27.28 19 27.28H18.25"
-                  stroke="white"
-                  strokeWidth="1.5"
-                />
-                <path
-                  d="M13 28V18.7552C13 15.5104 15.6863 12.88 19 12.88C22.3137 12.88 25 15.5104 25 18.7552C25 22 22.3137 24.6304 19 24.6304H18.25"
-                  stroke="white"
-                  strokeWidth="1.5"
-                />
-                <ellipse cx={19} cy="18.6554" rx="3.75" ry="3.6" fill="white" />
-              </svg>
               <div className="space-y-3">
                 <h2 className="font-medium text-gray-800 dark:text-white">
-                  What are the soft skills that you are looking for?
+                  Please choose or insert the required tools and technologies?
                 </h2>
+                <div className="space-y-1.5">
+                  <p className="mb-1.5 text-sm text-gray-800 dark:text-white">
+                    You can insert the skills like:
+                  </p>
+                  <ul className="list-disc list-outside space-y-1.5 ps-3.5">
+                    <li className="text-sm text-gray-800 dark:text-white">
+                      React Developer
+                    </li>
+                    <li className="text-sm text-gray-800 dark:text-white">
+                      Node.js Developer
+                    </li>
+                    <li className="text-sm text-gray-800 dark:text-white">
+                      Google Cloud Platform (GCP) Developer
+                    </li>
+                  </ul>
+                </div>
               </div>
             </li>
             {/* End Chat Bubble */}
+
             {/* Chat Bubble */}
             <li className="py-2 sm:py-4">
               <div className="max-w-4xl px-4 sm:px-6 lg:px-8 mx-auto">
@@ -215,7 +199,8 @@ function ChatPage() {
               </svg>
               <div className="space-y-3">
                 <h2 className="font-medium text-gray-800 dark:text-white">
-                  What are the technical skills that you are looking for?
+                  What are the most desired soft skills that you are looking
+                  for?
                 </h2>
               </div>
             </li>
@@ -231,9 +216,100 @@ function ChatPage() {
                   </span>
                   <div className="grow mt-2 space-y-3">
                     <p className="text-gray-800 dark:text-neutral-200">
-                      We need someone proficient in React, JavaScript, and CSS.
+                      Candidate must posses good communication skill, team
+                      collaboration and leadership.
                     </p>
                   </div>
+                </div>
+              </div>
+            </li>
+            {/* End Chat Bubble */}
+            {/* Chat Bubble */}
+            <li className="max-w-4xl py-2 px-4 sm:px-6 lg:px-8 mx-auto flex gap-x-2 sm:gap-x-4">
+              <svg
+                className="shrink-0 size-[38px] rounded-full"
+                width={38}
+                height={38}
+                viewBox="0 0 38 38"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect width={38} height={38} rx={6} fill="#2563EB" />
+                <path
+                  d="M10 28V18.64C10 13.8683 14.0294 10 19 10C23.9706 10 28 13.8683 28 18.64C28 23.4117 23.9706 27.28 19 27.28H18.25"
+                  stroke="white"
+                  strokeWidth="1.5"
+                />
+                <path
+                  d="M13 28V18.7552C13 15.5104 15.6863 12.88 19 12.88C22.3137 12.88 25 15.5104 25 18.7552C25 22 22.3137 24.6304 19 24.6304H18.25"
+                  stroke="white"
+                  strokeWidth="1.5"
+                />
+                <ellipse cx={19} cy="18.6554" rx="3.75" ry="3.6" fill="white" />
+              </svg>
+              <div className="space-y-3">
+                <h2 className="font-medium text-gray-800 dark:text-white">
+                  Do you want to add any additional information?
+                </h2>
+              </div>
+            </li>
+            {/* End Chat Bubble */}
+            {/* Chat Bubble */}
+            <li className="py-2 sm:py-4">
+              <div className="max-w-4xl px-4 sm:px-6 lg:px-8 mx-auto">
+                <div className="max-w-2xl flex gap-x-2 sm:gap-x-4">
+                  <span className="shrink-0 inline-flex items-center justify-center size-[38px] rounded-full bg-gray-600">
+                    <span className="text-sm font-medium text-white leading-none">
+                      AZ
+                    </span>
+                  </span>
+                  <div className="grow mt-2 space-y-3">
+                    <p className="text-gray-800 dark:text-neutral-200">No</p>
+                  </div>
+                </div>
+              </div>
+            </li>
+            {/* End Chat Bubble */}
+            {/* Chat Bubble */}
+            <li className="max-w-4xl py-2 px-4 sm:px-6 lg:px-8 mx-auto flex gap-x-2 sm:gap-x-4">
+              <svg
+                className="shrink-0 size-[38px] rounded-full"
+                width={38}
+                height={38}
+                viewBox="0 0 38 38"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect width={38} height={38} rx={6} fill="#2563EB" />
+                <path
+                  d="M10 28V18.64C10 13.8683 14.0294 10 19 10C23.9706 10 28 13.8683 28 18.64C28 23.4117 23.9706 27.28 19 27.28H18.25"
+                  stroke="white"
+                  strokeWidth="1.5"
+                />
+                <path
+                  d="M13 28V18.7552C13 15.5104 15.6863 12.88 19 12.88C22.3137 12.88 25 15.5104 25 18.7552C25 22 22.3137 24.6304 19 24.6304H18.25"
+                  stroke="white"
+                  strokeWidth="1.5"
+                />
+                <ellipse cx={19} cy="18.6554" rx="3.75" ry="3.6" fill="white" />
+              </svg>
+              <div className="space-y-3">
+                <h2 className="font-medium text-gray-800 dark:text-white">
+                  Please find the link for the Ideal Candidate Profile
+                </h2>
+                <div className="space-y-1.5">
+                  <ul className="list-disc list-outside space-y-1.5 ps-3.5">
+                    <li className="text-sm text-gray-800 dark:text-white">
+                      <Link to="/icp" className="text-blue-600 hover:underline">
+                        View Candidate Profile
+                      </Link>
+                    </li>
+                    <li className="text-sm text-gray-800 dark:text-white">
+                      <Link to="/icp" className="text-blue-600 hover:underline">
+                        Email the link
+                      </Link>
+                    </li>
+                  </ul>
                 </div>
               </div>
             </li>
