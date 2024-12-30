@@ -1,6 +1,21 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const [inputValue, setInputValue] = useState("");
+  const navigate = useNavigate();
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      // Data to send
+      const dataToSend = { input: inputValue };
+      // Navigate to "/chat" with data
+      navigate("/chat", { state: dataToSend });
+    }
+  };
+
+  const handleChange = (event) => {
+    setInputValue(event.target.value);
+  };
   return (
     <main id="content" className="bg-gray-50 dark:bg-neutral-900">
       {/* Content */}
@@ -46,7 +61,9 @@ const Home = () => {
                 type="text"
                 className="p-4 block w-full border border-gray-300 rounded-full text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
                 placeholder="Say something to start..."
-                //onkeydown="handleSearch(event)"
+                value={inputValue}
+                onKeyDown={(event) => handleKeyDown(event)}
+                onChange={(event) => handleChange(event)}
                 id="searchInput"
               />
               <div className="absolute top-1/2 end-2 -translate-y-1/2">
