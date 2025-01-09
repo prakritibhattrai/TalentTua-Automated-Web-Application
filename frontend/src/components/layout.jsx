@@ -4,9 +4,9 @@ import SideBar from "./sidebar";
 
 const Layout = () => {
   return (
-    <div className="dark:bg-neutral-900">
+    <div className="dark:bg-neutral-900 bg-gray-10">
       {/* ========== HEADER ========== */}
-      <Header />
+      {/* <Header /> */}
       {/* ========== END HEADER ========== */}
       {/* ========== MAIN CONTENT ========== */}
       {/* Breadcrumb */}
