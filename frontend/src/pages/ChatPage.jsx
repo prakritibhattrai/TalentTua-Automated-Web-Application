@@ -3,103 +3,72 @@ import Title from "../components/chat/Title";
 import { MessageList } from "../components/chat/MessageList";
 import ChatInput from "../components/chat/ChatInput";
 import { staticData } from "../data/traitMatrix";
+import { motion } from "framer-motion";
+import { sanitizeInput, validateData } from "../helpers/sanitizeInput";
 
 function ChatPage() {
+  const messageEndRef = useRef(null);
+  const [icpData, setICPData] = useState({});
+  const [results, setResults] = useState({});
+  const [botTyping, setBotTyping] = useState(false);
+  const [input, setInput] = useState("");
+  const [currentStep, setCurrentStep] = useState(0);
+  const [userData, setUserData] = useState({});
+
   const questions = [
     {
-      name: "jobTitle",
-      question: "What is the job role or title you are looking to hiring for?",
+      name: "welcome",
+      question:
+        "Would you like to generate the Ideal Candidate Profile for the role?",
+      option: ["Yes", "No"],
       inputType: "text",
+      validate: "required",
+    },
+    {
+      name: "jobTitle",
+      question: "What is the job role or title you are looking to hire for?",
+      inputType: "text",
+      validate: "required",
     },
     {
       name: "jobFamily",
       question: "Please select a job family for this role:",
       inputType: "dropdown",
-      options: [
-        "Accounting and Finance",
-        "Administrative Support",
-        "Craft and related trades",
-        "Database and Network Analysts",
-        "Health and Medicine",
-        "Human Resources",
-        "Legal, Social, and Cultural",
-        "Manufacturing",
-        "Marketing and Advertising",
-        "Natural Resources and Extraction",
-        "Sales and Retail",
-        "Science and Engineering",
-        "Service and Product Support",
-        "Software Applications and Developers",
-        "Other",
-      ],
+      options: staticData.jobFamilyOptions,
     },
     {
       name: "industry",
-      question: "Please select a industry for the role:",
+      question: "Please select an industry for the role:",
       inputType: "dropdown",
-      options: [
-        "Agriculture, forestry, fishing and hunting",
-        "Mining, quarrying, and oil and gas extraction",
-        "Utilities",
-        "Construction",
-        "Wholesale trade",
-        "Retail Trade",
-        "Transportation and warehousing",
-        "Information and cultural industries",
-        "Manufacturing",
-        "Finance and insurance",
-        "Real estate and rental and leasing",
-        "Professional, scientific, and technical services",
-        "Management of companies and enterprises",
-        "Administrative and support services",
-        "Educational services",
-        "Waste management and remediation services",
-        "Health care and social assistance",
-        "Arts, entertainment and recreation",
-        "Accommodation and food services",
-        "Other services (except public administration)",
-        "Public administration",
-      ],
+      options: staticData.industryOptions,
     },
     {
       name: "seniorityLevel",
       question: "Please select the seniority level for the role:",
       inputType: "dropdown",
-      options: [
-        "Entry level - very limited proficiency, willing to learn",
-        "Junior - limited proficiency, building competencies and skill sets",
-        "Intermediate - proficient, honing competencies and advancing skill sets",
-        "Senior - advanced proficiency, highly competent, could teach lower levels",
-        "Manager - intermediate to senior level, manages people, delivery, or product/service",
-        "Executive - proficient to advanced proficiency domain expertise, successful people manager or leader",
-      ],
+      options: staticData.seniorityLevelOptions,
     },
     {
       name: "stakeholderEngagement",
       question: "Please select multiple stakeholder engagement for the role:",
       inputType: "checkbox",
-      options: [
-        "Internal team or department",
-        "Other internal teams or departments",
-        "Client-facing responsibilities",
-        "Suppliers, vendors, or other business supports",
-        "Legislative, legal, NGOs or other government-regulated organizations",
-        "Board of directors, external shareholders, or executive team",
-      ],
+      options: staticData.stakeholderEngagementOptions,
+      selectedOption: [],
     },
     {
       name: "traitMatrix",
       question:
-        "Please select a TraitMatrix scale from according to the importance:",
-      inputType: "",
+        "Please select a TraitMatrix scale according to the importance:",
+      inputType: "traitMatrix",
       options: staticData.trait_matrix,
+      rating: {},
     },
     {
       name: "desirableSoftSkills",
       question:
-        "Please select or enter the five must have soft skills for the role:",
+        "Please select or enter the five must-have soft skills for the role:",
       inputType: "checkbox",
-      options: [
+      options: results.work_styles || [
         "Communication",
         "Leadership",
         "Teamwork",
@@ -116,24 +85,19 @@ function ChatPage() {
       name: "undesirableTraits",
       question: "Please select or enter five undesirable skills for the role:",
       inputType: "checkbox",
-      options: [
-        "Lack of initiative",
-        "Poor communication",
-        "Inflexibility",
-        "Disorganization",
-        "Lack of attention to detail",
-        "Negative attitude",
-        "Poor time management",
-      ],
+      options: staticData.undesirableSkills,
     },
     {
       name: "toolProficiencies",
       question:
-        "Please select tool and proficiencies required for day 1 on the job:",
+        "Please select tools and proficiencies required for day 1 on the job:",
       inputType: "checkbox",
-      options: [
+      options: results.toolsProficiencies || [
         "Excel",
         "PowerPoint",
+        "MS Word",
+        "Google Suite",
+        "Project Management Software",
         "CRM software",
         "SQL",
         "Data visualization tools",
@@ -143,7 +107,7 @@ function ChatPage() {
     {
       name: "roleDescription",
       question:
-        "Describe what is unique about this role for your organization in comparison to other organizations(Why does this role exists in your organization?)",
+        "Describe what is unique about this role for your organization in comparison to other organizations(Why does this role exist in your organization?)",
       inputType: "textarea",
     },
     {
@@ -157,124 +121,443 @@ function ChatPage() {
       inputType: "textarea",
     },
   ];
-  const messageEndRef = useRef(null);
+
   const [messages, setMessages] = useState([
     {
       heading: "Welcome to TalentTua AI. Your AI-powered copilot for hiring...",
-      content: questions[0].question, // First question
+      content: questions[0].question,
       inputType: questions[0].inputType,
+      name: questions[0].name,
       sender: "bot",
     },
   ]);
-  const [botTyping, setBotTyping] = useState(false);
-  const [input, setInput] = useState("");
-  const [currentStep, setCurrentStep] = useState(0);
-  const [userData, setUserData] = useState({});
-  const handleUserAction = (userInput) => {
-    const updatedUserData = {
-      ...userData,
-      [`${questions[currentStep].name}`]: userInput,
-    };
-    setUserData(updatedUserData);
 
-    const userMessage = {
-      content: userInput,
-      sender: "user",
-    };
-
-    setMessages((prevMessages) => [...prevMessages, userMessage]);
-    setInput("");
-
-    const nextStep = currentStep + 1;
-    if (nextStep < questions.length) {
-      setBotTyping(true); // Show typing indicator
-      setTimeout(() => {
-        const nextBotMessage = {
-          heading: "",
-          content: questions[nextStep].question,
-          inputType: questions[nextStep].inputType,
-          options: questions[nextStep].options || "",
-          name: questions[nextStep].name || "",
-          sender: "bot",
-        };
-
-        setMessages((prevMessages) => [...prevMessages, nextBotMessage]);
-        setCurrentStep(nextStep);
-        setBotTyping(false); // Hide typing indicator
-      }, 1000); // Simulate delay for bot typing
-    } else {
-      const thankYouMessage = {
-        heading: "",
-        content:
-          "Thank you for providing the details. We’ll take it from here!",
-        sender: "bot",
-      };
-
-      setBotTyping(true); // Show typing indicator
-      setTimeout(() => {
-        setMessages((prevMessages) => [...prevMessages, thankYouMessage]);
-        setBotTyping(false); // Hide typing indicator
-      }, 1000);
-    }
-  };
-  const handleEdit = () => {
-    // Let the user go back to the question they want to edit (you could give them options for each question)
-    setIsReviewing(false);
-    setCurrentStep(0);
-    setMessages([
+  const addErrorMessage = (message, currentQuestion) => {
+    setMessages((prev) => [
+      ...prev,
       {
-        heading: "Welcome back! Let's continue the questionnaire.",
-        content: questions[0].question,
+        content: message,
+        sender: "bot",
+      },
+      {
+        heading: "",
+        content: currentQuestion?.question || "No question found.",
+        inputType: currentQuestion?.inputType || "text",
+        options: currentQuestion?.options || "",
+        name: currentQuestion?.name || "",
         sender: "bot",
       },
     ]);
+    setInput("");
   };
-  const handleConfirmation = () => {
-    // You can handle the final submission here, such as sending the data to the server
-    const submitMessage = {
-      heading: "",
-      content:
-        "Thank you for confirming! Your data has been submitted successfully.",
-      sender: "bot",
-    };
 
-    setMessages((prevMessages) => [...prevMessages, submitMessage]);
-  };
-  const handleFormSubmit = () => {
-    console.log(userData);
-  };
-  // Scroll to the last message when messages update
-  useEffect(() => {
-    if (messageEndRef.current) {
-      messageEndRef.current.scrollIntoView({ behavior: "smooth" });
+  const handleUserAction = async (userInput) => {
+    try {
+      // Check if input is provided
+      if (
+        !userInput ||
+        userInput.length === 0 ||
+        Object.keys(userInput).length === 0
+      ) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            content: "Please provide an answer to continue.",
+            sender: "bot",
+          },
+          {
+            heading: "",
+            content: questions[currentStep]?.question || "No question found.",
+            inputType: questions[currentStep]?.inputType || "text",
+            options: questions[currentStep]?.options || "",
+            name: questions[currentStep]?.name || "",
+            sender: "bot",
+          },
+        ]);
+        setInput("");
+        return;
+      }
+
+      const updatedUserData = { ...userData };
+      const nextStep = currentStep + 1;
+      const currentQuestion = questions[currentStep];
+
+      // Sanitize and validate user input
+      if (typeof userInput === "string") {
+        userInput = sanitizeInput(userInput);
+        if (userInput.length > 255) {
+          addErrorMessage(
+            "Input exceeds the maximum length of 255 characters.",
+            currentQuestion
+          );
+          return;
+        }
+      }
+      // Validation based on inputType
+      switch (currentQuestion?.inputType) {
+        case "text":
+        case "textarea":
+          if (
+            (typeof userInput !== "string" && typeof userInput !== "object") || // If it's neither a string nor an object
+            (typeof userInput === "string" && userInput.trim() === "") || // If it's a string and empty
+            (typeof userInput === "object" && !Object.keys(userInput).length) // If it's an empty object
+          ) {
+            addErrorMessage("Input is invalid or empty.", currentQuestion);
+            return;
+          }
+
+          if (currentQuestion.name === "jobTitle") {
+            setBotTyping(true);
+            let response = await fetch("http://localhost:3000/jobs", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ jobTitle: userInput }),
+            });
+
+            const data = await response.json();
+
+            if (data?.keyProficiencies?.technicalSkills?.tools_and_technology) {
+              setResults((prev) => ({
+                ...prev,
+                toolsProficiencies:
+                  data.keyProficiencies.technicalSkills.tools_and_technology,
+              }));
+            }
+
+            if (
+              data?.niceToHave?.work_styles ||
+              data?.niceToHave?.interests ||
+              data?.niceToHave?.abilities
+            ) {
+              setResults((prev) => ({
+                ...prev,
+                work_styles: [
+                  ...(data?.niceToHave?.work_styles?.map(
+                    (style) => style.name
+                  ) || []),
+                  ...(data?.niceToHave?.interests.map((style) => style.name) ||
+                    []),
+                  ...(data?.niceToHave?.abilities.map((style) => style.name) ||
+                    []),
+                ],
+              }));
+            }
+            setBotTyping(false);
+          }
+          if (currentQuestion.name === "welcome") {
+            if (userInput == "no") {
+              setMessages((prev) => [
+                ...prev,
+                {
+                  heading: "",
+                  content: `Thank you for your time! Know more about TalentTua at `,
+                  link: "www.talentua.com",
+                  sender: "bot",
+                },
+              ]);
+              return;
+            }
+          }
+          break;
+
+        case "dropdown":
+          if (
+            !currentQuestion.options.includes(userInput) ||
+            typeof userInput !== "string"
+          ) {
+            addErrorMessage(
+              "Invalid selection from dropdown options.",
+              currentQuestion
+            );
+            return;
+          }
+          break;
+
+        case "checkbox":
+          if (!Array.isArray(userInput)) {
+            addErrorMessage(
+              "Invalid checkbox input. Input should be an array.",
+              currentQuestion
+            );
+            return;
+          }
+          break;
+
+        case "traitMatrix":
+          console.log("TraitMatrix data:", userInput);
+
+          // Check that input is an object and not an array
+          if (typeof userInput !== "object" || Array.isArray(userInput)) {
+            addErrorMessage(
+              "Invalid traitMatrix data format.",
+              currentQuestion
+            );
+            return;
+          }
+
+          break;
+
+        default:
+          addErrorMessage("Unsupported input type.", currentQuestion);
+          return;
+      }
+
+      // Save sanitized input
+      updatedUserData[currentQuestion.name] = userInput;
+      setUserData(updatedUserData);
+
+      // Display user input
+      setMessages((prev) => [
+        ...prev,
+        { content: userInput, sender: "user", name: currentQuestion.name },
+      ]);
+      setInput("");
+
+      // Handle next question or end
+      if (nextStep < questions.length) {
+        setBotTyping(true);
+        setMessages((prev) => [
+          ...prev,
+          {
+            heading: "",
+            content: questions[nextStep]?.question || "No question available.",
+            inputType: questions[nextStep]?.inputType || "text",
+            options: questions[nextStep]?.options || "",
+            name: questions[nextStep]?.name || "",
+            sender: "bot",
+          },
+        ]);
+        setCurrentStep(nextStep);
+        setBotTyping(false);
+      } else {
+        setBotTyping(true);
+        setMessages((prev) => [
+          ...prev,
+          {
+            heading: "",
+            content:
+              "Thank you for providing the details. We'll take it from here!",
+            sender: "bot",
+          },
+        ]);
+        setBotTyping(false);
+      }
+    } catch (error) {
+      console.error("Error:", error.message);
+      setMessages((prev) => [
+        ...prev,
+        {
+          content: error.message || "An error occurred. Please try again.",
+          sender: "bot",
+        },
+      ]);
     }
+  };
+
+  const handleGoBack = () => {
+    if (currentStep > 0) {
+      const prevStep = currentStep - 1;
+      const prevQuestion = questions[prevStep];
+      const prevAnswer = userData[prevQuestion.name] || [];
+
+      setCurrentStep(prevStep);
+      setMessages((prev) => [
+        ...prev,
+        {
+          heading: "",
+          content: prevQuestion.question,
+          inputType: prevQuestion.inputType,
+          options: prevQuestion.options || "",
+          selectedOption: prevAnswer || [],
+          rating: prevAnswer || {},
+          name: prevQuestion.name || "",
+          sender: "bot",
+        },
+      ]);
+      setInput("");
+    }
+  };
+
+  const handleFormSubmit = async (updatedData) => {
+    try {
+      // Validate updatedData before submitting
+      const validationErrors = validateData(updatedData);
+      if (validationErrors.length > 0) {
+        // Display validation errors and stay on the same step to allow user correction
+        setMessages((prev) => [
+          ...prev,
+          {
+            content: `Please fix the following errors:\n${validationErrors.join(
+              "\n"
+            )}`,
+            sender: "bot",
+          },
+        ]);
+        return; // Stop submission and allow the user to fix the errors
+      }
+
+      // Proceed with submitting the data if valid
+      setUserData(updatedData);
+      setBotTyping(true);
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          heading: "",
+          content: "Thank you, we are calculating the ICP for you!",
+          sender: "bot",
+        },
+      ]);
+
+      const response = await fetch("http://localhost:3000/jobs/saveJob", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userData),
+      });
+
+      console.log(response, userData);
+      if (!response.ok) {
+        throw new Error("Failed to save job data");
+      }
+
+      const responseData = await response.json();
+
+      if (!responseData) {
+        // If ICP generation fails, show an error and stay on the current step
+        throw new Error("ICP generation failed. Please try again.");
+      }
+
+      // If ICP is successfully generated, update the state
+      setICPData((prev) => ({ ...prev, ...responseData }));
+
+      // Move to the next step or complete the process
+      const nextStep = currentStep + 1;
+      if (nextStep < questions.length) {
+        setTimeout(() => {
+          setMessages((prev) => [
+            ...prev,
+            {
+              heading: "",
+              content: questions[nextStep].question,
+              inputType: questions[nextStep].inputType,
+              options: questions[nextStep].options || "",
+              name: questions[nextStep].name || "",
+              sender: "bot",
+            },
+          ]);
+          setCurrentStep(nextStep);
+          setBotTyping(false);
+        }, 1000);
+      } else {
+        setMessages((prev) => [
+          ...prev,
+          {
+            heading: "",
+            content: "Process complete! Thank you for your inputs.",
+            sender: "bot",
+          },
+        ]);
+        setBotTyping(false);
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+
+      // If there's an error (e.g., ICP generation failed), show the error and allow user correction
+      setMessages((prev) => [
+        ...prev,
+        {
+          content: error.message, // Show the specific error message (e.g., ICP generation failed)
+          sender: "bot",
+        },
+      ]);
+
+      // Show the previous question again for correction
+      setTimeout(() => {
+        setMessages((prev) => [
+          ...prev,
+          {
+            heading: "",
+            content: questions[currentStep].question, // Show the question again
+            inputType: questions[currentStep].inputType,
+            options: questions[currentStep].options || "",
+            name: questions[currentStep].name || "",
+            sender: "bot",
+          },
+        ]);
+        setBotTyping(false);
+      }, 1000);
+    }
+  };
+
+  useEffect(() => {
+    messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
   return (
     <div className="relative bg-none w-full lg:ps-64">
       <div className="pt-10 lg:pt-14">
         <Title />
+        <MessageList
+          messages={messages}
+          onSelect={handleUserAction}
+          onSubmit={handleFormSubmit}
+          userData={userData}
+          icpData={icpData}
+          botTyping={botTyping}
+        />
+        <div className="max-w-4xl py-2 px-4 sm:px-6 lg:px-8 mx-auto flex gap-x-2 sm:gap-x-4 justify-start">
+          {botTyping && (
+            <motion.div
+              className="bot-typing flex items-center mt-4"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 10 }}
+              transition={{ duration: 0.6, ease: "easeInOut" }}
+            >
+              <div className="typing-dots flex gap-1">
+                <span className="dot h-1.5 w-1.5 bg-gray-400 rounded-full animate-bounce"></span>
+                <span className="dot h-1.5 w-1.5 bg-gray-400 rounded-full animate-bounce delay-150"></span>
+                <span className="dot h-1.5 w-1.5 bg-gray-400 rounded-full animate-bounce delay-300"></span>
+              </div>
+              <p className="ml-2 text-gray-500 text-xs">Typing...</p>
+            </motion.div>
+          )}
 
-        <MessageList messages={messages} onSelect={handleUserAction} />
-        {botTyping && (
-          <div className="flex max-w-4xl justify-start">
-            <div className="py-2 px-16 text-blue-600">
-              <span className="animate-pulse [animation-delay:0ms] inline-block mr-1">
-                Bot
-              </span>
-              <span className="animate-pulse [animation-delay:500ms] inline-block mr-1">
-                is
-              </span>
-              <span className="animate-pulse [animation-delay:900ms] inline-block mr-1">
-                typing...
-              </span>
-            </div>
-          </div>
-        )}
-
-        <div ref={messageEndRef}></div>
+          {!botTyping && currentStep > 0 && (
+            <motion.div
+              className="navigation-buttons flex justify-start items-center mt-4"
+              initial={{ opacity: 0, scale: 0.8, x: -10 }}
+              animate={{ opacity: 1, scale: 1, x: 0 }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+            >
+              {currentStep > 0 && (
+                <motion.button
+                  className="go-back-button text-gray-800 shadow-sm dark:bg-neutral-900 dark:text-blue-600 border dark:border-blue-600 border-gray-400 text-sm px-4 py-2 rounded-tl-lg rounded-bl-lg bg-gray-50 dark:hover:bg-neutral-900 hover:bg-gray-200 transition-all"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleGoBack}
+                >
+                  {"<"} prev
+                </motion.button>
+              )}
+              {currentStep < questions.length - 1 && (
+                <motion.button
+                  className="next-button text-gray-800  shadow-sm dark:bg-neutral-900 dark:text-blue-600 border dark:border-blue-600 border-gray-400 text-sm px-4 py-2 rounded-tr-lg rounded-br-lg bg-gray-50 dark:hover:bg-neutral-900 hover:bg-gray-200 transition-all"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => handleUserAction(input)}
+                >
+                  next {">"}
+                </motion.button>
+              )}
+            </motion.div>
+          )}
+          <div ref={messageEndRef}></div>
+        </div>
 
         <ChatInput
           input={input}
+          current={questions[currentStep]}
           setInput={setInput}
           onSubmit={handleUserAction}
         />

@@ -9,7 +9,6 @@ export const staticData = {
     ],
 
     // Predefined options for each step
-    "jobTitleOptions": ['Software Engineer', 'Product Manager', 'Designer', 'Data Scientist', 'HR Specialist'],
     "jobFamilyOptions": [
         "Accounting and Finance",
         "Administrative Support",
@@ -28,27 +27,34 @@ export const staticData = {
         "Other",
     ],
     "industryOptions": [
-        "Agriculture, forestry, fishing and hunting",
-        "Mining, quarrying, and oil and gas extraction",
-        "Utilities",
-        "Construction",
-        "Wholesale trade",
-        "Retail Trade",
-        "Transportation and warehousing",
-        "Information and cultural industries",
-        "Manufacturing",
-        "Finance and insurance",
-        "Real estate and rental and leasing",
-        "Professional, scientific, and technical services",
-        "Management of companies and enterprises",
-        "Administrative and support services",
-        "Educational services",
-        "Waste management and remediation services",
-        "Health care and social assistance",
         "Arts, entertainment and recreation",
         "Accommodation and food services",
+        "Administrative and support services",
+
+        "Agriculture, forestry, fishing and hunting",
+        "Construction",
+        "Educational services",
+        "Finance and insurance",
+        "Health care and social assistance",
+        "Information and cultural industries",
+
+        "Mining, quarrying, and oil and gas extraction",
+        "Management of companies and enterprises",
+        "Manufacturing",
         "Other services (except public administration)",
+
+        "Professional, scientific, and technical services",
+
         "Public administration",
+        "Real estate and rental and leasing",
+        "Retail Trade",
+
+        "Transportation and warehousing",
+
+        "Utilities",
+        "Wholesale trade",
+        "Waste management and remediation services",
+
     ]
     ,
     "seniorityLevelOptions": [
@@ -67,315 +73,390 @@ export const staticData = {
         "Legislative, legal, NGOs or other government-regulated organizations",
         "Board of directors, external shareholders, or executive team",
     ],
-    "toolProficienciesOptions": ['Jira', 'Slack', 'Trello', 'Asana', 'GitHub'],
-    "undesirableTraitsOptions": ['Lack of empathy', 'Poor communication', 'Inflexibility', 'Procrastination'],
-    "jobDescriptionOptions": ['Writing code', 'Managing teams', 'Designing products', 'Building data models'],
 
     "trait_matrix": [
         {
-            "id": 1,
-            "name": "Direct communication",
-            "description": "straightforward, direct, to the point, and forthright",
-
+            competency: "Adaptability",
+            traits: [
+                {
+                    name: "Flexible",
+                    description: "Easily adjusts to changing situations and embraces ambiguity, readily adapting plans and trying new approaches to achieve solutions through a fluid and evolving process"
+                    , shortDescription: "Adapts easily to change."
+                },
+                {
+                    name: "Stable",
+                    description: "Maintains a consistent and reliable approach to work, ensuring actions align with goals and providing stability to others."
+                    , shortDescription: "Consistent and reliable"
+                }
+            ]
         },
         {
-            "id": 2,
-            "name": "Tactful communication",
-            "description": "state things in a respectful and diplomatic manner",
-
+            competency: "Civic Responsibility",
+            traits: [
+                {
+                    name: "Selfless",
+                    description: "Prioritizes the needs and well-being of the community and others, often going above and beyond to contribute to the greater good."
+                    , shortDescription: "Puts others first"
+                },
+                {
+                    name: "Reflective",
+                    description: "Prioritizes their needs by carefully considering the impact of their actions on others and the community, taking time to learn from experiences and improve future outcomes."
+                    , shortDescription: "Learns from experiences"
+                }
+            ]
         },
         {
-            "id": 3,
-            "name": "Certain of opinion",
-            "description": "feel confident in one's opinions",
-
+            competency: "Collaboration",
+            traits: [
+                {
+                    name: "Cooperative",
+                    description: "Works effectively and harmoniously with others, sharing responsibilities, and valuing diverse perspectives to achieve common goals."
+                    , shortDescription: "Works well with others"
+                },
+                {
+                    name: "Self-Directing",
+                    description: "Takes initiative and ownership of their work, requiring minimal supervision while contributing effectively to team efforts."
+                    , shortDescription: "Independent and takes ownership"
+                }
+            ]
         },
         {
-            "id": 4,
-            "name": "Open to others' opinions",
-            "description": "reflect on many different viewpoints",
-
+            competency: "Communication",
+            traits: [
+                {
+                    name: "Persuasive",
+                    description: "Articulates ideas clearly and confidently, influencing others positively and gaining buy-in for proposals or ideas."
+                    , shortDescription: "Influences others positively"
+                },
+                {
+                    name: "Candid",
+                    description: "Communicates honestly and directly, providing constructive feedback and expressing opinions transparently while maintaining respect for others."
+                    , shortDescription: "Honest and direct, but respectful"
+                }
+            ]
         },
         {
-            "id": 5,
-            "name": "Seeks to improve self",
-            "description": "attempt to develop or better oneself",
-
+            competency: "Conscientiousness",
+            traits: [
+                {
+                    name: "Organized",
+                    description: "Maintains order and structure in their work, managing time and resources efficiently to meet deadlines and achieve goals.",
+                    shortDescription: "Efficient and structured. "
+                },
+                {
+                    name: "Flexible",
+                    description: "Adapts plans readily and embraces ambiguity, finding innovative ways to solve problems.",
+                    shortDescription: "Adapts easily to change"
+                }
+            ]
         },
         {
-            "id": 6,
-            "name": "Positive self-identity",
-            "description": "to like oneself, as they are presently.",
-
+            competency: "Creativity",
+            traits: [
+                {
+                    name: "Innovative",
+                    description: "Generates novel ideas and approaches, challenging the status quo and finding unique solutions to problems.",
+                    shortDescription: "Creative problem-solver"
+                },
+                {
+                    name: "Systematic",
+                    description: "Applies structured, methodical processes to complex tasks, ensuring thoroughness and attention to detail.",
+                    shortDescription: "Methodical and thorough"
+                }
+            ]
         },
         {
-            "id": 7,
-            "name": "Puts own needs first",
-            "description": "Prioritizes their goals by aligning their wants and needs first",
-
+            competency: "Critical Thinking",
+            traits: [
+                {
+                    name: "Logical",
+                    description: "Analyzes information objectively, identifies patterns, and draws sound conclusions based on evidence and reasoning.",
+                    shortDescription: "Reasons clearly and objectively. "
+                },
+                {
+                    name: "Intuitive",
+                    description: "Uses intuition and experience to form judgments and make decisions, often seeing connections that others might miss.",
+                    shortDescription: "Makes decisions based on instinct and experience."
+                }
+            ]
         },
         {
-            "id": 8,
-            "name": "Puts others' needs first",
-            "description": "Prespond to others' needs and assist or support others' goals first before individual needs",
-
-        },
-        {
-            "id": 9,
-            "name": "Fact-finding decision making",
-            "description": "logically examine facts and situations",
-
-        },
-        {
-            "id": 10,
-            "name": "Intuition based decision making",
-            "description": "use hunches to help make decisions",
-
-        },
-        {
-            "id": 11,
-            "name": "Self motivated",
-            "description": "The drive to achieve including taking initiative, wanting challenge, and being enthusiastic about goals"
-            ,
-        },
-        {
-            "id": 12,
-            "name": "Manages stress well",
-            "description": "Manages stress well - deal effectively with strain and difficulty when it occurs"
-            ,
-        },
-        {
-            "id": 13,
-            "name": "Persistence against work barriers",
-            "description": "Rbe tenacious despite encountering significant obstacles",
-
-        },
-        {
-            "id": 14,
-            "name": "Experimenting against work barriers",
-            "description": "new things and new ways of doing things",
-
-        },
-        {
-            "id": 15,
-            "name": "Organized work style",
-            "description": "place and maintain order in an environment or situation",
-
-        },
-        {
-            "id": 16,
-            "name": "Flexible work style",
-            "description": "easily adapt to change",
-
-        },
-        {
-            "id": 17,
-            "name": "Analyzing pitfalls",
-            "description": "scrutinize potential difficulties related to a plan or strategy",
-
-        },
-        {
-            "id": 18,
-            "name": "Comfortable with uncertain outcomes",
-            "description": "feel at ease with business ventures that involve uncertainty",
-        },
-        {
-            "id": 19,
-            "name": "Rule enforcing",
-            "description": "skillfully correct others when they are violating rules or performing poorly",
-        },
-        {
-            "id": 20,
-            "name": "Friendly demeanor",
-            "description": "express positive feelings and affinity toward others",
-
-        },
-        {
-            "id": 21,
-            "name": "Collaborative",
-            "description": "collaborate with others when making decisions",
-
-        },
-        {
-            "id": 22,
-            "name": "Independent decision making",
-            "description": "the authority and the willingness to accept decision-making responsibility",
-
-        },
-        {
-            "id": 23,
-            "name": "Optimistic",
-            "description": "believe the future will be positive",
-
+            competency: "Curiosity",
+            traits: [
+                {
+                    name: "Curious",
+                    description: "Eager to learn and explore new ideas, asking insightful questions and seeking deeper understanding.",
+                    shortDescription: "Eager to learn and explore."
+                },
+                {
+                    name: "Contentment",
+                    description: "Satisfied with current knowledge and experiences, finding fulfillment in familiarity and established practices"
+                    , shortDescription: "Happy with current knowledge and practices"
+                }
+            ]
         }
-    ],
+        ,
+        {
+            competency: "Initiative",
+            traits: [
+                {
+                    name: "Proactive",
+                    description: "Anticipates needs and takes action without being prompted, identifying opportunities and taking initiative to drive progress.",
+                    shortDescription: "Eager to learn and explore."
+                },
+                {
+                    name: "Stable",
+                    description: "Maintains a consistent and reliable approach to their work, ensuring actions are aligned with goals and priorities which provides a sense of calm and grounding to others."
+                    , shortDescription: "Happy with current knowledge and practices"
+                }
+            ]
+        }, {
+            competency: "Customer Experience",
+            traits: [
+                {
+                    name: "Human-Centered",
+                    description: "Eager to learn and explore new ideas, asking insightful questions and seeking deeper understanding.",
+                    shortDescription: "Eager to learn and explore."
+                },
+                {
+                    name: "Supportive",
+                    description: "Provides reliable assistance and guidance to other staff who support customers, ensuring their needs are met and issues are resolved effectively."
+                    , shortDescription: "Happy with current knowledge and practices"
+                }
+            ]
+        }
+        , {
+            competency: "Digital Skills & Programming",
+            traits: [
+                {
+                    name: "Tech Savvy",
+                    description: "Proficient in using digital tools and technologies, adapting quickly to new advancements and leveraging technology to improve productivity.",
+                    shortDescription: "Eager to learn and explore."
+                },
+                {
+                    name: "Tech Adapter",
+                    description: "Able to integrate and utilize digital concepts and data into tangible results after careful consideration and observation of the efficiency and practical applications"
+                    , shortDescription: "Happy with current knowledge and practices"
+                }
+            ]
+        },
+        {
+            competency: "Domain Specific Expertise",
+            traits: [
+                {
+                    name: "Expert",
+                    description: "Possesses deep knowledge and skills in a specific area of expertise, providing valuable insights and guidance.",
+                    shortDescription: "Eager to learn and explore."
+                },
+                {
+                    name: "Generalist",
+                    description: "Has a broad understanding of various fields or domains, able to connect ideas and contribute to diverse projects."
+                    , shortDescription: "Happy with current knowledge and practices"
+                }
+            ]
+        }
+        ,
+        {
+            competency: "Empathy & Kindness",
+            traits: [
+                {
+                    name: "Compassionate",
+                    description: "Eager to learn and explore new ideas, asking insightful questions and seeking deeper understanding.",
+                    shortDescription: "Eager to learn and explore."
+                },
+                {
+                    name: "Candid",
+                    description: "Satisfied with current knowledge and experiences, finding fulfillment in familiarity and established practices."
+                    , shortDescription: "Happy with current knowledge and practices"
+                }
+            ]
+        }
+        ,
+        {
+            competency: "Environmental Stewardship",
+            traits: [
+                {
+                    name: "Sustainable",
+                    description: "Committed to environmentally responsible practices in their work, minimizing their impact on the planet and promoting sustainable solutions.",
+                    shortDescription: "Eager to learn and explore."
+                },
+                {
+                    name: "Resourceful",
+                    description: "Able to find creative solutions using available resources, adapting and improvising effectively in challenging situations for the greater good."
+                    , shortDescription: "Happy with current knowledge and practices"
+                }
+            ]
+        }
+        ,
+        {
+            competency: "Functional Abilities",
+            traits: [
+                {
+                    name: "Human-Centered",
+                    description: "Prioritizes the needs and well-being of individuals in every aspect of their work, considering the human impact of decisions and actions and striving to create positive experiences for all.",
+                    shortDescription: "Eager to learn and explore."
+                },
+                {
+                    name: "Tech Savvy",
+                    description: "Satisfied with current knowledge and experiences, finding fulfillment in familiarity and established practices."
+                    , shortDescription: "Happy with current knowledge and practices"
+                }
+            ]
+        },
+        {
+            competency: "Global Citizenship",
+            traits: [
+                {
+                    name: "Global Mindset",
+                    description: "Possesses a broad understanding of global issues and different cultures, demonstrating cultural sensitivity and awareness in their work outcomes.",
+                    shortDescription: "Eager to learn and explore."
+                },
+                {
+                    name: "Collective",
+                    description: "Values diversity and inclusivity, fostering a sense of belonging and collaboration among people from different backgrounds."
+                    , shortDescription: "Happy with current knowledge and practices"
+                }
+            ]
+        },
+        {
+            competency: "Grit",
+            traits: [
+                {
+                    name: "Tenacious",
+                    description: "Persistent and resilient in pursuing goals, overcoming obstacles with determination and a refusal to give up.",
+                    shortDescription: "Eager to learn and explore."
+                },
+                {
+                    name: "Systematic",
+                    description: "Approaches work with a structured and methodical process by breaking down complex tasks into manageable steps, ensuring thoroughness and attention to detail."
+                    , shortDescription: "Happy with current knowledge and practices"
+                }
+            ]
+        },
+        {
+            competency: "Growth Mindset",
+            traits: [
+                {
+                    name: "Evolving",
+                    description: "Embraces challenges as opportunities for learning and growth, constantly seeking to improve skills and knowledge.",
+                    shortDescription: "Eager to learn and explore."
+                },
+                {
+                    name: "Contentment",
+                    description: "Satisfied with current knowledge and experiences, finding fulfillment in familiarity and established practices."
+                    , shortDescription: "Happy with current knowledge and practices"
+                }
+            ]
+        }
+        ,
+        {
+            competency: "Initiative",
+            traits: [
+                {
+                    name: "Proactive",
+                    description: "Eager to learn and explore new ideas, asking insightful questions and seeking deeper understanding.",
+                    shortDescription: "Eager to learn and explore."
+                },
+                {
+                    name: "Stable",
+                    description: "Satisfied with current knowledge and experiences, finding fulfillment in familiarity and established practices."
+                    , shortDescription: "Happy with current knowledge and practices"
+                }
+            ]
+        }
 
-    "topSkills": [
+        ,
+
         {
-            "trait": "Collaborative",
-            "rating": 7.0,
-            "importance": 7,
-            "frequency": "70% of the time"
+            competency: "Negotiation",
+            traits: [
+                {
+                    name: "Diplomatic",
+                    description: "Skillful in navigating sensitive situations, finding common ground, and building consensus through tact and diplomacy.",
+                    shortDescription: "Eager to learn and explore."
+                },
+                {
+                    name: "Just",
+                    description: "Upholds ethical principles and values during negotiations, ensuring fairness and integrity in all dealings."
+                    , shortDescription: "Happy with current knowledge and practices"
+                }
+            ]
         },
         {
-            "trait": "Computers",
-            "rating": 7.0,
-            "importance": 7,
-            "frequency": "N/A"
+            competency: "Problem Solving",
+            traits: [
+                {
+                    name: "Resourceful",
+                    description: "Eager to learn and explore new ideas, asking insightful questions and seeking deeper understanding.",
+                    shortDescription: "Eager to learn and explore."
+                },
+                {
+                    name: "Analytical",
+                    description: "Takes time to thoroughly analyze problems from different perspectives, considering all options before making a decision."
+                    , shortDescription: "Happy with current knowledge and practices"
+                }
+            ]
+        }
+        ,
+        {
+            competency: "Socio-Emotional Awareness",
+            traits: [
+                {
+                    name: "Compassionate",
+                    description: "Shows genuine care and concern for others, understanding and responding to their emotional needs.",
+                    shortDescription: "Eager to learn and explore."
+                },
+                {
+                    name: "Reserved",
+                    description: "Approaches interpersonal interactions with a clear understanding of emotions and social dynamics, often observing and processing social cues thoughtfully before expressing their own emotions or offering emotional support."
+                    , shortDescription: "Happy with current knowledge and practices"
+                }
+            ]
         },
         {
-            "trait": "Diplomatic",
-            "rating": 7.0,
-            "importance": 8,
-            "frequency": "60% of the time"
-        },
-        {
-            "trait": "Enthusiastic",
-            "rating": 7.0,
-            "importance": 7,
-            "frequency": "70% of the time"
-        },
-        {
-            "trait": "Optimistic",
-            "rating": 7.0,
-            "importance": 7,
-            "frequency": "70% of the time"
-        },
-        {
-            "trait": "Persistent",
-            "rating": 7.0,
-            "importance": 7,
-            "frequency": "70% of the time"
-        },
-        {
-            "trait": "Pressure Tolerance",
-            "rating": 7.0,
-            "importance": 7,
-            "frequency": "70% of the time"
-        },
-        {
-            "trait": "Precise",
-            "rating": 6.5,
-            "importance": 8,
-            "frequency": "50% of the time"
-        },
-        {
-            "trait": "Authoritative",
-            "rating": 6.0,
-            "importance": 6,
-            "frequency": "60% of the time"
-        },
-        {
-            "trait": "Finance / Business",
-            "rating": 6.0,
-            "importance": 7,
-            "frequency": "50% of the time"
-        },
-        {
-            "trait": "Helpful",
-            "rating": 6.0,
-            "importance": 7,
-            "frequency": "50% of the time"
-        },
-        {
-            "trait": "Influencing",
-            "rating": 5.5,
-            "importance": 8,
-            "frequency": "30% of the time"
-        },
-        {
-            "trait": "Open / Reflective",
-            "rating": 5.5,
-            "importance": 7,
-            "frequency": "40% of the time"
-        },
-        {
-            "trait": "Flexible",
-            "rating": 5.0,
-            "importance": 5,
-            "frequency": "50% of the time"
-        },
-        {
-            "trait": "Self-Improvement",
-            "rating": 5.0,
-            "importance": 5,
-            "frequency": "N/A"
-        },
-        {
-            "trait": "Warmth / Empathy",
-            "rating": 5.0,
-            "importance": 7,
-            "frequency": "30% of the time"
-        },
-        {
-            "trait": "Manages Stress Well",
-            "rating": 4.0,
-            "importance": 4,
-            "frequency": "N/A"
-        },
-        {
-            "trait": "Teaching",
-            "rating": 2.0,
-            "importance": 2,
-            "frequency": "20% of the time"
+            competency: "System Analysis",
+            traits: [
+                {
+                    name: "Comprehensive",
+                    description: "Able to understand and analyze complex systems, considering all interconnected parts and their impact on the whole.",
+                    shortDescription: "Eager to learn and explore."
+                },
+                {
+                    name: "Focused",
+                    description: "Identifies key elements and relationships within a system, prioritizing areas for improvement and streamlining processes."
+                    , shortDescription: "Happy with current knowledge and practices"
+                }
+            ]
         }
     ],
 
     "undesirableSkills": [
-        {
-            "trait": "Defensive",
-            "rating": 8.0,
-            "importance": 8,
-            "frequency": "Avoid even a small amount"
-        },
-        {
-            "trait": "Harsh",
-            "rating": 7.0,
-            "importance": 7,
-            "frequency": "Avoid even some tendency"
-        },
-        {
-            "trait": "Insensitive",
-            "rating": 7.0,
-            "importance": 7,
-            "frequency": "Avoid even some tendency"
-        },
-        {
-            "trait": "Rigidly Meticulous",
-            "rating": 6.0,
-            "importance": 6,
-            "frequency": "Avoid a moderate tendency"
-        },
-        {
-            "trait": "Rigidly Organized",
-            "rating": 6.0,
-            "importance": 6,
-            "frequency": "Avoid a moderate tendency"
-        },
-        {
-            "trait": "Blunt",
-            "rating": 5.0,
-            "importance": 5,
-            "frequency": "Avoid a fair tendency"
-        },
-        {
-            "trait": "Dogmatic",
-            "rating": 5.0,
-            "importance": 5,
-            "frequency": "Avoid a fair tendency"
-        }
-    ],
-
-    "screeningQuestions": {
-        "nonNegotiableQuestions": [
-            "Do you have experience with React.js for at least 2 years?",
-            "Are you proficient in using Git for version control?",
-            "Can you work with TypeScript and JavaScript interchangeably?"
-        ],
-        "additionalQuestions": [
-            "What strategies do you use for optimizing frontend performance?",
-            "How do you ensure cross-browser compatibility?",
-            "Describe a time you collaborated with a backend team on a challenging project."
-        ]
-    }
+        "Linear Thinking",
+        "Isolationism",
+        "Miscommunication",
+        "Inflexibility",
+        "Emotional Blindness",
+        "Rigidity",
+        "Carelessness",
+        "Apathy",
+        "Giving Up Easily",
+        "Fixed Mindset",
+        "Passivity",
+        "Environmental Neglect",
+        "Cruelty",
+        "Nationalism",
+        "Conventional Thinking",
+        "Intuitive Thinking",
+        "Traditional Skills",
+        "Problem Avoidance",
+        "Holistic Thinking",
+        "Individualism",
+        "Passive Communication",
+        "Compromise",
+        "Emotional Detachment",
+        "Resistance to Change",
+        "Complacency",
+        "Procrastination",
+        "Indifference"
+    ]
 }

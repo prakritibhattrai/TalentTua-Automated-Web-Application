@@ -1,264 +1,384 @@
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
+import { motion } from "framer-motion";
 
 function ICPPage() {
   const location = useLocation();
-  const { jobTitle, toolProficiencies, topDesirableTraits, undesirableTraits } =
-    location.state || {}; // Get userData passed as state
+  const { recruiter, onet } = location.state || {};
+  const niceToHave = onet?.niceToHave || {};
+  if (!recruiter || !onet) {
+    return (
+      <div className="text-center text-red-600">Invalid data provided</div>
+    );
+  }
+  const knowledge = onet?.educationExpertise?.knowledge || [];
+
+  //console.log(knowledge, recruiter, onet);
+  const education = onet?.educationExpertise?.education?.[0] || {
+    name: "Not Specified",
+    description: "No additional details available.",
+  };
+
+  const toolsAndTechnologies =
+    onet?.keyProficiencies?.technicalSkills?.tools_and_technology || [];
+  const topDesirableTraits = onet?.desirableSoftSkills || [];
+  const undesirableTraits = recruiter?.undesirableTraits || [];
+  const desirableTraits = recruiter?.desirableSoftSkills || [];
+  console.log(undesirableTraits);
+  const requiredTools = recruiter?.toolProficiencies || [];
+  const toolProficiencies = toolsAndTechnologies.filter(
+    (tool) => !requiredTools.includes(tool)
+  );
+  const mustHaveTraits = [
+    ...new Set([
+      niceToHave?.abilities?.[0]?.name || "Default Ability",
+      niceToHave?.work_styles?.[0]?.name || "Default Work Style",
+      niceToHave?.work_activities?.[0]?.name || "Default Work Activity",
+      niceToHave?.skills?.[0]?.name || "Default Skill",
+      niceToHave?.interests?.[0]?.name || "Default Interest",
+    ]),
+  ];
 
   return (
-    <div className="relative w-full lg:ps-64">
-      <div className="py-10 lg:py-14">
-        {/* Title */}
-        <div className="max-w-4xl px-4 sm:px-6 lg:px-8 mx-auto text-center">
-          <h1 className="text-3xl font-bold text-gray-800 sm:text-4xl dark:text-white">
-            Ideal Candidate Profile
-          </h1>
-          <p className="mt-3 text-gray-600 dark:text-neutral-400">
-            Outlines the skills, experience, and personality traits of an Ideal
-            Candidate for a job.
-          </p>
-        </div>
-        {/* End Title */}
-
-        <div className="max-w-4xl px-4 sm:px-6 lg:px-8 mx-auto mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white border border-gray-200 rounded-lg p-4 space-y-3 dark:bg-neutral-900 dark:border-neutral-700">
-            <div className="flex items-center">
-              <svg
-                className="w-[20px] h-[20px] text-blue-600 mr-3 dark:text-white"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="1.5"
-                  d="M8 7H5a2 2 0 0 0-2 2v4m5-6h8M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m0 0h3a2 2 0 0 1 2 2v4m0 0v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6m18 0s-4 2-9 2-9-2-9-2m9-2h.01"
-                />
-              </svg>
-
-              <h2 className="font-medium text-gray-800 dark:text-white">
-                {jobTitle || "Software Engineer"}
-              </h2>
-            </div>
-            <div className="space-y-1.5">
-              <p className="mb-1.5 text-sm text-gray-800 dark:text-white">
-                You can ask questions like:
-              </p>
-              <ul className="list-disc list-outside space-y-1.5 ps-3.5">
-                <li className="text-sm text-gray-800 dark:text-white">
-                  What Preline UI?
-                </li>
-
-                <li className="text-sm text-gray-800 dark:text-white">
-                  How many Starter Pages &amp; Examples are there?
-                </li>
-
-                <li className="text-sm text-gray-800 dark:text-white">
-                  Is there a PRO version?
-                </li>
-              </ul>
-            </div>
-          </div>
-          {/* Tools and Technologies Card */}
-          <div className="p-6 bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-lg shadow-sm">
-            <div className="flex items-center">
-              <svg
-                className="w-[20px] h-[20px] text-blue-600 mr-3 dark:text-white"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke="currentColor"
-                  strokeLinejoin="round"
-                  strokeWidth="1.5"
-                  d="M7.58209 8.96025 9.8136 11.1917l-1.61782 1.6178c-1.08305-.1811-2.23623.1454-3.07364.9828-1.1208 1.1208-1.32697 2.8069-.62368 4.1363.14842.2806.42122.474.73509.5213.06726.0101.1347.0133.20136.0098-.00351.0666-.00036.1341.00977.2013.04724.3139.24069.5867.52125.7351 1.32944.7033 3.01552.4971 4.13627-.6237.8375-.8374 1.1639-1.9906.9829-3.0736l4.8107-4.8108c1.0831.1811 2.2363-.1454 3.0737-.9828 1.1208-1.1208 1.3269-2.80688.6237-4.13632-.1485-.28056-.4213-.474-.7351-.52125-.0673-.01012-.1347-.01327-.2014-.00977.0035-.06666.0004-.13409-.0098-.20136-.0472-.31386-.2406-.58666-.5212-.73508-1.3294-.70329-3.0155-.49713-4.1363.62367-.8374.83741-1.1639 1.9906-.9828 3.07365l-1.7788 1.77875-2.23152-2.23148-1.41419 1.41424Zm1.31056-3.1394c-.04235-.32684-.24303-.61183-.53647-.76186l-1.98183-1.0133c-.38619-.19746-.85564-.12345-1.16234.18326l-.86321.8632c-.3067.3067-.38072.77616-.18326 1.16235l1.0133 1.98182c.15004.29345.43503.49412.76187.53647l1.1127.14418c.3076.03985.61628-.06528.8356-.28461l.86321-.8632c.21932-.21932.32446-.52801.2846-.83561l-.14417-1.1127ZM19.4448 16.4052l-3.1186-3.1187c-.7811-.781-2.0474-.781-2.8285 0l-.1719.172c-.7811.781-.7811 2.0474 0 2.8284l3.1186 3.1187c.7811.781 2.0474.781 2.8285 0l.1719-.172c.7811-.781.7811-2.0474 0-2.8284Z"
-                />
-              </svg>
-
-              <h3 className="text-sm font-medium text-gray-800 dark:text-white">
-                Tools and Technologies
-              </h3>
-            </div>
-            <ul className="mt-3 space-y-1">
-              {toolProficiencies && toolProficiencies.length > 0 ? (
-                toolProficiencies.map((tool, index) => (
-                  <li
-                    key={index}
-                    className="text-sm text-gray-800 dark:text-neutral-200"
-                  >
-                    {tool}
-                  </li>
-                ))
-              ) : (
-                <li className="text-sm text-gray-800 dark:text-neutral-200">
-                  No tools and technologies available
-                </li>
-              )}
-            </ul>
-          </div>
-
-          {/* Top Desirable Traits Card */}
-          <div className="p-6 bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-lg shadow-sm">
-            <div className="flex items-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 text-blue-600 mr-3"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 10h2l.4 2M7 10h2l.4 2M11 10h2l.4 2M15 10h2l.4 2M19 10h2l.4 2M5 6h14M5 14h14M5 18h14"
-                />
-              </svg>
-              <h3 className="text-sm font-medium text-gray-800 dark:text-white">
-                Top Five Skills
-              </h3>
-            </div>
-            <ul className="mt-3 space-y-1">
-              {topDesirableTraits && topDesirableTraits.length > 0 ? (
-                topDesirableTraits.map((trait, index) => (
-                  <li
-                    key={index}
-                    className="text-sm text-gray-800 dark:text-neutral-200"
-                  >
-                    {trait}
-                  </li>
-                ))
-              ) : (
-                <li className="text-sm text-gray-800 dark:text-neutral-200">
-                  No skills available
-                </li>
-              )}
-            </ul>
-          </div>
-
-          {/* Top Undesirable Traits Card */}
-          <div className="p-6 bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-lg shadow-sm">
-            <div className="flex items-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 text-blue-600 mr-3"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 10h2l.4 2M7 10h2l.4 2M11 10h2l.4 2M15 10h2l.4 2M19 10h2l.4 2M5 6h14M5 14h14M5 18h14"
-                />
-              </svg>
-              <h3 className="text-sm font-medium text-gray-800 dark:text-white">
-                Top Undesirable Skills
-              </h3>
-            </div>
-            <ul className="mt-3 space-y-1">
-              {undesirableTraits && undesirableTraits.length > 0 ? (
-                undesirableTraits.map((trait, index) => (
-                  <li
-                    key={index}
-                    className="text-sm text-gray-800 dark:text-neutral-200"
-                  >
-                    {trait}
-                  </li>
-                ))
-              ) : (
-                <li className="text-sm text-gray-800 dark:text-neutral-200">
-                  No undesirable skills available
-                </li>
-              )}
-            </ul>
-          </div>
-
-          {/* PDF Download Card */}
-          <div className="p-6 bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-lg shadow-sm lg:col-span-2">
-            <div className="flex items-center">
-              <svg
-                className="w-[20px] h-[20px] text-blue-600 mr-3 dark:text-white"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="1.5"
-                  d="M10 3v4a1 1 0 0 1-1 1H5m8 7.5 2.5 2.5M19 4v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1Zm-5 9.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z"
-                />
-              </svg>
-
-              <h3 className="text-sm font-medium text-gray-800 dark:text-white">
-                ICP PDF file to download and visualize
-              </h3>
-            </div>
-            <ul>
-              <li className="mt-3">
-                <a
-                  className="text-sm text-blue-600 decoration-2 hover:underline focus:outline-none focus:underline font-medium dark:text-blue-500 dark:hover:text-blue-400"
-                  href="../../docs/index.html"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="inline-block h-4 w-4 mr-2"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                  Installation Guide
-                </a>
-              </li>
-              <li>
-                <a
-                  className="text-sm text-blue-600 decoration-2 hover:underline focus:outline-none focus:underline font-medium dark:text-blue-500 dark:hover:text-blue-400"
-                  href="../../docs/frameworks.html"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="inline-block h-4 w-4 mr-2"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M15 19l-7-7 7-7"
-                    />
-                  </svg>
-                  Framework Guides
-                </a>
-              </li>
-            </ul>
-          </div>
+    <motion.div
+      id="pdf"
+      className="relative w-full lg:ps-64"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1 }}
+    >
+      <div className="p-24 lg:py-14">
+        <Header recruiter={recruiter} />
+        <div className="max-w-4xl py-10 border shadow-sm rounded-lg px-12 shadow-black-700 sm:px-6 lg:px-8 mx-auto mt-8 gap-6">
+          <ShareButtons />
+          <ExecutiveSummary recruiter={recruiter} />
+          <TraitsSection
+            title="Essential Traits & Behaviors"
+            traits={desirableTraits}
+          />
+          <TraitsSection
+            title="Nice-to-Have Traits & Behaviors"
+            traits={mustHaveTraits}
+          />
+          <TraitsSection
+            title="Unwanted Traits & Behaviors"
+            traits={undesirableTraits}
+          />
+          <EducationSection
+            education={education}
+            toolProficiencies={toolProficiencies}
+            knowledge={knowledge}
+            requiredTools={requiredTools}
+          />
+          <EndParagraph recruiter={recruiter} />
         </div>
       </div>
+    </motion.div>
+  );
+}
+function EndParagraph({ recruiter }) {
+  return (
+    <p className="text-sm text-gray-800 dark:text-neutral-200">
+      This profile serves as a guide to educate you on the total skills,
+      knowledge, abilities, and attitudes required for the role of{" "}
+      {recruiter.jobTitle}. This is not meant to be all inclusive of the many
+      nuanced requirements and responsibilities associated with this role.
+      Rather, it is intended to serve as a reference for completing a
+      skills-based hiring process along with using a framework that
+      mathematically determines the likelihood of required attributes listed
+      here. Contact us at{" "}
+      <Link className="text-blue-600 text-sm">hello@talenttua.com</Link> for
+      more information.
+    </p>
+  );
+}
+function exportToPDF() {
+  const element = document.getElementById("pdf");
+  html2canvas(element).then((canvas) => {
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("p", "mm", "a4");
+    const imgWidth = 210;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+    pdf.save("profile.pdf");
+  });
+}
+function Header({ recruiter }) {
+  return (
+    <motion.div
+      className="text-center"
+      initial={{ opacity: 0, y: -50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8 }}
+    >
+      <h1 className="text-3xl font-bold text-gray-800 sm:text-4xl dark:text-white">
+        Ideal Candidate Profile: {recruiter.jobTitle}
+      </h1>
+      <p className="mt-3 text-gray-600 dark:text-neutral-400">
+        Outlines the skills, experience, and personality traits of an Ideal
+        Candidate for a job.
+      </p>
+    </motion.div>
+  );
+}
+
+function ShareButtons() {
+  return (
+    <div className="flex justify-end">
+      <button
+        className="bg-blue-600 text-white mr-1 text-sm px-3 py-2 rounded-lg flex items-center"
+        aria-label="Share Profile"
+      >
+        <svg
+          className="w-[16px] h-[16px] mr-1 text-white dark:text-white"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeWidth="2.7"
+            d="M7.926 10.898 15 7.727m-7.074 5.39L15 16.29M8 12a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm12 5.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm0-11a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z"
+          />
+        </svg>
+        Share
+      </button>
+      <Link
+        onClick={() => exportToPDF}
+        target="_blank"
+        className="bg-blue-600 text-white text-sm px-3 py-2 rounded-lg flex items-center"
+        aria-label="View Profile PDF"
+      >
+        <svg
+          className="w-3 h-3 me-2 text-white"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path d="M14.707 7.793a1 1 0 0 0-1.414 0L11 10.086V1.5a1 1 0 0 0-2 0v8.586L6.707 7.793a1 1 0 1 0-1.414 1.414l4 4a1 1 0 0 0 1.416 0l4-4a1 1 0 0 0-.002-1.414Z" />
+          <path d="M18 12h-2.55l-2.975 2.975a3.5 3.5 0 0 1-4.95 0L4.55 12H2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2Zm-3 5a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z" />
+        </svg>
+        View PDF
+      </Link>
     </div>
+  );
+}
+
+function ExecutiveSummary({ recruiter }) {
+  return (
+    <>
+      <h3 className="text-sm font-semibold text-gray-800 dark:text-blue-300 flex items-center">
+        Executive Summary
+      </h3>
+
+      <p className=" text-sm text-gray-800 dark:text-neutral-200 mt-1">
+        This profile outlines the ideal candidate for a {recruiter.jobTitle}{" "}
+        position, belonging to {recruiter.jobFamily} and {recruiter.industry}.
+        This role has the potential to grow and adapt to the company’s future
+        needs and requirements.
+      </p>
+    </>
+  );
+}
+
+function TraitsSection({ title, traits }) {
+  return (
+    <motion.div
+      className="traits-section"
+      initial={{ opacity: 0, x: -50 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.6, delay: 0.3 }}
+    >
+      <h3 className="text-sm font-medium mt-4 text-gray-800 dark:text-gray-200 flex items-center">
+        {title}
+      </h3>
+      <div className="grid grid-cols-3 gap-4 p-4">
+        {traits.length > 0 ? (
+          traits.map((trait, index) => (
+            <motion.div
+              className="flex items-center space-x-2 text-sm text-gray-800 dark:text-gray-400"
+              key={index}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.4, delay: index * 0.1 }}
+            >
+              <svg
+                className="w-[14px] h-[14px] min-h-3 max-h-3 text-gray-800 dark:text-white"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  d="M11.083 5.104c.35-.8 1.485-.8 1.834 0l1.752 4.022a1 1 0 0 0 .84.597l4.463.342c.9.069 1.255 1.2.556 1.771l-3.33 2.723a1 1 0 0 0-.337 1.016l1.03 4.119c.214.858-.71 1.552-1.474 1.106l-3.913-2.281a1 1 0 0 0-1.008 0L7.583 20.8c-.764.446-1.688-.248-1.474-1.106l1.03-4.119A1 1 0 0 0 6.8 14.56l-3.33-2.723c-.698-.571-.342-1.702.557-1.771l4.462-.342a1 1 0 0 0 .84-.597l1.753-4.022Z"
+                />
+              </svg>
+
+              <span>{trait}</span>
+            </motion.div>
+          ))
+        ) : (
+          <p className="mt-3 text-sm text-gray-800 dark:text-gray-400">
+            No traits listed.
+          </p>
+        )}
+      </div>
+    </motion.div>
+  );
+}
+
+function EducationSection({
+  education,
+  toolProficiencies,
+  knowledge,
+  requiredTools,
+}) {
+  return (
+    <>
+      <h3 className="text-sm font-medium mt-4 text-gray-800 dark:text-gray-200 flex items-center">
+        Education & Expertise :
+      </h3>
+      <div className="p-4">
+        <p className=" text-sm font-medium text-gray-800 dark:text-gray-400">
+          {education.name}
+        </p>
+        <p className="text-sm mt-1 text-gray-900 dark:text-gray-400">
+          {education.description || ""}
+        </p>
+      </div>
+      <h3 className="text-sm font-medium mt-4 text-gray-800 dark:text-gray-200 flex items-center">
+        Tools Proficiencies required in day 1 :
+      </h3>
+      <div className="p-4">
+        <p className="text-sm font-medium text-gray-800 dark:text-gray-400">
+          Technology Proficiencies
+        </p>
+        <div className="grid grid-cols-3 gap-4 p-4">
+          {requiredTools.length > 0 ? (
+            requiredTools.slice(0, 10).map((name, index) => (
+              <div
+                className="text-sm flex items-center  text-gray-800 dark:text-gray-400"
+                key={index}
+              >
+                {/* Icon with fixed size */}
+                <svg
+                  className="w-[16px] h-[16px]  min-h-3 max-h-3 text-gray-800 dark:text-white"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    d="M11.083 5.104c.35-.8 1.485-.8 1.834 0l1.752 4.022a1 1 0 0 0 .84.597l4.463.342c.9.069 1.255 1.2.556 1.771l-3.33 2.723a1 1 0 0 0-.337 1.016l1.03 4.119c.214.858-.71 1.552-1.474 1.106l-3.913-2.281a1 1 0 0 0-1.008 0L7.583 20.8c-.764.446-1.688-.248-1.474-1.106l1.03-4.119A1 1 0 0 0 6.8 14.56l-3.33-2.723c-.698-.571-.342-1.702.557-1.771l4.462-.342a1 1 0 0 0 .84-.597l1.753-4.022Z"
+                  />
+                </svg>
+                <span className="ml-2 w-full">{name || "N/A"}</span>
+              </div>
+            ))
+          ) : (
+            <p className="mt-3 text-sm text-gray-800 dark:text-gray-400">
+              Domain expertise not listed.
+            </p>
+          )}
+        </div>
+      </div>
+
+      <h3 className="text-sm font-medium mt-4  text-gray-800 dark:text-gray-400">
+        Key Proficiences :
+      </h3>
+
+      <ul className="p-4">
+        <li>
+          <p className="text-sm font-medium text-gray-800 dark:text-gray-400">
+            Technical Expertise
+          </p>
+          <div className="grid grid-cols-3 gap-4 p-4">
+            {toolProficiencies.length > 0 ? (
+              toolProficiencies.slice(0, 10).map((name, index) => (
+                <div
+                  className="text-sm flex items-center  text-gray-800 dark:text-gray-400"
+                  key={index}
+                >
+                  {/* Icon with fixed size */}
+                  <svg
+                    className="w-[16px] h-[16px] min-h-3 max-h-3 text-gray-800 dark:text-white"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      d="M11.083 5.104c.35-.8 1.485-.8 1.834 0l1.752 4.022a1 1 0 0 0 .84.597l4.463.342c.9.069 1.255 1.2.556 1.771l-3.33 2.723a1 1 0 0 0-.337 1.016l1.03 4.119c.214.858-.71 1.552-1.474 1.106l-3.913-2.281a1 1 0 0 0-1.008 0L7.583 20.8c-.764.446-1.688-.248-1.474-1.106l1.03-4.119A1 1 0 0 0 6.8 14.56l-3.33-2.723c-.698-.571-.342-1.702.557-1.771l4.462-.342a1 1 0 0 0 .84-.597l1.753-4.022Z"
+                    />
+                  </svg>
+                  <span className="ml-2 w-full">{name || "N/A"}</span>
+                </div>
+              ))
+            ) : (
+              <p className="mt-3 text-sm text-gray-800 dark:text-gray-400">
+                Domain expertise not listed.
+              </p>
+            )}
+          </div>
+        </li>
+
+        <li>
+          <p className="text-sm font-medium  text-gray-800 dark:text-gray-400">
+            Knowledge And Domain
+          </p>
+          <div className="grid grid-cols-3 gap-4 p-4">
+            {knowledge.length > 0 ? (
+              knowledge.slice(0, 10).map((name, index) => (
+                <div
+                  className=" text-sm flex items-center text-gray-900 dark:text-gray-400"
+                  key={index}
+                >
+                  {/* Icon */}
+                  <svg
+                    className="w-[14px] h-[14px] min-h-3 max-h-3 text-gray-800 dark:text-white"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="22"
+                    height="22"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      d="M11.083 5.104c.35-.8 1.485-.8 1.834 0l1.752 4.022a1 1 0 0 0 .84.597l4.463.342c.9.069 1.255 1.2.556 1.771l-3.33 2.723a1 1 0 0 0-.337 1.016l1.03 4.119c.214.858-.71 1.552-1.474 1.106l-3.913-2.281a1 1 0 0 0-1.008 0L7.583 20.8c-.764.446-1.688-.248-1.474-1.106l1.03-4.119A1 1 0 0 0 6.8 14.56l-3.33-2.723c-.698-.571-.342-1.702.557-1.771l4.462-.342a1 1 0 0 0 .84-.597l1.753-4.022Z"
+                    />
+                  </svg>
+                  <span className="ml-2">{name.name}</span>
+                </div>
+              ))
+            ) : (
+              <p className="mt-3 text-sm text-gray-900 dark:text-gray-400">
+                Knowledge not listed.
+              </p>
+            )}
+          </div>
+        </li>
+      </ul>
+    </>
   );
 }
 

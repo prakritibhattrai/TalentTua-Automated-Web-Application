@@ -1,4 +1,6 @@
-const ChatInput = ({ input, setInput, onSubmit }) => (
+import PropTypes from "prop-types";
+
+const ChatInput = ({ input, setInput, onSubmit, current = { name: "" } }) => (
   <>
     <div className="max-w-4xl mx-auto sticky bottom-0 z-10 p-3 sm:py-6">
       <div className="relative">
@@ -8,7 +10,13 @@ const ChatInput = ({ input, setInput, onSubmit }) => (
                  rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 
                  focus:ring-1 focus:outline-none dark:bg-neutral-800 dark:border-neutral-700
                   dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
-          placeholder="Ask me anything..."
+          placeholder={
+            current.name === "jobTitle"
+              ? "Please enter your job title here! (e.g. Software Engineer, Data Analyst, etc.)"
+              : current.name === "roleDescription"
+              ? "Describe the role here! (e.g. Responsible for developing web applications, managing teams, etc.)"
+              : "Typing is disabled for this step..."
+          }
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => {
@@ -18,9 +26,12 @@ const ChatInput = ({ input, setInput, onSubmit }) => (
               setInput("");
             }
           }}
+          disabled={
+            current.name !== "jobTitle" && current.name !== "roleDescription"
+          }
         />
         {/* Toolbar */}
-        <div className="absolute bottom-px inset-x-px p-2 rounded-b-lg bg-gray-50 dark:bg-neutral-800">
+        <div className="absolute bottom-px inset-x-px p-2 rounded-b-lg bg-gray-100 dark:bg-neutral-800">
           <div className="flex justify-between items-center">
             {/* Button Group */}
             <div className="flex items-center">
@@ -98,6 +109,11 @@ const ChatInput = ({ input, setInput, onSubmit }) => (
               <button
                 type="button"
                 className="inline-flex shrink-0 justify-center items-center size-8 rounded-lg text-white bg-blue-600 hover:bg-blue-500 focus:z-10 focus:outline-none focus:bg-blue-500"
+                onClick={(e) => {
+                  e.preventDefault();
+                  onSubmit(input);
+                  setInput("");
+                }}
               >
                 <svg
                   className="shrink-0 size-3.5"
@@ -120,5 +136,14 @@ const ChatInput = ({ input, setInput, onSubmit }) => (
     </div>
   </>
 );
+
+ChatInput.propTypes = {
+  input: PropTypes.string.isRequired,
+  setInput: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+  current: PropTypes.shape({
+    name: PropTypes.string,
+  }),
+};
 
 export default ChatInput;

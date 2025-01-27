@@ -44,7 +44,7 @@ function Header() {
             </div>
             <Link
               to="/"
-              className="text-xl font-bold text-blue-600 dark:text-white"
+              className="text-xl font-bold text-gray-600 dark:text-white"
             >
               TalentTua
             </Link>

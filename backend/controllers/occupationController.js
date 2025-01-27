@@ -1,0 +1,562 @@
+import db from '../config/db.js';
+import JobModel from '../models/jobModel.js';
+import axios from 'axios';
+
+let jobTitlesCache = null
+let cacheTimestamp = null
+const CACHE_DURATION = 60 * 60 * 1000 // 1 hour in milliseconds
+let i = 1
+const OccupationController = {
+    saveJobForICP: async (req, res) => {
+
+        try {
+            const {
+                jobTitle,
+                jobFamily,
+                industry,
+                seniorityLevel,
+                stakeholderEngagement,
+                traitMatrix,
+                desirableSoftSkills,
+                undesirableTraits,
+                toolProficiencies,
+                roleDescription
+            } = req.body;
+
+            const sanitizedData = {
+                //user_id: parseInt(user_id),
+                jobTitle: jobTitle.occupation.jobTitle.trim(),
+                jobFamily: jobFamily?.trim() || null,
+                industry: industry?.trim() || null,
+                seniorityLevel: seniorityLevel?.trim() || null,
+                stakeholderEngagement: JSON.stringify(stakeholderEngagement || {}),
+                traitMatrix: JSON.stringify(traitMatrix || {}),
+                desirableSoftSkills: JSON.stringify(desirableSoftSkills || []),
+                undesirableTraits: JSON.stringify(undesirableTraits || []),
+                toolProficiencies: JSON.stringify(toolProficiencies || []),
+                roleDescription: roleDescription?.trim() || null
+            };
+
+            const connection = db.promise();
+            await connection.beginTransaction();
+
+            try {
+                // const [results] = await connection.execute(
+                //     `INSERT INTO jobs (
+                //          job_title, job_family, industry, seniority_level,
+                //         stakeholder_engagement, trait_matrix, desirable_soft_skills,
+                //         undesirable_traits, tool_proficiencies, role_description
+                //     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                //     Object.values(sanitizedData)
+                // );
+                const [results] = ["Data inserted successfully"];
+                const occupations = await JobController.fetchJobOccupation(sanitizedData.jobTitle);
+
+                if (!occupations?.length) {
+                    await connection.commit();
+                    return res.status(404).json({
+                        error: 'No occupations found for the provided job title',
+                        jobId: results?.insertId?.toString() || 'N/A'
+                    });
+                }
+
+                const occupationData = await JobController.processOccupationData(occupations);
+
+                await connection.commit();
+
+                if (!occupationData) {
+                    return res.status(404).json({
+                        error: 'No matching occupation data found',
+                        jobId: results?.insertId?.toString() || 'N/A'
+                    });
+                }
+
+                return res.status(200).json({
+                    recruiter: {
+                        ...sanitizedData,
+                        stakeholderEngagement: JSON.parse(sanitizedData.stakeholderEngagement),
+                        traitMatrix: JSON.parse(sanitizedData.traitMatrix),
+                        desirableSoftSkills: JSON.parse(sanitizedData.desirableSoftSkills),
+                        undesirableTraits: JSON.parse(sanitizedData.undesirableTraits),
+                        toolProficiencies: JSON.parse(sanitizedData.toolProficiencies),
+                    },
+                    onet: occupationData,
+                    message: 'Job saved successfully',
+                    jobId: results?.insertId || 'N/A'
+                });
+
+            } catch (error) {
+                await connection.rollback();
+                throw error;
+            }
+
+        } catch (error) {
+            console.error('Error in saveJob:', error);
+            return res.status(500).json({
+                error: 'An error occurred while saving the job',
+                details: process.env.NODE_ENV === 'development' ? error.message : undefined
+            });
+        }
+    },
+
+    getOccupation: async (req, res) => {
+        try {
+            // Check if the cache is valid
+            const currentTime = Date.now();
+            if (jobTitlesCache && cacheTimestamp && (currentTime - cacheTimestamp < CACHE_DURATION)) {
+                return res.json({ jobTitles: jobTitlesCache, message: `Fetched ${jobTitlesCache.length} job titles from cache.`, status: 200, success: true });
+            }
+
+            // Query the database if cache is expired or not set
+            const query = `SELECT DISTINCT title, onetsoc_code as id FROM occupation_data ORDER BY title ASC`;
+            const [results] = await db.promise().query(query);
+
+            const jobTitles = results.map((row) => ({ title: row.title, id: row.id }));
+
+            // Update cache
+            jobTitlesCache = jobTitles;
+            cacheTimestamp = currentTime;
+
+            res.json({ jobTitles, message: `Fetched ${jobTitles.length} job titles.`, status: 200, success: true });
+        } catch (error) {
+            console.error('Error fetching job titles:', error.message || error);
+            res.status(500).json({ error: 'An internal error occurred.' });
+        }
+    },
+    getjobTitleByOccupationId: async (req, res) => {
+        const { occupation_id } = req.params;
+
+        if (!occupation_id) {
+            return res.status(400).json({ error: 'Occupation ID is required' });
+        }
+
+        const query = `
+            SELECT reported_job_title 
+            FROM sample_of_reported_titles 
+            WHERE onetsoc_code = ?
+        `;
+
+
+        try {
+            const [results] = await db.promise().query(query, [occupation_id]);
+
+            if (results.length === 0) {
+                return res.status(404).json({ message: 'No related job titles found.' });
+            }
+
+            const reportedJobTitles = results.map((row) => ({ title: row.reported_job_title, id: row.id }));
+
+            res.json({ reportedJobTitles, message: `Fetched ${reportedJobTitles.length} related job titles.`, status: 200, success: true });
+        } catch (error) {
+            console.error('Error fetching related job titles:', error.message || error);
+            res.status(500).json({ error: 'An internal error occurred.' });
+        }
+    },
+    // Suggest job attributes based on the provided job title
+    suggestJobAttributes: async (req, res) => {
+        const { occupation, jobTitle } = req.body;
+
+        try {
+            // Step 2: Fetch Occupation Details from Database
+            const occupationId = occupation.id; // Hardcoded for testing
+
+            const technology_skills = await OccupationController.getTechnologySkills(occupationId);
+            console.log(technology_skills)
+            const sortedTechnologySkills = technology_skills.map(item => item.example);  // Extract only the element_name;
+            const knowledge = await OccupationController.getKnowledge(occupationId);
+
+            const work_styles = await OccupationController.getWorkStyles(occupationId);
+            const work_activities = await OccupationController.getWorkActivities(occupationId);
+            const work_values = await OccupationController.getWorkValues(occupationId);
+            const skills = await OccupationController.getSkills(occupationId);
+            const abilities = await OccupationController.getAbilities(occupationId);
+            // Apply the common function to each of the items
+            const sortedWorkStyles = OccupationController.getTopElements(work_styles);
+            const sortedWorkActivities = OccupationController.getTopElements(work_activities);
+            const sortedWorkValues = OccupationController.getTopElements(work_values);
+            const sortedSkills = OccupationController.getTopElements(skills);
+            const sortedAbilities = OccupationController.getTopElements(abilities);
+
+            res.json({
+                onet: {
+                    work_styles: sortedWorkStyles,
+                    work_activities: sortedWorkActivities,
+                    work_values: sortedWorkValues,
+                    skills: sortedSkills,
+                    abilities: sortedAbilities,
+                    technology_skills: sortedTechnologySkills,
+                    knowledge: knowledge,
+                }
+            });
+
+        } catch (error) {
+            console.error('Error in getOccupationDetails:', error.message || error);
+            res.status(500).json({ error: 'An internal error occurred.', details: error });
+        }
+    },
+    // Common function to sort and get the element_name from the top items based on data_value
+    getTopElements: (items, scaleId = 'IM', topN = 20) => {
+        return items
+            .filter(item => item.scale_id === scaleId)  // Filter by scale_id
+            .sort((a, b) => parseFloat(b.data_value) - parseFloat(a.data_value))  // Sort by data_value descending
+            .slice(0, topN)  // Take top N items
+            .map(item => item.element_name);  // Extract only the element_name
+    },
+
+    fetchOccupByTitle: async (job_title) => {
+        try {
+            // Normalize input job title
+            const normalizedJobTitle = job_title.toLowerCase().trim();
+
+            // Query using direct title comparison and LIKE operator
+            const query = `
+            SELECT 
+                o.onetsoc_code,
+                o.title
+            FROM occupation_data o 
+            WHERE LOWER(o.title) LIKE ?
+               OR LOWER(o.title) LIKE ?
+               OR LOWER(o.title) = ?
+            LIMIT 10
+        `;
+
+            const searchPatterns = [
+                `%${normalizedJobTitle}%`,  // Contains the search term
+                `${normalizedJobTitle}%`,   // Starts with the search term
+                normalizedJobTitle          // Exact match
+            ];
+
+            const [results] = await db.promise().query(query, searchPatterns);
+
+            if (results.length > 0) {
+                // Return the search results directly without Levenshtein distance
+                return {
+                    status: 200,
+                    matches: results.map(result => ({
+                        code: result.onetsoc_code,
+                        title: result.title
+                    }))
+                };
+            }
+            // Query using direct title comparison and LIKE operator
+            const queryAlternate = `
+            SELECT 
+                o.onetsoc_code,
+                o.alternate_title
+            FROM alternate_titles o 
+            WHERE LOWER(o.alternate_title) LIKE ?
+               OR LOWER(o.alternate_title) LIKE ?
+               OR LOWER(o.alternate_title) = ?
+            LIMIT 10
+        `;
+
+            const searchPatternsAlternate = [
+                `%${normalizedJobTitle}%`,  // Contains the search term
+                `${normalizedJobTitle}%`,   // Starts with the search term
+                normalizedJobTitle          // Exact match
+            ];
+
+            const [resultsAlternate] = await db.promise().query(query, searchPatternsAlternate);
+
+            if (resultsAlternate.length > 0) {
+                // Return the search results directly without Levenshtein distance
+                return {
+                    status: 200,
+                    matches: resultsAlternate.map(result => ({
+                        code: result.onetsoc_code,
+                        title: result.title
+                    }))
+                };
+            }
+            return {
+                status: 404,
+                message: "No similar occupations found."
+            };
+        } catch (err) {
+            console.error("Error finding similar occupations:", err.message);
+            return {
+                status: 500,
+                error: "Failed to search for similar occupations."
+            };
+        }
+    },
+
+    getWorkStyles: async (occupation_id) => {
+        console.log(occupation_id)
+        const query = `
+        SELECT ws.onetsoc_code, ws.element_id, ws.scale_id, ws.data_value, ws.n, ws.standard_error, 
+               ws.lower_ci_bound, ws.upper_ci_bound, ws.recommend_suppress, ws.date_updated, ws.domain_source, 
+               cmr.element_name, cmr.description
+        FROM work_styles ws
+        JOIN content_model_reference cmr
+          ON ws.element_id = cmr.element_id
+        WHERE ws.onetsoc_code = ?;
+    `;
+
+        try {
+            const results = await new Promise((resolve, reject) => {
+                db.query(query, [occupation_id], (error, results) => {
+                    if (error) {
+                        reject(error); // Reject the promise if there's an error
+                    } else {
+                        resolve(results); // Resolve the promise with the results
+                    }
+                });
+            });
+
+            return results; // Return the results if successful
+        } catch (error) {
+            console.error('Error executing query:', error);
+            throw error; // Re-throw the error to be caught by the caller
+        }
+    },
+    getWorkActivities: async (occupation_id) => {
+        const query = `
+        SELECT ws.onetsoc_code, ws.element_id, ws.scale_id, ws.data_value, ws.n, ws.standard_error,
+               ws.lower_ci_bound, ws.upper_ci_bound, ws.recommend_suppress, ws.date_updated, ws.domain_source,
+               cmr.element_name, cmr.description
+        FROM work_activities ws
+        JOIN content_model_reference cmr
+          ON ws.element_id = cmr.element_id
+        WHERE ws.onetsoc_code = ?;
+    `;
+
+        try {
+            const results = await new Promise((resolve, reject) => {
+                db.query(query, [occupation_id], (error, results) => {
+                    if (error) {
+                        reject(error); // Reject the promise if there's an error
+                    } else {
+                        resolve(results); // Resolve the promise with the results
+                    }
+                });
+            });
+
+            return results; // Return the results if successful
+        } catch (error) {
+            console.error('Error executing query:', error);
+            throw error; // Re-throw the error to be caught by the caller
+        }
+    },
+    getWorkValues: async (occupation_id) => {
+        const query = `
+         SELECT ws.onetsoc_code, ws.element_id, ws.scale_id, ws.data_value, 
+               cmr.element_name, cmr.description
+        FROM work_values ws
+        JOIN content_model_reference cmr
+          ON ws.element_id = cmr.element_id
+        WHERE ws.onetsoc_code = ?;
+    `;
+
+        try {
+            const results = await new Promise((resolve, reject) => {
+                db.query(query, [occupation_id], (error, results) => {
+                    if (error) {
+                        reject(error); // Reject the promise if there's an error
+                    } else {
+                        resolve(results); // Resolve the promise with the results
+                    }
+                });
+            });
+
+            return results; // Return the results if successful
+        } catch (error) {
+            console.error('Error executing query:', error);
+            throw error; // Re-throw the error to be caught by the caller
+        }
+    },
+    getSkills: async (occupation_id) => {
+        const query = `
+       SELECT ws.onetsoc_code, ws.element_id, ws.scale_id, ws.data_value, ws.n, ws.standard_error,
+               ws.lower_ci_bound, ws.upper_ci_bound, ws.recommend_suppress, ws.date_updated, ws.domain_source,
+               cmr.element_name, cmr.description
+        FROM skills ws
+        JOIN content_model_reference cmr
+          ON ws.element_id = cmr.element_id
+        WHERE ws.onetsoc_code = ?;
+    `;
+
+        try {
+            const results = await new Promise((resolve, reject) => {
+                db.query(query, [occupation_id], (error, results) => {
+                    if (error) {
+                        reject(error); // Reject the promise if there's an error
+                    } else {
+                        resolve(results); // Resolve the promise with the results
+                    }
+                });
+            });
+
+            return results; // Return the results if successful
+        } catch (error) {
+            console.error('Error executing query:', error);
+            throw error; // Re-throw the error to be caught by the caller
+        }
+    },
+    getAbilities: async (occupation_id) => {
+        const query = `
+       SELECT ws.onetsoc_code, ws.element_id, ws.scale_id, ws.data_value, ws.n, ws.standard_error,
+               ws.lower_ci_bound, ws.upper_ci_bound, ws.recommend_suppress, ws.date_updated, ws.domain_source,
+               cmr.element_name, cmr.description
+        FROM abilities ws
+        JOIN content_model_reference cmr
+          ON ws.element_id = cmr.element_id
+        WHERE ws.onetsoc_code = ?;
+    `;
+
+        try {
+            const results = await new Promise((resolve, reject) => {
+                db.query(query, [occupation_id], (error, results) => {
+                    if (error) {
+                        reject(error); // Reject the promise if there's an error
+                    } else {
+                        resolve(results); // Resolve the promise with the results
+                    }
+                });
+            });
+
+            return results; // Return the results if successful
+        } catch (error) {
+            console.error('Error executing query:', error);
+            throw error; // Re-throw the error to be caught by the caller
+        }
+    },
+    getTechnologySkills: async (occupation_id) => {
+        const query = `
+          SELECT *
+                FROM technology_skills
+                WHERE onetsoc_code = ?
+                AND hot_technology = 'Y'
+                AND in_demand = 'Y';
+    `;
+
+        try {
+            const results = await new Promise((resolve, reject) => {
+                db.query(query, [occupation_id], (error, results) => {
+                    if (error) {
+                        reject(error); // Reject the promise if there's an error
+                    } else {
+                        resolve(results); // Resolve the promise with the results
+                    }
+                });
+            });
+
+            return results; // Return the results if successful
+        } catch (error) {
+            console.error('Error executing query:', error);
+            throw error; // Re-throw the error to be caught by the caller
+        }
+    },
+    getKnowledge: async (occupation_id) => {
+        const query = `
+      SELECT 
+          j.job_zone AS job_zone_value, 
+          jz.name AS job_zone_title, 
+          jz.education AS job_zone_education, 
+          jz.experience AS job_zone_related_experience, 
+          jz.job_training AS job_zone_job_training, 
+          jz.examples AS job_zone_examples, 
+          jz.svp_range AS job_zone_svp_range,
+
+          e.category AS education_category, 
+          e.data_value AS education_score,
+
+          cmr.element_name AS knowledge_name, 
+          cmr.description AS knowledge_description
+      FROM education_training_experience e
+      LEFT JOIN job_zones j ON e.onetsoc_code = j.onetsoc_code
+      LEFT JOIN job_zone_reference jz ON j.job_zone = jz.job_zone
+      LEFT JOIN knowledge k ON e.onetsoc_code = k.onetsoc_code
+      LEFT JOIN content_model_reference cmr ON cmr.element_id = k.element_id
+      WHERE e.onetsoc_code = ?
+        AND e.recommend_suppress = 'N'
+        AND e.data_value > 0
+      ORDER BY e.data_value DESC
+      LIMIT 5;
+    `;
+
+        try {
+            const results = await new Promise((resolve, reject) => {
+                db.query(query, [occupation_id], (error, results) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(results);
+                    }
+                });
+            });
+
+            // Process the query results to match the desired JSON format
+            const jobZoneDetails = results.length > 0 ? {
+                value: results[0].job_zone_value,
+                title: results[0].job_zone_title,
+                education: results[0].job_zone_education,
+                related_experience: results[0].job_zone_related_experience,
+                job_training: results[0].job_zone_job_training,
+                job_zone_examples: results[0].job_zone_examples,
+                svp_range: results[0].job_zone_svp_range,
+            } : null;
+
+            const educationDetails = results.reduce((acc, curr) => {
+                acc.level_required.category.push({
+                    name: curr.education_category,
+                    score: {
+                        scale: "Percentage of Respondents",
+                        value: curr.education_score,
+                    },
+                });
+                return acc;
+            }, { level_required: { category: [] } });
+
+            const knowledgeDetails = results.map((row) => ({
+                name: row.knowledge_name,
+                description: row.knowledge_description,
+            }));
+
+            return {
+                job_zone: jobZoneDetails,
+                education: educationDetails,
+                knowledge: knowledgeDetails,
+            };
+        } catch (error) {
+            console.error('Error executing query:', error);
+            throw error;
+        }
+    },
+    getRelatedOccupById: (req, res) => {
+        const { user_id } = req.params;
+
+        if (!user_id) {
+            return res.status(400).send({ error: 'User ID is required' });
+        }
+
+        JobModel.getJobsByUserId(user_id, (err, results) => {
+            if (err) {
+                console.error('Error fetching jobs:', err);
+                return res.status(500).send({ error: 'Failed to fetch jobs' });
+            }
+            res.send(results);
+        });
+    },
+    getOccupData: async (title) => {
+        try {
+            const response = await axios.get(`https://services.onetcenter.org/ws/online/search?keyword=${title}`, {
+                headers: {
+                    Authorization: 'Basic ' + process.env.ONET_API_KEY,
+                },
+            });
+
+            // Ensure the response contains occupation data
+            if (response.data && response.data.occupation && response.data.occupation.length > 0) {
+                return response.data.occupation[0];
+            }
+
+            return null; // Return null if no occupation is found
+        } catch (error) {
+            console.error('Error fetching job occupation:', error.message);
+            return null;
+        }
+    },
+};
+
+export default OccupationController;
