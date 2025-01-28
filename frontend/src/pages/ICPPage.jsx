@@ -2,6 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import { motion } from "framer-motion";
+import SaveButton from "../components/chat/Button";
 
 function ICPPage() {
   const location = useLocation();
@@ -14,7 +15,6 @@ function ICPPage() {
   }
   const knowledge = onet?.educationExpertise?.knowledge || [];
 
-  //console.log(knowledge, recruiter, onet);
   const education = onet?.educationExpertise?.education?.[0] || {
     name: "Not Specified",
     description: "No additional details available.",
@@ -25,7 +25,6 @@ function ICPPage() {
   const topDesirableTraits = onet?.desirableSoftSkills || [];
   const undesirableTraits = recruiter?.undesirableTraits || [];
   const desirableTraits = recruiter?.desirableSoftSkills || [];
-  console.log(undesirableTraits);
   const requiredTools = recruiter?.toolProficiencies || [];
   const toolProficiencies = toolsAndTechnologies.filter(
     (tool) => !requiredTools.includes(tool)
@@ -48,9 +47,9 @@ function ICPPage() {
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
     >
-      <div className="p-24 lg:py-14">
+      <div className="p-6 sm:p-12 lg:py-14">
         <Header recruiter={recruiter} />
-        <div className="max-w-4xl py-10 border shadow-sm rounded-lg px-12 shadow-black-700 sm:px-6 lg:px-8 mx-auto mt-8 gap-6">
+        <div className="max-w-4xl py-10 border shadow-sm rounded-lg px-6 sm:px-8 lg:px-12 mx-auto mt-8 gap-6">
           <ShareButtons />
           <ExecutiveSummary recruiter={recruiter} />
           <TraitsSection
@@ -79,7 +78,7 @@ function ICPPage() {
 }
 function EndParagraph({ recruiter }) {
   return (
-    <p className="text-sm text-gray-800 dark:text-neutral-200">
+    <p className="text-sm sm:text-sm md:text-sm lg:text-sm text-gray-800 dark:text-neutral-200">
       This profile serves as a guide to educate you on the total skills,
       knowledge, abilities, and attitudes required for the role of{" "}
       {recruiter.jobTitle}. This is not meant to be all inclusive of the many
@@ -88,8 +87,10 @@ function EndParagraph({ recruiter }) {
       skills-based hiring process along with using a framework that
       mathematically determines the likelihood of required attributes listed
       here. Contact us at{" "}
-      <Link className="text-blue-600 text-sm">hello@talenttua.com</Link> for
-      more information.
+      <Link className="text-blue-600 text-sm sm:text-sm">
+        hello@talenttua.com
+      </Link>{" "}
+      for more information.
     </p>
   );
 }
@@ -112,10 +113,10 @@ function Header({ recruiter }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8 }}
     >
-      <h1 className="text-2xl font-bold text-gray-800 sm:text-3xl md:text-3xl lg:text-4xl dark:text-white">
+      <h1 className="text-2xl font-bold text-gray-800 sm:text-3xl md:text-3xl lg:text-3xl xl:text-3xl dark:text-white">
         Ideal Candidate Profile: {recruiter.jobTitle}
       </h1>
-      <p className="mt-3 text-gray-600 dark:text-neutral-400">
+      <p className="mt-3 text-sm sm:text-sm md:text-sm lg:text-sm text-gray-600 dark:text-neutral-400">
         Outlines the skills, experience, and personality traits of an Ideal
         Candidate for a job.
       </p>
@@ -125,13 +126,16 @@ function Header({ recruiter }) {
 
 function ShareButtons() {
   return (
-    <div className="flex justify-end">
-      <button
-        className="bg-blue-600 text-white mr-1 text-sm px-3 py-2 rounded-lg flex items-center"
-        aria-label="Share Profile"
+    <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-4">
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        className={` text-white bg-blue-600 text-sm px-3 py-2 rounded-lg flex items-center `}
+        aria-label="Save Data"
+        role="button"
       >
         <svg
-          className="w-[16px] h-[16px] mr-1 text-white dark:text-white"
+          className="w-3 h-3 sm:w-3 sm:h-3 mr-1 text-white dark:text-white"
           aria-hidden="true"
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -146,16 +150,19 @@ function ShareButtons() {
             d="M7.926 10.898 15 7.727m-7.074 5.39L15 16.29M8 12a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm12 5.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm0-11a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z"
           />
         </svg>
-        Share
-      </button>
-      <Link
-        onClick={() => exportToPDF}
-        target="_blank"
-        className="bg-blue-600 text-white text-sm px-3 py-2 rounded-lg flex items-center"
-        aria-label="View Profile PDF"
+
+        <span className="text-sm">Share</span>
+      </motion.button>
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        className={` text-white bg-blue-600 text-sm px-3 py-2 rounded-lg flex items-center `}
+        aria-label="Save Data"
+        role="button"
+        onClick={exportToPDF}
       >
         <svg
-          className="w-3 h-3 me-2 text-white"
+          className="w-3 h-3 sm:w-3 sm:h-3 me-2 text-white"
           aria-hidden="true"
           xmlns="http://www.w3.org/2000/svg"
           fill="currentColor"
@@ -164,8 +171,9 @@ function ShareButtons() {
           <path d="M14.707 7.793a1 1 0 0 0-1.414 0L11 10.086V1.5a1 1 0 0 0-2 0v8.586L6.707 7.793a1 1 0 1 0-1.414 1.414l4 4a1 1 0 0 0 1.416 0l4-4a1 1 0 0 0-.002-1.414Z" />
           <path d="M18 12h-2.55l-2.975 2.975a3.5 3.5 0 0 1-4.95 0L4.55 12H2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2Zm-3 5a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z" />
         </svg>
-        View PDF
-      </Link>
+
+        <span className="text-sm"> View PDF</span>
+      </motion.button>
     </div>
   );
 }
@@ -173,11 +181,11 @@ function ShareButtons() {
 function ExecutiveSummary({ recruiter }) {
   return (
     <>
-      <h3 className="text-sm font-semibold text-gray-800 dark:text-blue-300 flex items-center">
+      <h3 className="text-sm sm:text-sm lg:text-sm font-semibold text-gray-900 dark:text-blue-300 flex items-center">
         Executive Summary
       </h3>
 
-      <p className=" text-sm text-gray-800 dark:text-neutral-200 mt-1">
+      <p className="text-sm sm:text-sm lg:text-sm text-gray-800 dark:text-neutral-200 mt-1 sm:mt-2">
         This profile outlines the ideal candidate for a {recruiter.jobTitle}{" "}
         position, belonging to {recruiter.jobFamily} and {recruiter.industry}.
         This role has the potential to grow and adapt to the company’s future
@@ -198,7 +206,7 @@ function TraitsSection({ title, traits }) {
       <h3 className="text-sm font-medium mt-4 text-gray-800 dark:text-gray-200 flex items-center">
         {title}
       </h3>
-      <div className="grid grid-cols-3 gap-4 p-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
         {traits.length > 0 ? (
           traits.map((trait, index) => (
             <motion.div
@@ -209,7 +217,7 @@ function TraitsSection({ title, traits }) {
               transition={{ duration: 0.4, delay: index * 0.1 }}
             >
               <svg
-                className="w-[14px] h-[14px] min-h-3 max-h-3 text-gray-800 dark:text-white"
+                className="w-[14px] h-[14px] min-h-3 max-h-3 min-w-3 max-w-3 text-gray-800 dark:text-white"
                 aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -245,34 +253,35 @@ function EducationSection({
 }) {
   return (
     <>
-      <h3 className="text-sm font-medium mt-4 text-gray-800 dark:text-gray-200 flex items-center">
+      <h3 className="text-sm sm:text-sm font-medium mt-4 text-gray-800 dark:text-gray-200 flex items-center">
         Education & Expertise :
       </h3>
       <div className="p-4">
-        <p className=" text-sm font-medium text-gray-800 dark:text-gray-400">
+        <p className="text-sm sm:text-sm font-medium text-gray-800 dark:text-gray-400">
           {education.name}
         </p>
-        <p className="text-sm mt-1 text-gray-900 dark:text-gray-400">
+        <p className="text-sm sm:text-sm mt-1 text-gray-900 dark:text-gray-400">
           {education.description || ""}
         </p>
       </div>
-      <h3 className="text-sm font-medium mt-4 text-gray-800 dark:text-gray-200 flex items-center">
-        Tools Proficiencies required in day 1 :
+
+      <h3 className="text-sm sm:text-sm font-medium mt-4 text-gray-800 dark:text-gray-200 flex items-center">
+        Tools Proficiencies required on day 1 :
       </h3>
       <div className="p-4">
-        <p className="text-sm font-medium text-gray-800 dark:text-gray-400">
+        <p className="text-sm sm:text-sm font-medium text-gray-800 dark:text-gray-400">
           Technology Proficiencies
         </p>
-        <div className="grid grid-cols-3 gap-4 p-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
           {requiredTools.length > 0 ? (
             requiredTools.slice(0, 10).map((name, index) => (
               <div
-                className="text-sm flex items-center  text-gray-800 dark:text-gray-400"
+                className="text-sm sm:text-sm flex items-center text-gray-800 dark:text-gray-400"
                 key={index}
               >
                 {/* Icon with fixed size */}
                 <svg
-                  className="w-[16px] h-[16px]  min-h-3 max-h-3 text-gray-800 dark:text-white"
+                  className="w-[16px] h-[16px] min-h-3 max-h-3 min-w-3 max-w-3 text-gray-800 dark:text-white"
                   aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   width="20"
@@ -297,25 +306,25 @@ function EducationSection({
         </div>
       </div>
 
-      <h3 className="text-sm font-medium mt-4  text-gray-800 dark:text-gray-400">
-        Key Proficiences :
+      <h3 className="text-sm sm:text-sm font-medium mt-4 text-gray-800 dark:text-gray-400">
+        Key Proficiencies :
       </h3>
 
       <ul className="p-4">
         <li>
-          <p className="text-sm font-medium text-gray-800 dark:text-gray-400">
+          <p className="text-sm sm:text-sm font-medium text-gray-800 dark:text-gray-400">
             Technical Expertise
           </p>
-          <div className="grid grid-cols-3 gap-4 p-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
             {toolProficiencies.length > 0 ? (
               toolProficiencies.slice(0, 10).map((name, index) => (
                 <div
-                  className="text-sm flex items-center  text-gray-800 dark:text-gray-400"
+                  className="text-sm sm:text-sm flex items-center text-gray-800 dark:text-gray-400"
                   key={index}
                 >
                   {/* Icon with fixed size */}
                   <svg
-                    className="w-[16px] h-[16px] min-h-3 max-h-3 text-gray-800 dark:text-white"
+                    className="w-[16px] h-[16px] min-h-3 min-w-3 max-w-3 max-h-3 text-gray-800 dark:text-white"
                     aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
                     width="20"
@@ -341,19 +350,19 @@ function EducationSection({
         </li>
 
         <li>
-          <p className="text-sm font-medium  text-gray-800 dark:text-gray-400">
-            Knowledge And Domain
+          <p className="text-sm sm:text-sm font-medium text-gray-800 dark:text-gray-400">
+            Knowledge and Domain
           </p>
-          <div className="grid grid-cols-3 gap-4 p-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
             {knowledge.length > 0 ? (
               knowledge.slice(0, 10).map((name, index) => (
                 <div
-                  className=" text-sm flex items-center text-gray-900 dark:text-gray-400"
+                  className="text-sm sm:text-sm flex items-center text-gray-900 dark:text-gray-400"
                   key={index}
                 >
                   {/* Icon */}
                   <svg
-                    className="w-[14px] h-[14px] min-h-3 max-h-3 text-gray-800 dark:text-white"
+                    className="w-[14px] h-[14px] min-h-3 min-w-3 max-w-3 max-h-3 text-gray-800 dark:text-white"
                     aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
                     width="22"

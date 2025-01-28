@@ -2,7 +2,6 @@ import PropTypes from "prop-types";
 
 const Modal = ({ isOpen, onClose, title, data }) => {
   if (!isOpen) return null; // Don't render modal if it's not open
-  console.log("COM", data);
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50">
       <div className="bg-white p-4 rounded-lg shadow-lg w-80">

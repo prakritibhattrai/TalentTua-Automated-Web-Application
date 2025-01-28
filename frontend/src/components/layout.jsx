@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
 import SideBar from "./sidebar";
+import logo from "../assets/logo.png";
 
 const Layout = () => {
   return (
@@ -22,28 +23,14 @@ const Layout = () => {
             data-hs-overlay="#hs-application-sidebar"
           >
             <span className="sr-only">Toggle Navigation</span>
-            <svg
-              className="shrink-0 size-4"
-              xmlns="http://www.w3.org/2000/svg"
-              width={24}
-              height={24}
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <rect width={18} height={18} x={3} y={3} rx={2} />
-              <path d="M15 3v18" />
-              <path d="m8 9 3 3-3 3" />
-            </svg>
+
+            <img src={logo}></img>
           </button>
           {/* End Navigation Toggle */}
           {/* Breadcrumb */}
           <ol className="ms-3 flex items-center whitespace-nowrap">
             <li className="flex items-center text-sm text-gray-800 dark:text-neutral-400">
-              Application Layout
+              TalentTua
               <svg
                 className="shrink-0 mx-3 overflow-visible size-2.5 text-gray-400 dark:text-neutral-500"
                 width={16}
@@ -64,7 +51,7 @@ const Layout = () => {
               className="text-sm font-semibold text-gray-800 truncate dark:text-neutral-400"
               aria-current="page"
             >
-              Dashboard
+              Chat
             </li>
           </ol>
           {/* End Breadcrumb */}

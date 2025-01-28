@@ -25,7 +25,7 @@ const BotMessage = ({ message, onSelect, onSubmit, userData, icpData }) => {
         transition={{ duration: 0.5, delay: 0.2 }}
       >
         <motion.div
-          className="bg-gray-50 border border-gray-200 rounded-lg p-4 dark:bg-neutral-900 dark:border-neutral-700"
+          className="bg-gray-50 border w-fit border-gray-200 rounded-lg p-4 dark:bg-neutral-900 dark:border-neutral-700"
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
@@ -49,7 +49,7 @@ const BotMessage = ({ message, onSelect, onSubmit, userData, icpData }) => {
           >
             <motion.button
               onClick={() => onSelect("yes")}
-              className="border border-gray-400 hover:bg-blue-500 shadow-md rounded-lg px-4 py-2 text-sm bg-blue-600 text-white dark:bg-neutral-900 dark:text-white dark:border-neutral-700 flex items-center"
+              className="border border-gray-400 hover:bg-blue-500 shadow-md rounded-lg px-4 py-2 text-sm bg-blue-600 text-white dark:bg-neutral-900 dark:text-white dark:border-neutral-700 flex items-center w-full sm:w-auto"
               whileTap={{ scale: 0.95 }}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -76,7 +76,7 @@ const BotMessage = ({ message, onSelect, onSubmit, userData, icpData }) => {
             </motion.button>
             <motion.button
               onClick={() => onSelect("no")}
-              className="border border-gray-400 hover:bg-blue-500 shadow-md rounded-lg px-4 py-2 text-sm bg-blue-600 text-white dark:bg-neutral-900 dark:text-white dark:border-neutral-700 flex items-center"
+              className="border border-gray-400 hover:bg-blue-500 shadow-md rounded-lg px-4 py-2 text-sm bg-blue-600 text-white dark:bg-neutral-900 dark:text-white dark:border-neutral-700 flex items-center w-full sm:w-auto"
               whileTap={{ scale: 0.95 }}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -116,7 +116,7 @@ const BotMessage = ({ message, onSelect, onSubmit, userData, icpData }) => {
                 key={index}
                 type="button"
                 onClick={() => onSelect(option)}
-                className="py-1 px-1.5 border border-gray-400 rounded-full text-sm shadow-sm text-gray-800 hover:bg-gray-100 dark:bg-neutral-900 dark:text-blue-500 dark:border-blue-500 dark:hover:bg-neutral-800"
+                className="py-1 px-2 sm:px-4 border border-gray-400 rounded-full text-sm shadow-sm text-gray-800 hover:bg-gray-100 dark:bg-neutral-900 dark:text-blue-500 dark:border-blue-500 dark:hover:bg-neutral-800 w-full sm:w-auto sm:min-w-[150px]"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.1 }}

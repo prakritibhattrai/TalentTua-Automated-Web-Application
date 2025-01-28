@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion"; // Import motion from framer-motion
 import logo from "../assets/logo.png";
+
 const Home = () => {
   const [inputValue, setInputValue] = useState("");
   const [placeholderText, setPlaceholderText] = useState(
-    "Say something to start..."
+    "🤖 Say something to start..."
   );
+
   const navigate = useNavigate();
 
   const handleKeyDown = (event) => {
@@ -16,6 +18,7 @@ const Home = () => {
   };
 
   const handleChange = (event) => {
+    navigate("/chat", { state: { input: inputValue } });
     setInputValue(event.target.value);
   };
 
@@ -28,7 +31,7 @@ const Home = () => {
       "🧠 Create an ideal candidate profile with AI-powered insights!",
       "🌱 Grow your professional network effortlessly!",
       "🔑 Unlock new hiring opportunities without the resume hassle!",
-      "🔎 Explore a world of skill-based career opportunities!",
+      "🌍 Explore a world of skill-based career opportunities!",
     ];
 
     let index = 0;
@@ -47,7 +50,7 @@ const Home = () => {
           <div className="-mt-20 max-w-4xl w-full text-center mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-center mb-6 gap-2 text-[#1C1D22]">
               <div className="flex items-center justify-center gap-2 text-[#1C1D22]">
-                <div className="size-6 text-blue-600">
+                <div className="text-6xl text-blue-600">
                   <svg
                     viewBox="0 0 48 48"
                     fill="none"
@@ -86,15 +89,25 @@ const Home = () => {
             </motion.p>
           </div>
 
-          <div className="mt-10 max-w-2xl w-full mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Motion Component for Input Box */}
+          <motion.div
+            className="mt-10 max-w-2xl w-full mx-auto px-4 sm:px-6 lg:px-8"
+            initial={{ y: -50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8 }}
+          >
             <div className="relative">
-              <input
+              <motion.input
                 type="text"
-                className="p-4 block border w-full border-gray-300 rounded-full text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+                className="p-4 block border w-full text-gray-800 border-gray-300 rounded-full text-sm focus:border-blue-500 focus:ring-blue-500 
+                 focus:ring-1 focus:outline-none dark:bg-neutral-800 dark:border-neutral-700
+                  dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
                 placeholder={placeholderText}
                 value={inputValue}
                 onChange={handleChange}
                 onKeyDown={handleKeyDown}
+                animate={{ placeholderText }}
+                transition={{ duration: 0.5 }}
               />
               <div className="absolute top-1/2 end-2 -translate-y-1/2">
                 <button
@@ -120,10 +133,10 @@ const Home = () => {
                 </button>
               </div>
             </div>
-          </div>
+          </motion.div>
 
+          {/* Motion Component for Button */}
           <Link to="/chat" className="w-full mx-auto text-center">
-            {/* Motion Component for button */}
             <motion.button
               type="button"
               className="mt-6 inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -136,11 +149,17 @@ const Home = () => {
           </Link>
         </div>
 
-        <footer className="mt-auto max-w-4xl text-center mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Motion Component for Footer */}
+        <motion.footer
+          className="mt-auto max-w-4xl text-center mx-auto px-4 sm:px-6 lg:px-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 1 }}
+        >
           <p className="text-xs text-gray-600 dark:text-neutral-500">
             Copyright @ TalentTua Candidate Screening. All rights reserved.
           </p>
-        </footer>
+        </motion.footer>
       </div>
     </main>
   );

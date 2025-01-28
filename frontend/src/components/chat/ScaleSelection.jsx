@@ -27,7 +27,6 @@ const ScaleSelection = ({ onSelect, rated = {} }) => {
   );
 
   const competencyRefs = useRef(competencies.map(() => React.createRef()));
-
   const handleScaleSelection = (competency, trait, scale) => {
     setRatings((prevRatings) => {
       const newRatings = {
@@ -46,40 +45,65 @@ const ScaleSelection = ({ onSelect, rated = {} }) => {
         setError(null);
       }
 
+      // Scroll to the next trait/competency
+      const competencyIndex = competencies.findIndex(
+        (comp) => comp.competency === competency
+      );
+      const traitIndex = competencies[competencyIndex].traits.findIndex(
+        (t) => t.name === trait
+      );
+
+      // Check if we're at the last trait in the current competency
+      if (traitIndex === competencies[competencyIndex].traits.length - 1) {
+        // Move to the next competency if we're at the last trait
+        if (competencyIndex < competencies.length - 1) {
+          competencyRefs.current[competencyIndex + 1].current.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+        }
+      } else {
+        // Scroll to the next trait within the same competency
+        competencyRefs.current[competencyIndex].current.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }
+
       return newRatings;
     });
   };
 
   const handleSave = () => {
-    // const incompleteCompetency = competencies.find((competency) =>
-    //   Object.values(ratings[competency.competency]).some(
-    //     (rating) =>
-    //       rating === null ||
-    //       typeof rating !== "number" ||
-    //       rating < 1 ||
-    //       rating > 4
-    //   )
-    // );
+    const incompleteCompetency = competencies.find((competency) =>
+      Object.values(ratings[competency.competency]).some(
+        (rating) =>
+          rating === null ||
+          typeof rating !== "number" ||
+          rating < 1 ||
+          rating > 4
+      )
+    );
 
-    // if (incompleteCompetency) {
-    //   const index = competencies.findIndex(
-    //     (comp) => comp.competency === incompleteCompetency.competency
-    //   );
+    if (incompleteCompetency) {
+      const index = competencies.findIndex(
+        (comp) => comp.competency === incompleteCompetency.competency
+      );
 
-    //   if (competencyRefs.current[index]) {
-    //     competencyRefs.current[index].current.scrollIntoView({
-    //       behavior: "smooth",
-    //       block: "center",
-    //     });
-    //   }
+      if (competencyRefs.current[index]) {
+        competencyRefs.current[index].current.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }
 
-    //   setError({
-    //     competency: incompleteCompetency.competency,
-    //     message: `Please rate all traits under the competency "${incompleteCompetency.competency}" with values between 1 and 4 before saving.`,
-    //   });
+      setError({
+        competency: incompleteCompetency.competency,
+        message: `Please rate all traits under the competency "${incompleteCompetency.competency}" with values between 1 and 4 before saving.`,
+      });
 
-    //   return;
-    // }
+      return;
+    }
 
     onSelect(ratings);
   };
@@ -115,7 +139,7 @@ const ScaleSelection = ({ onSelect, rated = {} }) => {
 
       {/* Scrollable list container */}
       <div className="w-full overflow-y-scroll flex-1">
-        <div className="grid grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
           {competencies.map((competency, index) => (
             <div
               key={competency.competency}
@@ -154,7 +178,7 @@ const ScaleSelection = ({ onSelect, rated = {} }) => {
                     </span>
                   </p>
 
-                  <div className="flex space-x-1 ">
+                  <div className="flex space-x-1">
                     {[1, 2, 3, 4].map((scale) => (
                       <button
                         key={scale}

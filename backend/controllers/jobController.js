@@ -67,10 +67,10 @@ const JobController = {
                 toolProficiencies,
                 roleDescription
             } = req.body;
-            console.log(jobTitle)
             const sanitizedData = {
-                //user_id: parseInt(user_id),
                 jobTitle: jobTitle?.jobTitle?.trim() || jobTitle?.occupation?.title?.trim() || jobTitle?.selectedJobTitle?.trim(),
+                selectedJobTitle: jobTitle?.selectedJobTitle?.trim() || null,
+                occupation: jobTitle?.occupation?.title?.trim() || null,
                 jobFamily: jobFamily?.trim() || null,
                 industry: industry?.trim() || null,
                 seniorityLevel: seniorityLevel?.trim() || null,
@@ -79,22 +79,29 @@ const JobController = {
                 desirableSoftSkills: JSON.stringify(desirableSoftSkills || []),
                 undesirableTraits: JSON.stringify(undesirableTraits || []),
                 toolProficiencies: JSON.stringify(toolProficiencies || []),
-                roleDescription: roleDescription?.trim() || null
+                roleDescription: roleDescription?.trim() || null,
             };
+
+            // Ensure all values are sanitized and match the column order
+            const sanitizedValues = Object.values(sanitizedData).map((value) =>
+                typeof value === 'object' && value !== null ? JSON.stringify(value) : value
+            );
 
             const connection = db.promise();
             await connection.beginTransaction();
-            console.log(sanitizedData.jobTitle)
+
             try {
-                // const [results] = await connection.execute(
-                //     `INSERT INTO jobs (
-                //          job_title, job_family, industry, seniority_level,
-                //         stakeholder_engagement, trait_matrix, desirable_soft_skills,
-                //         undesirable_traits, tool_proficiencies, role_description
-                //     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-                //     Object.values(sanitizedData)
-                // );
-                const [results] = ["Data inserted successfully"];
+                // Insert sanitized values into the database
+                const [results] = await connection.execute(
+                    `INSERT INTO jobs (
+            job_title, alternate_title, occupation, job_family, industry, seniority_level,
+            stakeholder_engagement, trait_matrix, desirable_soft_skills, undesirable_traits, 
+            tool_proficiencies, role_description
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+                    sanitizedValues
+                );
+                console.log(results)
+                //const [results] = ["Data inserted successfully"];
                 const occupations = await JobController.fetchJobOccupation(sanitizedData.jobTitle);
 
                 if (!occupations?.length) {

@@ -114,9 +114,7 @@ const CheckboxOptions = ({ optionsToDisplay, onSelect, selected, name }) => {
       </div>
 
       {/* Warning Message */}
-      {warning && (
-        <p className="text-red-500 text-sm font-semibold">{warning}</p>
-      )}
+      {warning && <p className="text-red-500 text-sm">{warning}</p>}
 
       <div className="w-full flex justify-end">
         <div className="flex items-end h-22">

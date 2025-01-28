@@ -118,13 +118,13 @@ const AutoCompleteInput = ({ onSelect }) => {
   };
 
   return (
-    <div className="space-y-6 flex flex-col border dark:border-neutral-700 shadow-sm min-w-96 rounded-lg p-4 w-full text-gray-900 bg-white dark:bg-neutral-900">
+    <div className="space-y-6 flex flex-col border dark:border-neutral-700 shadow-sm rounded-lg p-4 w-full text-gray-900 bg-white dark:bg-neutral-900 sm:min-w-96">
       <div className="space-y-4 w-full">
         {/* Occupation Search Section */}
         <div className="w-full">
           <label
             htmlFor="occupation-input"
-            className="block mb-2 text-sm text-gray-800 dark:text-neutral-200"
+            className="block mb-2 text-sm text-gray-800 dark:text-neutral-200 sm:text-base"
           >
             Please select the closest occupation:
           </label>
@@ -132,7 +132,7 @@ const AutoCompleteInput = ({ onSelect }) => {
             <input
               id="occupation-input"
               type="text"
-              className="border border-gray-400 shadow-sm dark:border-neutral-700 dark:text-neutral-200 dark:bg-neutral-900 text-sm text-gray-700 rounded-lg p-1 pl-8 w-full focus:ring-1 focus:ring-blue-600 focus:outline-none"
+              className="border border-gray-400 shadow-sm dark:border-neutral-700 dark:text-neutral-200 dark:bg-neutral-900 text-sm text-gray-700 rounded-lg p-1 pl-8 w-full focus:ring-1 focus:ring-blue-600 focus:outline-none sm:text-base"
               placeholder="Type, search and select occupation ..."
               value={searchTerm}
               onChange={handleInputChange}
@@ -153,7 +153,7 @@ const AutoCompleteInput = ({ onSelect }) => {
             />
             <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
               <svg
-                className="w-3 h-3 text-gray-500 dark:text-neutral-400"
+                className="w-3 h-3 text-gray-500 dark:text-neutral-400 sm:w-4 sm:h-4"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -173,16 +173,20 @@ const AutoCompleteInput = ({ onSelect }) => {
               </div>
             )}
           </div>
-          {error && <p className="text-red-500 mt-2 text-sm">{error}</p>}
+          {error && (
+            <p className="text-red-500 mt-2 text-sm sm:text-base">{error}</p>
+          )}
           {!loading && suggestions.length === 0 && searchTerm.trim() && (
-            <p className="text-gray-500 mt-2 text-sm">No results found.</p>
+            <p className="text-gray-500 mt-2 text-sm sm:text-base">
+              No results found.
+            </p>
           )}
           {!selectedOccupation && suggestions.length > 0 && (
             <motion.ul
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="bg-white border text-sm max-w-80 dark:text-neutral-200 border-gray-300 dark:border-neutral-700 dark:bg-neutral-900 rounded-lg shadow-md overflow-auto max-h-40 mt-2"
+              className="bg-white border text-sm max-w-80 dark:text-neutral-200 border-gray-300 dark:border-neutral-700 dark:bg-neutral-900 rounded-lg shadow-md overflow-auto max-h-40 mt-2 sm:max-w-full"
             >
               {suggestions.map((suggestion, index) => (
                 <motion.li
@@ -213,13 +217,13 @@ const AutoCompleteInput = ({ onSelect }) => {
           <div className="w-full">
             <label
               htmlFor="job-title"
-              className="block mb-2 text-sm text-gray-800 dark:text-neutral-200"
+              className="block mb-2 text-sm text-gray-800 dark:text-neutral-200 sm:text-base"
             >
               Select Job Title for {selectedOccupation?.title || ""}
             </label>
             <select
               id="job-title"
-              className="border border-gray-400 shadow-sm dark:text-neutral-200 text-sm text-gray-700 dark:border-neutral-700 dark:bg-neutral-900 bg-white rounded-lg p-1 w-full focus:ring-1 focus:ring-blue-600 focus:outline-none"
+              className="border border-gray-400 shadow-sm dark:text-neutral-200 text-sm text-gray-700 dark:border-neutral-700 dark:bg-neutral-900 bg-white rounded-lg p-1 w-full focus:ring-1 focus:ring-blue-600 focus:outline-none sm:text-base"
               value={selectedJobTitle}
               onChange={handleJobTitleChange}
             >
@@ -236,11 +240,11 @@ const AutoCompleteInput = ({ onSelect }) => {
       )}
 
       <div className="space-y-4 w-full flex-grow">
-        <div className="w-full ">
-          <p className="text-center text-sm text-gray-800">Or</p>
+        <div className="w-full">
+          <p className="text-center text-sm text-gray-800 sm:text-base">Or</p>
           <label
             htmlFor="custom-job-title"
-            className="block mb-1 text-sm text-gray-700 dark:text-neutral-200"
+            className="block mb-1 text-sm text-gray-700 dark:text-neutral-200 sm:text-base"
           >
             Your preferred job title:
           </label>
@@ -248,7 +252,7 @@ const AutoCompleteInput = ({ onSelect }) => {
             <input
               id="custom-job-title"
               type="text"
-              className="border border-gray-400 shadow-sm dark:border-neutral-700 dark:text-neutral-200 dark:bg-neutral-900 text-sm text-gray-700 rounded-lg p-1 pl-3 w-full focus:ring-1 focus:ring-blue-600 focus:outline-none"
+              className="border border-gray-400 shadow-sm dark:border-neutral-700 dark:text-neutral-200 dark:bg-neutral-900 text-sm text-gray-700 rounded-lg p-1 pl-3 w-full focus:ring-1 focus:ring-blue-600 focus:outline-none sm:text-base"
               placeholder="Preferred job title ..."
               value={jobTitle}
               onChange={(event) => {

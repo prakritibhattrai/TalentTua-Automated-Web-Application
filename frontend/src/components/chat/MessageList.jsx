@@ -74,7 +74,7 @@ const UserMessage = ({ message }) => {
     if (message.name === "jobTitle") {
       const { occupation, jobTitle, selectedJobTitle } = message.content;
       return (
-        <div className="bg-blue-600 inline-block dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+        <div className="bg-blue-600 w-fit inline-block dark:bg-gray-800 p-4 rounded-lg shadow-sm">
           <p className="text-sm text-white dark:text-white break-words">
             Occupation: {occupation?.title}
           </p>
@@ -93,16 +93,16 @@ const UserMessage = ({ message }) => {
     }
     return typeof message.content === "object" ? (
       Array.isArray(message.content) ? (
-        <div className="bg-blue-600 text-white inline-block dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+        <div className="bg-blue-600 w-fit text-white inline-block dark:bg-gray-800 p-4 rounded-lg shadow-sm">
           {message.content.join(", ")}
         </div>
       ) : (
-        <div className="bg-blue-600 text-white inline-block dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+        <div className="bg-blue-600 w-fit text-white inline-block dark:bg-gray-800 p-4 rounded-lg shadow-sm">
           {JSON.stringify(message.content)}
         </div>
       )
     ) : (
-      <div className="bg-blue-600 text-white inline-block dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+      <div className="bg-blue-600 w-fit text-white inline-block dark:bg-gray-800 p-4 rounded-lg shadow-sm">
         {message.content}
       </div>
     );
@@ -110,7 +110,7 @@ const UserMessage = ({ message }) => {
 
   return (
     <motion.div
-      className="py-2 sm:py-4 w-full justify-items-end"
+      className="py-2 sm:py-4 w-fit justify-items-end"
       initial={{ opacity: 0, x: 10 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -10 }}

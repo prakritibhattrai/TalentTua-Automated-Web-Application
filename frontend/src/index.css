@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+html,
+body {
+  scroll-behavior: smooth; /* Optional */
+  overflow: visible;
+  height: auto;
+  -webkit-overflow-scrolling: touch; /* Enables smooth scrolling on iOS */
+}

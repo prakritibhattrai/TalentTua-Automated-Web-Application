@@ -124,7 +124,7 @@ const OccupationController = {
                     jobTitles = results.map((row) => ({ title: row.title, id: row.id }));
                 }
             } catch (dbError) {
-                console.error('Database query failed, falling back to external API:', dbError.message || dbError);
+                console.warn('Database query failed, trying external API:', dbError.message || dbError);
             }
 
             // If no results from the database, fallback to the external API (e.g., O*NET API)
@@ -138,8 +138,7 @@ const OccupationController = {
                         },
                         timeout: 5000,
                     });
-
-                    jobTitles = response.data.map((item) => ({
+                    jobTitles = response.data.occupation.map((item) => ({
                         title: item.title,
                         id: item.onetsoc_code,
                     }));
@@ -164,13 +163,13 @@ const OccupationController = {
             res.status(500).json({ error: 'An internal error occurred.' });
         }
     },
-    getjobTitleByOccupationId: async (req, res) => {
-        console.log(req.params);
-        const { occupation_id } = req.params;
 
+    getjobTitleByOccupationId: async (req, res) => {
+        const { occupation_id } = req.params;
+        console.log(occupation_id)
         // Validate that occupation_id is provided
         if (!occupation_id) {
-            return res.status(400).json({ error: 'Occupation ID is required' });
+            return res.status(400).json({ error: 'Occupation ID is required.' });
         }
 
         // Check if the job titles for this occupation_id are already cached
@@ -184,42 +183,63 @@ const OccupationController = {
         }
 
         const query = `
-    SELECT DISTINCT reported_job_title AS title 
-    FROM sample_of_reported_titles 
-    WHERE onetsoc_code = ?
-    UNION
-    SELECT DISTINCT alternate_title AS title 
-    FROM alternate_titles 
-    WHERE onetsoc_code = ?
+        SELECT DISTINCT reported_job_title AS title 
+        FROM sample_of_reported_titles 
+        WHERE onetsoc_code = ?
+        UNION
+        SELECT DISTINCT alternate_title AS title 
+        FROM alternate_titles 
+        WHERE onetsoc_code = ?
     `;
 
+        let jobTitles = [];
+
+        // Attempt to fetch from the database
         try {
             const [results] = await db.promise().query(query, [occupation_id, occupation_id]);
-            console.log(results);
 
-            // If no job titles are found, return a 404
-            if (results.length === 0) {
-                return res.status(404).json({ message: 'No related job titles found.' });
+            if (results.length > 0) {
+                jobTitles = results.map((row) => ({ title: row.title }));
             }
-
-            // Map the results to the desired format
-            const jobTitles = results.map((row) => ({ title: row.title }));
-
-            // Cache the job titles for this occupation_id
-            jobTitlesByOccupationCache[occupation_id] = jobTitles;
-
-            // Return the results with a success message
-            res.json({
-                jobTitles,
-                message: `Fetched ${jobTitles.length} unique job titles for occupation ID ${occupation_id}.`,
-                status: 200,
-                success: true,
-            });
-        } catch (error) {
-            console.error('Error fetching related job titles:', error.stack || error.message || error);
-            res.status(500).json({ error: 'An internal error occurred.' });
+        } catch (dbError) {
+            console.warn('Database query failed, attempting external API:', dbError.message || dbError);
         }
+
+        // If no results from the database, fallback to the external API
+        if (jobTitles.length === 0) {
+            try {
+                const url = `${process.env.ONET_API_URL}/occupations/${occupation_id}/jobTitles`;
+
+                const response = await axios.get(url, {
+                    headers: {
+                        Authorization: `Basic ${process.env.ONET_API_KEY}`,
+                    },
+                    timeout: 5000,
+                });
+
+                jobTitles = response.data.map((item) => ({
+                    title: item.title,
+                }));
+            } catch (apiError) {
+                console.error('External API request failed:', apiError.message || apiError);
+
+                // Return error only if both database and API fail
+                return res.status(500).json({ error: 'Failed to fetch job titles from both database and external API.' });
+            }
+        }
+
+        // Cache the job titles for this occupation_id
+        jobTitlesByOccupationCache[occupation_id] = jobTitles;
+
+        // Return the results with a success message
+        res.json({
+            jobTitles,
+            message: `Fetched ${jobTitles.length} unique job titles for occupation ID ${occupation_id}.`,
+            status: 200,
+            success: true,
+        });
     },
+
 
     // Suggest job attributes based on the provided job title
     suggestJobAttributes: async (req, res) => {
@@ -230,7 +250,6 @@ const OccupationController = {
             const occupationId = occupation.id; // Hardcoded for testing
 
             const technology_skills = await OccupationController.getTechnologySkills(occupationId);
-            console.log(technology_skills)
             const sortedTechnologySkills = technology_skills.map(item => item.example);  // Extract only the element_name;
             const knowledge = await OccupationController.getKnowledge(occupationId);
 
@@ -351,7 +370,6 @@ const OccupationController = {
     },
 
     getWorkStyles: async (occupation_id) => {
-        console.log(occupation_id)
         const query = `
         SELECT ws.onetsoc_code, ws.element_id, ws.scale_id, ws.data_value, ws.n, ws.standard_error, 
                ws.lower_ci_bound, ws.upper_ci_bound, ws.recommend_suppress, ws.date_updated, ws.domain_source, 

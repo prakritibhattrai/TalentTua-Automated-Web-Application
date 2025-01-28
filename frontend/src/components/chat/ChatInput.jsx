@@ -26,9 +26,7 @@ const ChatInput = ({ input, setInput, onSubmit, current = { name: "" } }) => (
               setInput("");
             }
           }}
-          disabled={
-            current.name !== "jobTitle" && current.name !== "roleDescription"
-          }
+          disabled={current.name !== "roleDescription"}
         />
         {/* Toolbar */}
         <div className="absolute bottom-px inset-x-px p-2 rounded-b-lg bg-gray-100 dark:bg-neutral-800">
