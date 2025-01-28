@@ -112,7 +112,7 @@ function Header({ recruiter }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8 }}
     >
-      <h1 className="text-3xl font-bold text-gray-800 sm:text-4xl dark:text-white">
+      <h1 className="text-2xl font-bold text-gray-800 sm:text-3xl md:text-3xl lg:text-4xl dark:text-white">
         Ideal Candidate Profile: {recruiter.jobTitle}
       </h1>
       <p className="mt-3 text-gray-600 dark:text-neutral-400">

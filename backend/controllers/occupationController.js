@@ -2,10 +2,10 @@ import db from '../config/db.js';
 import JobModel from '../models/jobModel.js';
 import axios from 'axios';
 
-let jobTitlesCache = null
-let cacheTimestamp = null
-const CACHE_DURATION = 60 * 60 * 1000 // 1 hour in milliseconds
-let i = 1
+let jobTitlesCache = [];
+let cacheTimestamp = 0;
+const CACHE_DURATION = 5 * 60 * 1000;
+const jobTitlesByOccupationCache = {};
 const OccupationController = {
     saveJobForICP: async (req, res) => {
 
@@ -101,57 +101,126 @@ const OccupationController = {
 
     getOccupation: async (req, res) => {
         try {
-            // Check if the cache is valid
             const currentTime = Date.now();
-            if (jobTitlesCache && cacheTimestamp && (currentTime - cacheTimestamp < CACHE_DURATION)) {
-                return res.json({ jobTitles: jobTitlesCache, message: `Fetched ${jobTitlesCache.length} job titles from cache.`, status: 200, success: true });
+
+            // Check if the cache is valid (within the cache duration)
+            if (jobTitlesCache.length > 0 && cacheTimestamp && (currentTime - cacheTimestamp < CACHE_DURATION)) {
+                return res.json({
+                    jobTitles: jobTitlesCache,
+                    message: `Fetched ${jobTitlesCache.length} job titles from cache.`,
+                    status: 200,
+                    success: true,
+                });
             }
 
-            // Query the database if cache is expired or not set
-            const query = `SELECT DISTINCT title, onetsoc_code as id FROM occupation_data ORDER BY title ASC`;
-            const [results] = await db.promise().query(query);
+            let jobTitles = [];
 
-            const jobTitles = results.map((row) => ({ title: row.title, id: row.id }));
+            // Try fetching from the database
+            try {
+                const query = `SELECT DISTINCT title, onetsoc_code as id FROM occupation_data ORDER BY title ASC`;
+                const [results] = await db.promise().query(query);
 
-            // Update cache
+                if (results.length > 0) {
+                    jobTitles = results.map((row) => ({ title: row.title, id: row.id }));
+                }
+            } catch (dbError) {
+                console.error('Database query failed, falling back to external API:', dbError.message || dbError);
+            }
+
+            // If no results from the database, fallback to the external API (e.g., O*NET API)
+            if (jobTitles.length === 0) {
+                try {
+                    const url = `${process.env.ONET_API_URL}/occupations`;
+
+                    const response = await axios.get(url, {
+                        headers: {
+                            Authorization: `Basic ${process.env.ONET_API_KEY}`,
+                        },
+                        timeout: 5000,
+                    });
+
+                    jobTitles = response.data.map((item) => ({
+                        title: item.title,
+                        id: item.onetsoc_code,
+                    }));
+                } catch (apiError) {
+                    console.error('External API request failed:', apiError.message || apiError);
+                    return res.status(500).json({ error: 'Failed to fetch job titles from both database and external API.' });
+                }
+            }
+
+            // Update cache and timestamp
             jobTitlesCache = jobTitles;
             cacheTimestamp = currentTime;
 
-            res.json({ jobTitles, message: `Fetched ${jobTitles.length} job titles.`, status: 200, success: true });
+            return res.json({
+                jobTitles,
+                message: `Fetched ${jobTitles.length} job titles.`,
+                status: 200,
+                success: true,
+            });
         } catch (error) {
             console.error('Error fetching job titles:', error.message || error);
             res.status(500).json({ error: 'An internal error occurred.' });
         }
     },
     getjobTitleByOccupationId: async (req, res) => {
+        console.log(req.params);
         const { occupation_id } = req.params;
 
+        // Validate that occupation_id is provided
         if (!occupation_id) {
             return res.status(400).json({ error: 'Occupation ID is required' });
         }
 
-        const query = `
-            SELECT reported_job_title 
-            FROM sample_of_reported_titles 
-            WHERE onetsoc_code = ?
-        `;
+        // Check if the job titles for this occupation_id are already cached
+        if (jobTitlesByOccupationCache[occupation_id]) {
+            return res.json({
+                jobTitles: jobTitlesByOccupationCache[occupation_id],
+                message: `Fetched job titles for occupation ID ${occupation_id} from cache.`,
+                status: 200,
+                success: true,
+            });
+        }
 
+        const query = `
+    SELECT DISTINCT reported_job_title AS title 
+    FROM sample_of_reported_titles 
+    WHERE onetsoc_code = ?
+    UNION
+    SELECT DISTINCT alternate_title AS title 
+    FROM alternate_titles 
+    WHERE onetsoc_code = ?
+    `;
 
         try {
-            const [results] = await db.promise().query(query, [occupation_id]);
+            const [results] = await db.promise().query(query, [occupation_id, occupation_id]);
+            console.log(results);
 
+            // If no job titles are found, return a 404
             if (results.length === 0) {
                 return res.status(404).json({ message: 'No related job titles found.' });
             }
 
-            const reportedJobTitles = results.map((row) => ({ title: row.reported_job_title, id: row.id }));
+            // Map the results to the desired format
+            const jobTitles = results.map((row) => ({ title: row.title }));
 
-            res.json({ reportedJobTitles, message: `Fetched ${reportedJobTitles.length} related job titles.`, status: 200, success: true });
+            // Cache the job titles for this occupation_id
+            jobTitlesByOccupationCache[occupation_id] = jobTitles;
+
+            // Return the results with a success message
+            res.json({
+                jobTitles,
+                message: `Fetched ${jobTitles.length} unique job titles for occupation ID ${occupation_id}.`,
+                status: 200,
+                success: true,
+            });
         } catch (error) {
-            console.error('Error fetching related job titles:', error.message || error);
+            console.error('Error fetching related job titles:', error.stack || error.message || error);
             res.status(500).json({ error: 'An internal error occurred.' });
         }
     },
+
     // Suggest job attributes based on the provided job title
     suggestJobAttributes: async (req, res) => {
         const { occupation, jobTitle } = req.body;

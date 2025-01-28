@@ -2,10 +2,10 @@ import PropTypes from "prop-types";
 
 const ChatInput = ({ input, setInput, onSubmit, current = { name: "" } }) => (
   <>
-    <div className="max-w-4xl mx-auto sticky bottom-0 z-10 p-3 sm:py-6">
+    <div className="max-w-4xl mx-auto sticky bottom-0 z-10 p-2 sm:py-6">
       <div className="relative">
         <textarea
-          className="p-3 pb-16 block w-full
+          className="p-3 pb-12 block w-full
                  bg-gray-100 border border-gray-300 
                  rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 
                  focus:ring-1 focus:outline-none dark:bg-neutral-800 dark:border-neutral-700
@@ -38,7 +38,7 @@ const ChatInput = ({ input, setInput, onSubmit, current = { name: "" } }) => (
               {/* Mic Button */}
               <button
                 type="button"
-                className="inline-flex shrink-0 justify-center items-center size-8 rounded-lg text-gray-500 hover:bg-white focus:z-10 focus:outline-none focus:bg-white dark:text-neutral-500 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+                className="inline-flex shrink-0 justify-center items-center size-8 rounded-lg text-gray-800 hover:bg-white focus:z-10 focus:outline-none focus:bg-white dark:text-neutral-500 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
               >
                 <svg
                   className="shrink-0 size-4"
@@ -60,7 +60,7 @@ const ChatInput = ({ input, setInput, onSubmit, current = { name: "" } }) => (
               {/* Attach Button */}
               <button
                 type="button"
-                className="inline-flex shrink-0 justify-center items-center size-8 rounded-lg text-gray-500 hover:bg-white focus:z-10 focus:outline-none focus:bg-white dark:text-neutral-500 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+                className="inline-flex shrink-0 justify-center items-center size-8 rounded-lg text-gray-800 hover:bg-white focus:z-10 focus:outline-none focus:bg-white dark:text-neutral-500 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
               >
                 <svg
                   className="shrink-0 size-4"

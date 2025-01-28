@@ -7,11 +7,7 @@ const JobController = {
     suggestJobAttributes: async (req, res) => {
         try {
             const { jobTitle } = req.body;
-
-
             const sanitizedJobTitle = jobTitle?.jobTitle?.trim() || jobTitle.selectedJobTitle?.trim() || jobTitle?.occupation?.title?.trim();
-
-
             const occupations = await JobController.fetchJobOccupation(sanitizedJobTitle);
             if (!occupations?.length) {
                 return res.status(404).json({
@@ -71,7 +67,7 @@ const JobController = {
                 toolProficiencies,
                 roleDescription
             } = req.body;
-
+            console.log(jobTitle)
             const sanitizedData = {
                 //user_id: parseInt(user_id),
                 jobTitle: jobTitle?.jobTitle?.trim() || jobTitle?.occupation?.title?.trim() || jobTitle?.selectedJobTitle?.trim(),
@@ -88,7 +84,7 @@ const JobController = {
 
             const connection = db.promise();
             await connection.beginTransaction();
-
+            console.log(sanitizedData.jobTitle)
             try {
                 // const [results] = await connection.execute(
                 //     `INSERT INTO jobs (
@@ -244,7 +240,7 @@ const JobController = {
             }
             if (occupationSummary?.technology_skills?.category) {
                 // Define specific ids to prioritize
-                const priorityIds = ['43232400', '43232405', '43232306', '43232705', '43232306']; // Replace with actual ids to prioritize
+                const priorityIds = ['43232402', '43232408', '43232304', '43232701', '43232400', '43232405', '43232705', '43232306']; // Replace with actual ids to prioritize
 
                 // Sort the category array based on the title id, prioritizing specific ids
                 const sortedCategory = occupationSummary.technology_skills.category.sort((a, b) => {
@@ -253,7 +249,7 @@ const JobController = {
                     return aPriority - bPriority || a.title.id - b.title.id;
                 });
 
-                // Extract only the hot_technology from the example array
+                // Extract only the hot_technology from the example array and avoid duplicates
                 sortedCategory.forEach(({ example }) => {
                     example.forEach(({ hot_technology }) => {
                         if (
@@ -265,6 +261,7 @@ const JobController = {
                     });
                 });
             }
+
 
 
             if (occupationSummary?.abilities?.element) {

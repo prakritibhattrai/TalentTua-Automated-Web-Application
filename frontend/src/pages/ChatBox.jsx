@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 function ChatBox({ children }) {
   return (
     <div className="chat-container max-w-4xl px-4 sm:px-6 lg:px-8 mx-auto">
@@ -7,5 +9,9 @@ function ChatBox({ children }) {
     </div>
   );
 }
+
+ChatBox.propTypes = {
+  children: PropTypes.node.isRequired,
+};
 
 export default ChatBox;

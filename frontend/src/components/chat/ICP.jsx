@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
 
-export const ICP = ({ icpData }) => {
+const ICP = ({ icpData }) => {
   console.log("ICP", icpData);
   return (
     <>
@@ -16,3 +17,9 @@ export const ICP = ({ icpData }) => {
     </>
   );
 };
+
+ICP.propTypes = {
+  icpData: PropTypes.object.isRequired,
+};
+
+export default ICP;

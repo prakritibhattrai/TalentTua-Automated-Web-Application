@@ -77,7 +77,7 @@ function Header() {
                 className="py-2 ps-10 pe-16 block w-full bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder:text-neutral-400 dark:focus:ring-neutral-600"
                 placeholder="Search"
               />
-              <div className="hidden absolute inset-y-0 end-0 flex items-center pointer-events-none z-20 pe-1">
+              <div className=" absolute inset-y-0 end-0 flex items-center pointer-events-none z-20 pe-1">
                 <button
                   type="button"
                   className="inline-flex shrink-0 justify-center items-center size-6 rounded-full text-gray-500 hover:text-blue-600 focus:outline-none focus:text-blue-600 dark:text-neutral-500 dark:hover:text-blue-500 dark:focus:text-blue-500"

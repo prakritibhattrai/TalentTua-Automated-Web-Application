@@ -1,4 +1,4 @@
-import React from "react";
+import PropTypes from "prop-types";
 
 const Modal = ({ isOpen, onClose, title, data }) => {
   if (!isOpen) return null; // Don't render modal if it's not open
@@ -43,6 +43,20 @@ const Modal = ({ isOpen, onClose, title, data }) => {
       </div>
     </div>
   );
+};
+
+Modal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  title: PropTypes.string.isRequired,
+  data: PropTypes.shape({
+    traits: PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        description: PropTypes.string.isRequired,
+      })
+    ),
+  }).isRequired,
 };
 
 export default Modal;

@@ -1,12 +1,8 @@
 import { useState, useEffect } from "react";
 import SaveButton from "./Button";
+import PropTypes from "prop-types";
 
-export const CheckboxOptions = ({
-  optionsToDisplay,
-  onSelect,
-  selected,
-  name,
-}) => {
+const CheckboxOptions = ({ optionsToDisplay, onSelect, selected, name }) => {
   const [selectedOptions, setSelectedOptions] = useState(
     Array.isArray(selected) ? [...selected] : []
   );
@@ -57,7 +53,7 @@ export const CheckboxOptions = ({
         {optionsToDisplay.map((option, index) => (
           <label
             key={index}
-            className={`flex items-start space-x-2 px-2 py-1 transition-all duration-200 cursor-pointer ${
+            className={`flex items-start space-x-2 px-2 py-1 text-xs transition-all duration-200 cursor-pointer ${
               selectedOptions.includes(option) ? "" : "bg-white border-gray-300"
             }`}
           >
@@ -76,7 +72,7 @@ export const CheckboxOptions = ({
         {/* Custom Option */}
         {customInput && (
           <label
-            className={`flex  space-x-2 px-2 py-1 transition-all duration-200 cursor-pointer ${
+            className={`flex  space-x-2 px-2 py-1 transition-all text-xs duration-200 cursor-pointer ${
               selectedOptions.includes(customInput)
                 ? "bg-blue-100"
                 : "bg-white border-gray-300"
@@ -102,7 +98,7 @@ export const CheckboxOptions = ({
           .map((option, index) => (
             <label
               key={index}
-              className="grid grid-cols-3 p-4 items-center space-x-2 gap-2 px-2 py-1 transition-all duration-200 cursor-pointer "
+              className="grid grid-cols-3 p-4 items-center text-xs space-x-2 gap-2 px-2 py-1 transition-all duration-200 cursor-pointer "
             >
               <input
                 type="checkbox"
@@ -156,3 +152,12 @@ export const CheckboxOptions = ({
     </div>
   );
 };
+
+CheckboxOptions.propTypes = {
+  optionsToDisplay: PropTypes.arrayOf(PropTypes.string).isRequired,
+  onSelect: PropTypes.func.isRequired,
+  selected: PropTypes.arrayOf(PropTypes.string),
+  name: PropTypes.string.isRequired,
+};
+
+export default CheckboxOptions;

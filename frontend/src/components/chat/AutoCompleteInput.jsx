@@ -1,6 +1,8 @@
 import axios from "axios";
 import { useState, useEffect, useRef } from "react";
 import SaveButton from "./Button";
+import PropTypes from "prop-types";
+import { motion } from "framer-motion";
 
 const AutoCompleteInput = ({ onSelect }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -67,7 +69,7 @@ const AutoCompleteInput = ({ onSelect }) => {
         const response = await axios.get(
           `http://localhost:3000/occupations/jobTitles/${selectedOccupation.id}`
         );
-        setJobTitles(response.data.reportedJobTitles);
+        setJobTitles(response.data.jobTitles);
       } catch (err) {
         setError("Failed to fetch job titles. Please try again.");
       } finally {
@@ -116,7 +118,7 @@ const AutoCompleteInput = ({ onSelect }) => {
   };
 
   return (
-    <div className="space-y-6 flex flex-col border dark:border-neutral-700 shadow-sm min-w-96 rounded-lg p-6 w-full text-gray-900 bg-white dark:bg-neutral-900">
+    <div className="space-y-6 flex flex-col border dark:border-neutral-700 shadow-sm min-w-96 rounded-lg p-4 w-full text-gray-900 bg-white dark:bg-neutral-900">
       <div className="space-y-4 w-full">
         {/* Occupation Search Section */}
         <div className="w-full">
@@ -176,10 +178,18 @@ const AutoCompleteInput = ({ onSelect }) => {
             <p className="text-gray-500 mt-2 text-sm">No results found.</p>
           )}
           {!selectedOccupation && suggestions.length > 0 && (
-            <ul className="bg-white border text-sm max-w-80 dark:text-neutral-200 border-gray-300 dark:border-neutral-700 dark:bg-neutral-900 rounded-lg shadow-md overflow-auto max-h-40 mt-2">
+            <motion.ul
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="bg-white border text-sm max-w-80 dark:text-neutral-200 border-gray-300 dark:border-neutral-700 dark:bg-neutral-900 rounded-lg shadow-md overflow-auto max-h-40 mt-2"
+            >
               {suggestions.map((suggestion, index) => (
-                <li
+                <motion.li
                   key={suggestion.id}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
                   className={`px-4 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-neutral-800 dark:hover:border-blue-500 ${
                     index === highlightedIndex
                       ? "bg-blue-100 dark:bg-neutral-900 dark:text-blue-500 text-blue-500"
@@ -190,9 +200,9 @@ const AutoCompleteInput = ({ onSelect }) => {
                   onMouseLeave={() => setHighlightedIndex(-1)}
                 >
                   {suggestion.title}
-                </li>
+                </motion.li>
               ))}
-            </ul>
+            </motion.ul>
           )}
         </div>
       </div>
@@ -224,6 +234,7 @@ const AutoCompleteInput = ({ onSelect }) => {
           </div>
         </div>
       )}
+
       <div className="space-y-4 w-full flex-grow">
         <div className="w-full ">
           <p className="text-center text-sm text-gray-800">Or</p>
@@ -237,9 +248,7 @@ const AutoCompleteInput = ({ onSelect }) => {
             <input
               id="custom-job-title"
               type="text"
-              className="border border-gray-400 shadow-sm dark:border-neutral-700
-         dark:text-neutral-200 dark:bg-neutral-900 text-sm text-gray-700 
-          rounded-lg p-1 pl-3 w-full focus:ring-1 focus:ring-blue-600 focus:outline-none"
+              className="border border-gray-400 shadow-sm dark:border-neutral-700 dark:text-neutral-200 dark:bg-neutral-900 text-sm text-gray-700 rounded-lg p-1 pl-3 w-full focus:ring-1 focus:ring-blue-600 focus:outline-none"
               placeholder="Preferred job title ..."
               value={jobTitle}
               onChange={(event) => {
@@ -271,5 +280,8 @@ function debounce(func, delay) {
     timer = setTimeout(() => func(...args), delay);
   };
 }
+AutoCompleteInput.propTypes = {
+  onSelect: PropTypes.func.isRequired,
+};
 
 export default AutoCompleteInput;

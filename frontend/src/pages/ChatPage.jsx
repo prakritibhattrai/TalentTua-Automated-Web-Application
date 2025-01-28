@@ -14,6 +14,16 @@ function ChatPage() {
   const [input, setInput] = useState("");
   const [currentStep, setCurrentStep] = useState(0);
   const [userData, setUserData] = useState({});
+  const botTypingRef = useRef(null); // Ref for bot typing section
+
+  // Set the ref dynamically based on botTyping status
+  useEffect(() => {
+    if (botTyping) {
+      botTypingRef.current?.scrollIntoView({ behavior: "smooth" });
+    } else {
+      messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [botTyping]); // Trigger effect when botTyping changes
 
   const questions = [
     {
@@ -153,6 +163,8 @@ function ChatPage() {
 
   const handleUserAction = async (userInput) => {
     try {
+      setBotTyping(true);
+
       // Check if input is provided
       if (
         !userInput ||
@@ -175,6 +187,7 @@ function ChatPage() {
           },
         ]);
         setInput("");
+        setBotTyping(false); // Stop typing when no valid input
         return;
       }
 
@@ -190,9 +203,11 @@ function ChatPage() {
             "Input exceeds the maximum length of 255 characters.",
             currentQuestion
           );
+          setBotTyping(false); // Stop typing if input length error occurs
           return;
         }
       }
+
       // Validation based on inputType
       switch (currentQuestion?.inputType) {
         case "text":
@@ -203,11 +218,11 @@ function ChatPage() {
             (typeof userInput === "object" && !Object.keys(userInput).length) // If it's an empty object
           ) {
             addErrorMessage("Input is invalid or empty.", currentQuestion);
+            setBotTyping(false); // Stop typing if input is invalid
             return;
           }
 
           if (currentQuestion.name === "jobTitle") {
-            setBotTyping(true);
             let response = await fetch("http://localhost:3000/jobs", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -242,8 +257,11 @@ function ChatPage() {
                 ],
               }));
             }
+
+            // Stop bot typing here before sending the next message
             setBotTyping(false);
           }
+
           if (currentQuestion.name === "welcome") {
             if (userInput == "no") {
               setMessages((prev) => [
@@ -255,6 +273,7 @@ function ChatPage() {
                   sender: "bot",
                 },
               ]);
+              setBotTyping(false); // Stop typing here as well
               return;
             }
           }
@@ -269,6 +288,7 @@ function ChatPage() {
               "Invalid selection from dropdown options.",
               currentQuestion
             );
+            setBotTyping(false); // Stop typing on dropdown error
             return;
           }
           break;
@@ -279,6 +299,7 @@ function ChatPage() {
               "Invalid checkbox input. Input should be an array.",
               currentQuestion
             );
+            setBotTyping(false); // Stop typing on checkbox error
             return;
           }
           break;
@@ -292,13 +313,14 @@ function ChatPage() {
               "Invalid traitMatrix data format.",
               currentQuestion
             );
+            setBotTyping(false); // Stop typing on traitMatrix error
             return;
           }
-
           break;
 
         default:
           addErrorMessage("Unsupported input type.", currentQuestion);
+          setBotTyping(false); // Stop typing on unsupported type
           return;
       }
 
@@ -315,7 +337,6 @@ function ChatPage() {
 
       // Handle next question or end
       if (nextStep < questions.length) {
-        setBotTyping(true);
         setMessages((prev) => [
           ...prev,
           {
@@ -328,9 +349,7 @@ function ChatPage() {
           },
         ]);
         setCurrentStep(nextStep);
-        setBotTyping(false);
       } else {
-        setBotTyping(true);
         setMessages((prev) => [
           ...prev,
           {
@@ -340,7 +359,6 @@ function ChatPage() {
             sender: "bot",
           },
         ]);
-        setBotTyping(false);
       }
     } catch (error) {
       console.error("Error:", error.message);
@@ -351,6 +369,7 @@ function ChatPage() {
           sender: "bot",
         },
       ]);
+      setBotTyping(false); // Stop typing in case of error
     }
   };
 
@@ -408,7 +427,7 @@ function ChatPage() {
           sender: "bot",
         },
       ]);
-
+      setBotTyping(true);
       const response = await fetch("http://localhost:3000/jobs/saveJob", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -429,7 +448,7 @@ function ChatPage() {
 
       // If ICP is successfully generated, update the state
       setICPData((prev) => ({ ...prev, ...responseData }));
-
+      setBotTyping(false);
       // Move to the next step or complete the process
       const nextStep = currentStep + 1;
       if (nextStep < questions.length) {
@@ -488,7 +507,14 @@ function ChatPage() {
       }, 1000);
     }
   };
-
+  // Simulating bot typing and setting botTyping to false after 2 seconds
+  useEffect(() => {
+    if (botTyping) {
+      setTimeout(() => {
+        setBotTyping(false); // Stop bot typing after 2 seconds
+      }, 2000);
+    }
+  }, [botTyping]);
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -513,6 +539,7 @@ function ChatPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
               transition={{ duration: 0.6, ease: "easeInOut" }}
+              ref={botTypingRef} // Attach ref to bot typing div
             >
               <div className="typing-dots flex gap-1">
                 <span className="dot h-1.5 w-1.5 bg-gray-400 rounded-full animate-bounce"></span>
@@ -528,6 +555,7 @@ function ChatPage() {
               className="navigation-buttons flex justify-start items-center mt-4"
               initial={{ opacity: 0, scale: 0.8, x: -10 }}
               animate={{ opacity: 1, scale: 1, x: 0 }}
+              exit={{ opacity: 0, scale: 0.8, x: -10 }}
               transition={{ duration: 0.5, ease: "easeOut" }}
             >
               {currentStep > 0 && (

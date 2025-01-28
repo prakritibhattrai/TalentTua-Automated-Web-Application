@@ -1,6 +1,7 @@
+import PropTypes from "prop-types";
 import { motion } from "framer-motion";
-import { BotMessage } from "./BotMessage";
-import user from "../../../public/user.png";
+import BotMessage from "./BotMessage";
+import user from "../../assets/user.png";
 
 export const MessageList = ({
   messages,
@@ -23,6 +24,14 @@ export const MessageList = ({
       ))}
   </ul>
 );
+
+MessageList.propTypes = {
+  messages: PropTypes.arrayOf(PropTypes.object).isRequired,
+  onSelect: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+  userData: PropTypes.object.isRequired,
+  icpData: PropTypes.object.isRequired,
+};
 
 const MessageItem = ({ message, onSelect, onSubmit, userData, icpData }) => {
   const isBot = message.sender === "bot";
@@ -50,6 +59,14 @@ const MessageItem = ({ message, onSelect, onSubmit, userData, icpData }) => {
       )}
     </motion.li>
   );
+};
+
+MessageItem.propTypes = {
+  message: PropTypes.object.isRequired,
+  onSelect: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+  userData: PropTypes.object.isRequired,
+  icpData: PropTypes.object.isRequired,
 };
 
 const UserMessage = ({ message }) => {
@@ -113,4 +130,8 @@ const UserMessage = ({ message }) => {
       </div>
     </motion.div>
   );
+};
+
+UserMessage.propTypes = {
+  message: PropTypes.object.isRequired,
 };

@@ -1,40 +1,62 @@
-import { CheckboxOptions } from "./CheckboxOptions";
-import { EditableSummary } from "./EditableSummary";
-import { ICP } from "./ICP";
-import { ScaleSelection } from "./ScaleSelection";
+import CheckboxOptions from "./CheckboxOptions";
+import EditableSummary from "./EditableSummary";
+import ICP from "./ICP";
+import ScaleSelection from "./ScaleSelection";
 import { motion } from "framer-motion";
-
 import logo from "../../assets/logo.png";
 import AutoCompleteInput from "./AutoCompleteInput";
+import PropTypes from "prop-types";
 
-export const BotMessage = ({
-  message,
-  onSelect,
-  onSubmit,
-  userData,
-  icpData,
-}) => {
+const BotMessage = ({ message, onSelect, onSubmit, userData, icpData }) => {
   return (
     <>
-      <img src={logo} className="h-7 w-7 mb-4"></img>
-      <div className="space-y-4">
-        <div className="bg-white border border-gray-200 rounded-lg p-4 dark:bg-neutral-900 dark:border-neutral-700">
-          <p className="text-sm text-gray-800 dark:text-white">
+      <motion.img
+        src={logo}
+        className="h-7 w-7 mb-4 mx-auto sm:mx-0"
+        alt="Logo"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+      />
+      <motion.div
+        className="space-y-4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
+        <motion.div
+          className="bg-gray-50 border border-gray-200 rounded-lg p-4 dark:bg-neutral-900 dark:border-neutral-700"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+        >
+          <motion.p
+            className="text-sm text-gray-800 dark:text-white"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3, delay: 0.3 }}
+          >
             {message.content || ""}
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
+
         {message.name === "welcome" && (
-          <div className="flex space-x-2">
+          <motion.div
+            className="flex flex-wrap justify-center sm:justify-start space-x-2 mt-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4, delay: 0.5 }}
+          >
             <motion.button
               onClick={() => onSelect("yes")}
-              className="border border-gray-400 hover:bg-blue-400 shadow-md rounded-lg px-4 py-2 text-sm bg-blue-500 text-white dark:bg-neutral-900 dark:text-white dark:border-neutral-700 flex items-center"
+              className="border border-gray-400 hover:bg-blue-500 shadow-md rounded-lg px-4 py-2 text-sm bg-blue-600 text-white dark:bg-neutral-900 dark:text-white dark:border-neutral-700 flex items-center"
               whileTap={{ scale: 0.95 }}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
             >
               <svg
-                className="w-[18px] mr-0.5  h-[18px] text-white dark:text-white"
+                className="w-[18px] mr-0.5 h-[18px] text-white dark:text-white"
                 aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -54,11 +76,11 @@ export const BotMessage = ({
             </motion.button>
             <motion.button
               onClick={() => onSelect("no")}
-              className="border border-gray-400 hover:bg-blue-400 shadow-md rounded-lg px-4 py-1 text-sm bg-blue-500 text-white dark:bg-neutral-900 dark:text-white dark:border-neutral-700 flex items-center"
+              className="border border-gray-400 hover:bg-blue-500 shadow-md rounded-lg px-4 py-2 text-sm bg-blue-600 text-white dark:bg-neutral-900 dark:text-white dark:border-neutral-700 flex items-center"
               whileTap={{ scale: 0.95 }}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 0.1 }}
+              transition={{ duration: 0.3, delay: 0.1, ease: "easeOut" }}
             >
               <svg
                 className="w-[18px] h-[18px] text-white dark:text-white"
@@ -79,41 +101,107 @@ export const BotMessage = ({
               </svg>
               No
             </motion.button>
-          </div>
+          </motion.div>
         )}
+
         {message.inputType === "dropdown" && message.options && (
-          <div className="flex flex-wrap gap-2">
+          <motion.div
+            className="flex flex-wrap gap-2 justify-center sm:justify-start mt-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4, delay: 0.6 }}
+          >
             {message.options.map((option, index) => (
-              <button
+              <motion.button
                 key={index}
                 type="button"
                 onClick={() => onSelect(option)}
-                className="py-1 px-3 border border-gray-400 rounded-full text-sm shadow-sm text-gray-800 hover:bg-gray-100 dark:bg-neutral-900 dark:text-blue-500 dark:border-blue-500 dark:hover:bg-neutral-800"
+                className="py-1 px-1.5 border border-gray-400 rounded-full text-sm shadow-sm text-gray-800 hover:bg-gray-100 dark:bg-neutral-900 dark:text-blue-500 dark:border-blue-500 dark:hover:bg-neutral-800"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
               >
                 {option}
-              </button>
+              </motion.button>
             ))}
-          </div>
+          </motion.div>
         )}
+
         {message.inputType === "checkbox" && message.options && (
-          <CheckboxOptions
-            name={message.name}
-            optionsToDisplay={message.options}
-            onSelect={onSelect}
-            selected={message.selectedOption}
-          />
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4, delay: 0.7 }}
+          >
+            <CheckboxOptions
+              name={message.name}
+              optionsToDisplay={message.options}
+              onSelect={onSelect}
+              selected={message.selectedOption}
+            />
+          </motion.div>
         )}
+
         {message.name === "jobTitle" && (
-          <AutoCompleteInput data={["data", "Software"]} onSelect={onSelect} />
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4, delay: 0.8 }}
+          >
+            <AutoCompleteInput
+              data={["data", "Software"]}
+              onSelect={onSelect}
+            />
+          </motion.div>
         )}
+
         {message.name === "traitMatrix" && message.options && (
-          <ScaleSelection onSelect={onSelect} rated={message.rating} />
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4, delay: 0.9 }}
+          >
+            <ScaleSelection onSelect={onSelect} rated={message.rating} />
+          </motion.div>
         )}
+
         {message.name === "reviewAndUpdate" && (
-          <EditableSummary onSubmit={onSubmit} userData={userData} />
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4, delay: 1 }}
+          >
+            <EditableSummary onSubmit={onSubmit} userData={userData} />
+          </motion.div>
         )}
-        {message.name === "icp" && <ICP icpData={icpData} />}
-      </div>
+
+        {message.name === "icp" && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4, delay: 1.1 }}
+          >
+            <ICP icpData={icpData} />
+          </motion.div>
+        )}
+      </motion.div>
     </>
   );
 };
+
+BotMessage.propTypes = {
+  message: PropTypes.shape({
+    content: PropTypes.string,
+    name: PropTypes.string,
+    inputType: PropTypes.string,
+    options: PropTypes.arrayOf(PropTypes.string),
+    selectedOption: PropTypes.string,
+    rating: PropTypes.number,
+  }).isRequired,
+  onSelect: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func,
+  userData: PropTypes.object,
+  icpData: PropTypes.object,
+};
+
+export default BotMessage;

@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import PropTypes from "prop-types";
 
 const SaveButton = ({ onClick, label = "Save", className = "", icon }) => {
   return (
@@ -37,5 +38,10 @@ const SaveButton = ({ onClick, label = "Save", className = "", icon }) => {
     </div>
   );
 };
-
+SaveButton.propTypes = {
+  onClick: PropTypes.func.isRequired,
+  label: PropTypes.string,
+  className: PropTypes.string,
+  icon: PropTypes.string,
+};
 export default SaveButton;
