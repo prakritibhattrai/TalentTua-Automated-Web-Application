@@ -5,6 +5,7 @@ import ChatInput from "../components/chat/ChatInput";
 import { staticData } from "../data/traitMatrix";
 import { motion } from "framer-motion";
 import { sanitizeInput, validateData } from "../helpers/sanitizeInput";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 function ChatPage() {
   const messageEndRef = useRef(null);
@@ -16,20 +17,13 @@ function ChatPage() {
   const [userData, setUserData] = useState({});
   const botTypingRef = useRef(null); // Ref for bot typing section
 
-  // Set the ref dynamically based on botTyping status
-  useEffect(() => {
-    if (botTyping) {
-      botTypingRef.current?.scrollIntoView({ behavior: "smooth" });
-    } else {
-      messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [botTyping]); // Trigger effect when botTyping changes
-
   const questions = [
     {
       name: "welcome",
-      question:
-        "Would you like to generate the Ideal Candidate Profile for the role?",
+      question: `At TalentTua we are experts when it comes to finding incredibly talented candidates that match your unique
+         Ideal Candidate Profile (ICP). What is an ICP you may ask? It is simple, we take day one hard skills needed 
+         for the role, level of experience, and most importantly the soft skills that relate to the role and have you 
+         customize what your open role requires.`,
       option: ["Yes", "No"],
       inputType: "text",
       validate: "required",
@@ -223,43 +217,47 @@ function ChatPage() {
           }
 
           if (currentQuestion.name === "jobTitle") {
-            let response = await fetch("http://localhost:3000/jobs", {
+            let response = await fetch(`${API_BASE_URL}/jobs`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ jobTitle: userInput }),
             });
 
             const data = await response.json();
+            if (data) {
+              if (
+                data?.keyProficiencies?.technicalSkills?.tools_and_technology
+              ) {
+                setResults((prev) => ({
+                  ...prev,
+                  toolsProficiencies:
+                    data.keyProficiencies.technicalSkills.tools_and_technology,
+                }));
+              }
 
-            if (data?.keyProficiencies?.technicalSkills?.tools_and_technology) {
-              setResults((prev) => ({
-                ...prev,
-                toolsProficiencies:
-                  data.keyProficiencies.technicalSkills.tools_and_technology,
-              }));
+              if (
+                data?.niceToHave?.work_styles ||
+                data?.niceToHave?.interests ||
+                data?.niceToHave?.abilities
+              ) {
+                setResults((prev) => ({
+                  ...prev,
+                  work_styles: [
+                    ...(data?.niceToHave?.work_styles?.map(
+                      (style) => style.name
+                    ) || []),
+                    ...(data?.niceToHave?.interests.map(
+                      (style) => style.name
+                    ) || []),
+                    ...(data?.niceToHave?.abilities.map(
+                      (style) => style.name
+                    ) || []),
+                  ],
+                }));
+              }
+              // Stop bot typing here before sending the next message
+              setBotTyping(false);
             }
-
-            if (
-              data?.niceToHave?.work_styles ||
-              data?.niceToHave?.interests ||
-              data?.niceToHave?.abilities
-            ) {
-              setResults((prev) => ({
-                ...prev,
-                work_styles: [
-                  ...(data?.niceToHave?.work_styles?.map(
-                    (style) => style.name
-                  ) || []),
-                  ...(data?.niceToHave?.interests.map((style) => style.name) ||
-                    []),
-                  ...(data?.niceToHave?.abilities.map((style) => style.name) ||
-                    []),
-                ],
-              }));
-            }
-
-            // Stop bot typing here before sending the next message
-            setBotTyping(false);
           }
 
           if (currentQuestion.name === "welcome") {
@@ -305,8 +303,6 @@ function ChatPage() {
           break;
 
         case "traitMatrix":
-          console.log("TraitMatrix data:", userInput);
-
           // Check that input is an object and not an array
           if (typeof userInput !== "object" || Array.isArray(userInput)) {
             addErrorMessage(
@@ -323,7 +319,6 @@ function ChatPage() {
           setBotTyping(false); // Stop typing on unsupported type
           return;
       }
-
       // Save sanitized input
       updatedUserData[currentQuestion.name] = userInput;
       setUserData(updatedUserData);
@@ -334,7 +329,6 @@ function ChatPage() {
         { content: userInput, sender: "user", name: currentQuestion.name },
       ]);
       setInput("");
-
       // Handle next question or end
       if (nextStep < questions.length) {
         setMessages((prev) => [
@@ -361,7 +355,6 @@ function ChatPage() {
         ]);
       }
     } catch (error) {
-      console.error("Error:", error.message);
       setMessages((prev) => [
         ...prev,
         {
@@ -399,6 +392,7 @@ function ChatPage() {
 
   const handleFormSubmit = async (updatedData) => {
     try {
+      setBotTyping(true);
       // Validate updatedData before submitting
       const validationErrors = validateData(updatedData);
       if (validationErrors.length > 0) {
@@ -412,85 +406,100 @@ function ChatPage() {
             sender: "bot",
           },
         ]);
-        return; // Stop submission and allow the user to fix the errors
+        setBotTyping(false); // Stop typing if validation fails
+        return; // Stop submission and allow user to fix errors
       }
 
       // Proceed with submitting the data if valid
       setUserData(updatedData);
-      setBotTyping(true);
 
-      setMessages((prev) => [
-        ...prev,
-        {
-          heading: "",
-          content: "Thank you, we are calculating the ICP for you!",
-          sender: "bot",
-        },
-      ]);
-      setBotTyping(true);
-      const response = await fetch("http://localhost:3000/jobs/saveJob", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userData),
-      });
+      setBotTyping(true); // Bot starts processing the ICP request
 
-      console.log(response, userData);
-      if (!response.ok) {
-        throw new Error("Failed to save job data");
-      }
+      // Simulate typing for a short duration to improve UX
+      setTimeout(async () => {
+        try {
+          const response = await fetch(`${API_BASE_URL}/jobs/saveJob`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(userData),
+          });
 
-      const responseData = await response.json();
+          if (!response.ok) {
+            throw new Error("Failed to save job data");
+          }
 
-      if (!responseData) {
-        // If ICP generation fails, show an error and stay on the current step
-        throw new Error("ICP generation failed. Please try again.");
-      }
+          const responseData = await response.json();
 
-      // If ICP is successfully generated, update the state
-      setICPData((prev) => ({ ...prev, ...responseData }));
-      setBotTyping(false);
-      // Move to the next step or complete the process
-      const nextStep = currentStep + 1;
-      if (nextStep < questions.length) {
-        setTimeout(() => {
+          if (!responseData) {
+            // If ICP generation fails, show an error
+            throw new Error("ICP generation failed. Please try again.");
+          }
+
+          // If ICP is successfully generated, update the state
+          setICPData((prev) => ({ ...prev, ...responseData }));
+          setBotTyping(false); // Bot is done processing
+
+          // Move to the next step or complete the process
+          const nextStep = currentStep + 1;
+          if (nextStep < questions.length) {
+            setMessages((prev) => [
+              ...prev,
+              {
+                heading: "",
+                content: questions[nextStep].question,
+                inputType: questions[nextStep].inputType,
+                options: questions[nextStep].options || "",
+                name: questions[nextStep].name || "",
+                sender: "bot",
+              },
+            ]);
+            setCurrentStep(nextStep);
+          } else {
+            setMessages((prev) => [
+              ...prev,
+              {
+                heading: "",
+                content: "Process complete! Thank you for your inputs.",
+                sender: "bot",
+              },
+            ]);
+          }
+        } catch (error) {
+          setMessages((prev) => [
+            ...prev,
+            {
+              content: error.message, // Show the specific error message
+              sender: "bot",
+            },
+          ]);
+
+          // Re-display the current question for correction
           setMessages((prev) => [
             ...prev,
             {
               heading: "",
-              content: questions[nextStep].question,
-              inputType: questions[nextStep].inputType,
-              options: questions[nextStep].options || "",
-              name: questions[nextStep].name || "",
+              content: questions[currentStep].question,
+              inputType: questions[currentStep].inputType,
+              options: questions[currentStep].options || "",
+              name: questions[currentStep].name || "",
               sender: "bot",
             },
           ]);
-          setCurrentStep(nextStep);
-          setBotTyping(false);
-        }, 1000);
-      } else {
-        setMessages((prev) => [
-          ...prev,
-          {
-            heading: "",
-            content: "Process complete! Thank you for your inputs.",
-            sender: "bot",
-          },
-        ]);
-        setBotTyping(false);
-      }
+        } finally {
+          setBotTyping(false); // Ensure bot stops typing in all cases
+        }
+      }, 1000); // Simulated delay for UX
     } catch (error) {
-      console.error("Error submitting form:", error);
-
-      // If there's an error (e.g., ICP generation failed), show the error and allow user correction
+      setBotTyping(false); // Stop typing on error
       setMessages((prev) => [
         ...prev,
         {
-          content: error.message, // Show the specific error message (e.g., ICP generation failed)
+          content: error.message, // Show the specific error message
           sender: "bot",
         },
       ]);
 
-      // Show the previous question again for correction
+      // Re-display the current question for correction
       setTimeout(() => {
         setMessages((prev) => [
           ...prev,
@@ -503,24 +512,27 @@ function ChatPage() {
             sender: "bot",
           },
         ]);
-        setBotTyping(false);
-      }, 1000);
+      }, 300);
     }
   };
-  // Simulating bot typing and setting botTyping to false after 2 seconds
+
+  // Set the ref dynamically based on botTyping status
   useEffect(() => {
     if (botTyping) {
-      setTimeout(() => {
-        setBotTyping(false); // Stop bot typing after 2 seconds
-      }, 2000);
+      botTypingRef.current?.scrollIntoView({ behavior: "smooth" });
+    } else {
+      messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
-  }, [botTyping]);
+  }, [botTyping]); // Trigger effect when botTyping changes
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messages[messages.length - 1]?.sender === "bot") {
+      setBotTyping(false); // Stop bot typing when the bot message is displayed
+    }
   }, [messages]);
 
   return (
-    <div className="relative bg-none w-full lg:ps-64">
+    <div className="relative bg-none min-h-screen max-h-100 lg:ps-64">
       <div className="pt-10 lg:pt-14">
         <Title />
         <MessageList
@@ -530,7 +542,9 @@ function ChatPage() {
           userData={userData}
           icpData={icpData}
           botTyping={botTyping}
+          message={messageEndRef}
         />
+
         <div className="max-w-4xl py-2 px-4 sm:px-6 lg:px-8 mx-auto flex gap-x-2 sm:gap-x-4 justify-start">
           {botTyping && (
             <motion.div
@@ -538,21 +552,61 @@ function ChatPage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
-              transition={{ duration: 0.6, ease: "easeInOut" }}
+              transition={{
+                duration: 0.8, // Smoother transition duration
+                ease: "easeInOut", // Easier animation curve
+              }}
               ref={botTypingRef} // Attach ref to bot typing div
             >
               <div className="typing-dots flex gap-1">
-                <span className="dot h-1.5 w-1.5 bg-gray-400 rounded-full animate-bounce"></span>
-                <span className="dot h-1.5 w-1.5 bg-gray-400 rounded-full animate-bounce delay-150"></span>
-                <span className="dot h-1.5 w-1.5 bg-gray-400 rounded-full animate-bounce delay-300"></span>
+                <motion.span
+                  className="dot h-2 w-2 bg-gradient-to-tl from-blue-600 to-violet-600 rounded-full"
+                  animate={{ y: [0, -8, 0] }}
+                  transition={{
+                    repeat: Infinity,
+                    repeatDelay: 0.3,
+                    duration: 0.6,
+                    ease: "easeInOut",
+                  }}
+                />
+                <motion.span
+                  className="dot h-2 w-2 bg-gradient-to-tl from-blue-600 to-violet-600 rounded-full"
+                  animate={{ y: [0, -8, 0] }}
+                  transition={{
+                    repeat: Infinity,
+                    repeatDelay: 0.3,
+                    duration: 0.6,
+                    ease: "easeInOut",
+                    delay: 0.15, // Stagger the animation
+                  }}
+                />
+                <motion.span
+                  className="dot h-2 w-2 bg-gradient-to-tl from-blue-600 to-violet-600 rounded-full"
+                  animate={{ y: [0, -8, 0] }}
+                  transition={{
+                    repeat: Infinity,
+                    repeatDelay: 0.3,
+                    duration: 0.6,
+                    ease: "easeInOut",
+                    delay: 0.3, // Stagger the animation
+                  }}
+                />
               </div>
-              <p className="ml-2 text-gray-500 text-xs">Typing...</p>
+              <motion.p
+                className="ml-2 bg-clip-text bg-gradient-to-tl from-blue-600 to-violet-600 text-transparent text-xs"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }} // Fade out when exiting
+                transition={{ duration: 0.6, delay: 0.4, ease: "easeInOut" }}
+              >
+                Analyzing your data...
+              </motion.p>
             </motion.div>
           )}
 
           {!botTyping && currentStep > 0 && (
             <motion.div
-              className="navigation-buttons flex justify-start items-center mt-4"
+              className="navigation-buttons flex justify-start items-center mt-1 relative"
               initial={{ opacity: 0, scale: 0.8, x: -10 }}
               animate={{ opacity: 1, scale: 1, x: 0 }}
               exit={{ opacity: 0, scale: 0.8, x: -10 }}
@@ -560,27 +614,26 @@ function ChatPage() {
             >
               {currentStep > 0 && (
                 <motion.button
-                  className="go-back-button text-gray-800 shadow-sm dark:bg-neutral-900 dark:text-blue-600 border dark:border-blue-600 border-gray-400 text-sm px-4 py-2 rounded-tl-lg rounded-bl-lg bg-gray-50 dark:hover:bg-neutral-900 hover:bg-gray-200 transition-all"
+                  className="go-back-button text-blue-700 shadow-sm font-medium dark:bg-neutral-900 dark:text-blue-600 border dark:border-blue-600 border-gray-400 text-sm px-3 py-1 rounded-tl-lg rounded-bl-lg bg-gray-50 dark:hover:bg-neutral-900 hover:bg-gray-200 transition-all"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={handleGoBack}
                 >
-                  {"<"} prev
+                  {"< "}prev
                 </motion.button>
               )}
               {currentStep < questions.length - 1 && (
                 <motion.button
-                  className="next-button text-gray-800  shadow-sm dark:bg-neutral-900 dark:text-blue-600 border dark:border-blue-600 border-gray-400 text-sm px-4 py-2 rounded-tr-lg rounded-br-lg bg-gray-50 dark:hover:bg-neutral-900 hover:bg-gray-200 transition-all"
+                  className="next-button text-blue-700  shadow-sm font-medium dark:bg-neutral-900 dark:text-blue-600 border dark:border-blue-600 border-gray-400 text-sm px-3 py-1 rounded-tr-lg rounded-br-lg bg-gray-50 dark:hover:bg-neutral-900 hover:bg-gray-200 transition-all"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => handleUserAction(input)}
                 >
-                  next {">"}
+                  next{" >"}
                 </motion.button>
               )}
             </motion.div>
           )}
-          <div ref={messageEndRef}></div>
         </div>
 
         <ChatInput

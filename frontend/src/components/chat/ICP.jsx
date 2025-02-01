@@ -8,7 +8,7 @@ const ICP = ({ icpData }) => {
         <Link
           to="/icp"
           state={icpData}
-          className="text-sm text-blue-600 transition-colors"
+          className="text-sm xs:text-sm text-blue-600 transition-colors"
         >
           View ICP Details
         </Link>

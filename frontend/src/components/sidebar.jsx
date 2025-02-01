@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.png";
+import ThemeContext from "../contexts/ThemeContext";
 
 function SideBar() {
-  const [darkMode, setDarkMode] = useState(false);
+  const { darkMode, toggleDarkMode } = useContext(ThemeContext); // Access context
 
   // Effect to toggle dark mode on the document's root
   useEffect(() => {
@@ -14,10 +15,6 @@ function SideBar() {
     }
   }, [darkMode]);
 
-  // Toggle function
-  const toggleDarkMode = () => {
-    setDarkMode((prevMode) => !prevMode);
-  };
   return (
     <div
       id="hs-application-sidebar"
@@ -126,29 +123,52 @@ function SideBar() {
             </p>
           </div>
           <div className="p-4 border-t border-gray-200 dark:border-neutral-700">
-            <a
-              className="flex justify-between items-center gap-x-3 py-2 px-3 text-sm text-gray-700 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:hover:bg-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-300 dark:focus:text-neutral-300"
-              href="#"
-              onClick={toggleDarkMode}
+            <button
+              className="flex justify-between items-center gap-x-3 py-2 px-3 text-sm text-gray-700 rounded-lg  focus:outline-none  dark:hover:bg-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-300 dark:focus:text-neutral-300"
+              onClick={(e) => {
+                e.preventDefault();
+                toggleDarkMode();
+              }}
             >
-              Theme
-              <svg
-                className="shrink-0 size-4"
-                xmlns="http://www.w3.org/2000/svg"
-                width={24}
-                height={24}
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-                <polyline points="10 17 15 12 10 7" />
-                <line x1={15} x2={3} y1={12} y2={12} />
-              </svg>
-            </a>
+              Switch Theme
+              {darkMode && darkMode ? (
+                <svg
+                  className="w-[18px] h-[18px] text-gray-800 dark:text-white"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="1.5"
+                    d="M12 21a9 9 0 0 1-.5-17.986V3c-.354.966-.5 1.911-.5 3a9 9 0 0 0 9 9c.239 0 .254.018.488 0A9.004 9.004 0 0 1 12 21Z"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  className="w-[18px] h-[18px] text-gray-800 dark:text-white"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="1.8"
+                    d="M12 5V3m0 18v-2M7.05 7.05 5.636 5.636m12.728 12.728L16.95 16.95M5 12H3m18 0h-2M7.05 16.95l-1.414 1.414M18.364 5.636 16.95 7.05M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z"
+                  />
+                </svg>
+              )}
+            </button>
           </div>
         </div>
         {/* End Footer */}

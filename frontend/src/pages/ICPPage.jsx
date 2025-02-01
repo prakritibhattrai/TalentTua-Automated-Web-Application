@@ -1,11 +1,17 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import { motion } from "framer-motion";
-import SaveButton from "../components/chat/Button";
+import PropTypes from "prop-types";
+import { useEffect } from "react";
 
-function ICPPage() {
+const ICPPage = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleGoBack = () => {
+    navigate(-1); // This takes you to the previous page
+  };
   const { recruiter, onet } = location.state || {};
   const niceToHave = onet?.niceToHave || {};
   if (!recruiter || !onet) {
@@ -22,7 +28,7 @@ function ICPPage() {
 
   const toolsAndTechnologies =
     onet?.keyProficiencies?.technicalSkills?.tools_and_technology || [];
-  const topDesirableTraits = onet?.desirableSoftSkills || [];
+  //const topDesirableTraits = onet?.desirableSoftSkills || [];
   const undesirableTraits = recruiter?.undesirableTraits || [];
   const desirableTraits = recruiter?.desirableSoftSkills || [];
   const requiredTools = recruiter?.toolProficiencies || [];
@@ -39,17 +45,22 @@ function ICPPage() {
     ]),
   ];
 
+  useEffect(() => {
+    // Scroll to top when the component mounts
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <motion.div
-      id="pdf"
       className="relative w-full lg:ps-64"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
     >
-      <div className="p-6 sm:p-12 lg:py-14">
+      <div className="p-6 sm:p-12 lg:py-14 " id="pdf">
+        <button onClick={navigate(-1)}>Go Back to Chat</button>
         <Header recruiter={recruiter} />
-        <div className="max-w-4xl py-10 border shadow-sm rounded-lg px-6 sm:px-8 lg:px-12 mx-auto mt-8 gap-6">
+        <div className="max-w-4xl py-10 border dark:border-neutral-700 shadow-sm rounded-lg px-6 xs:text-xs sm:px-8 lg:px-12 mx-auto mt-8 gap-6">
           <ShareButtons />
           <ExecutiveSummary recruiter={recruiter} />
           <TraitsSection
@@ -75,10 +86,10 @@ function ICPPage() {
       </div>
     </motion.div>
   );
-}
+};
 function EndParagraph({ recruiter }) {
   return (
-    <p className="text-sm sm:text-sm md:text-sm lg:text-sm text-gray-800 dark:text-neutral-200">
+    <p className="text-sm sm:text-sm md:text-sm lg:text-sm text-gray-800 dark:text-gray-300">
       This profile serves as a guide to educate you on the total skills,
       knowledge, abilities, and attitudes required for the role of{" "}
       {recruiter.jobTitle}. This is not meant to be all inclusive of the many
@@ -94,17 +105,46 @@ function EndParagraph({ recruiter }) {
     </p>
   );
 }
+
+EndParagraph.propTypes = {
+  recruiter: PropTypes.shape({
+    jobTitle: PropTypes.string.isRequired,
+  }).isRequired,
+};
 function exportToPDF() {
-  const element = document.getElementById("pdf");
-  html2canvas(element).then((canvas) => {
+  const element = document.getElementById("pdf"); // Get the entire content
+
+  html2canvas(element, { scale: 2 }).then((canvas) => {
+    // Set scale for better quality
     const imgData = canvas.toDataURL("image/png");
     const pdf = new jsPDF("p", "mm", "a4");
-    const imgWidth = 210;
+
+    const imgWidth = 210; // A4 width in mm
     const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+    // Add the first page with content
     pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
-    pdf.save("profile.pdf");
+
+    // Check if the content is taller than the A4 page
+    const pageHeight = pdf.internal.pageSize.height;
+    if (imgHeight > pageHeight) {
+      let remainingHeight = imgHeight - pageHeight;
+      let currentPosition = pageHeight;
+
+      // Add additional pages if necessary
+      while (remainingHeight > 0) {
+        pdf.addPage();
+        pdf.addImage(imgData, "PNG", 0, -currentPosition, imgWidth, imgHeight);
+        remainingHeight -= pageHeight;
+        currentPosition = pageHeight;
+      }
+    }
+
+    // Save the PDF
+    pdf.save("fullProfile.pdf");
   });
 }
+
 function Header({ recruiter }) {
   return (
     <motion.div
@@ -124,9 +164,15 @@ function Header({ recruiter }) {
   );
 }
 
+Header.propTypes = {
+  recruiter: PropTypes.shape({
+    jobTitle: PropTypes.string.isRequired,
+  }).isRequired,
+};
+
 function ShareButtons() {
   return (
-    <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-4">
+    <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
@@ -180,20 +226,28 @@ function ShareButtons() {
 
 function ExecutiveSummary({ recruiter }) {
   return (
-    <>
-      <h3 className="text-sm sm:text-sm lg:text-sm font-semibold text-gray-900 dark:text-blue-300 flex items-center">
+    <div className="mt-5">
+      <h3 className="text-sm sm:text-sm  lg:text-sm font-semibold text-gray-900 dark:text-white flex items-center">
         Executive Summary
       </h3>
 
-      <p className="text-sm sm:text-sm lg:text-sm text-gray-800 dark:text-neutral-200 mt-1 sm:mt-2">
+      <p className="text-sm sm:text-sm lg:text-sm text-gray-800 dark:text-gray-400 mt-4">
         This profile outlines the ideal candidate for a {recruiter.jobTitle}{" "}
         position, belonging to {recruiter.jobFamily} and {recruiter.industry}.
         This role has the potential to grow and adapt to the company’s future
         needs and requirements.
       </p>
-    </>
+    </div>
   );
 }
+
+ExecutiveSummary.propTypes = {
+  recruiter: PropTypes.shape({
+    jobTitle: PropTypes.string.isRequired,
+    jobFamily: PropTypes.string.isRequired,
+    industry: PropTypes.string.isRequired,
+  }).isRequired,
+};
 
 function TraitsSection({ title, traits }) {
   return (
@@ -217,7 +271,7 @@ function TraitsSection({ title, traits }) {
               transition={{ duration: 0.4, delay: index * 0.1 }}
             >
               <svg
-                className="w-[14px] h-[14px] min-h-3 max-h-3 min-w-3 max-w-3 text-gray-800 dark:text-white"
+                className="w-[14px] h-[14px] min-h-3 max-h-3 min-w-3 max-w-3 text-gray-800 dark:text-gray-400"
                 aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -244,6 +298,11 @@ function TraitsSection({ title, traits }) {
     </motion.div>
   );
 }
+
+TraitsSection.propTypes = {
+  title: PropTypes.string.isRequired,
+  traits: PropTypes.arrayOf(PropTypes.string).isRequired,
+};
 
 function EducationSection({
   education,
@@ -281,7 +340,7 @@ function EducationSection({
               >
                 {/* Icon with fixed size */}
                 <svg
-                  className="w-[16px] h-[16px] min-h-3 max-h-3 min-w-3 max-w-3 text-gray-800 dark:text-white"
+                  className="w-[16px] h-[16px] min-h-3 max-h-3 min-w-3 max-w-3 text-gray-800 dark:text-gray-400"
                   aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   width="20"
@@ -306,13 +365,13 @@ function EducationSection({
         </div>
       </div>
 
-      <h3 className="text-sm sm:text-sm font-medium mt-4 text-gray-800 dark:text-gray-400">
+      <h3 className="text-sm sm:text-sm font-medium mt-4 text-gray-800 dark:text-white">
         Key Proficiencies :
       </h3>
 
       <ul className="p-4">
         <li>
-          <p className="text-sm sm:text-sm font-medium text-gray-800 dark:text-gray-400">
+          <p className="text-sm sm:text-sm font-medium text-gray-800 dark:text-gray-300">
             Technical Expertise
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
@@ -324,7 +383,7 @@ function EducationSection({
                 >
                   {/* Icon with fixed size */}
                   <svg
-                    className="w-[16px] h-[16px] min-h-3 min-w-3 max-w-3 max-h-3 text-gray-800 dark:text-white"
+                    className="w-[16px] h-[16px] min-h-3 min-w-3 max-w-3 max-h-3 text-gray-800 dark:text-gray-400"
                     aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
                     width="20"
@@ -350,7 +409,7 @@ function EducationSection({
         </li>
 
         <li>
-          <p className="text-sm sm:text-sm font-medium text-gray-800 dark:text-gray-400">
+          <p className="text-sm sm:text-sm font-medium text-gray-800 dark:text-gray-300">
             Knowledge and Domain
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
@@ -362,7 +421,7 @@ function EducationSection({
                 >
                   {/* Icon */}
                   <svg
-                    className="w-[14px] h-[14px] min-h-3 min-w-3 max-w-3 max-h-3 text-gray-800 dark:text-white"
+                    className="w-[14px] h-[14px] min-h-3 min-w-3 max-w-3 max-h-3 text-gray-800 dark:text-gray-400"
                     aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
                     width="22"
@@ -390,5 +449,29 @@ function EducationSection({
     </>
   );
 }
+
+// PropTypes validation
+EducationSection.propTypes = {
+  education: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    description: PropTypes.string,
+  }).isRequired,
+  toolProficiencies: PropTypes.arrayOf(PropTypes.string).isRequired,
+  knowledge: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  requiredTools: PropTypes.arrayOf(PropTypes.string).isRequired,
+};
+
+ICPPage.propTypes = {
+  location: PropTypes.shape({
+    state: PropTypes.shape({
+      recruiter: PropTypes.object,
+      onet: PropTypes.object,
+    }),
+  }),
+};
 
 export default ICPPage;

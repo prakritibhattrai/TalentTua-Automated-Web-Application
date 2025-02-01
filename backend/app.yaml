@@ -1,0 +1,18 @@
+runtime: nodejs18
+env: standard
+
+instance_class: F2 # Optional: Define the instance class (e.g., F2, F4)
+
+env_variables:
+  DB_HOST: "35.193.251.51" # Public IP address of your Cloud SQL instance
+  DB_USER: "root" # Database username
+  DB_PASSWORD: "4pn>.OT~nTF:*0X8" # Your actual password
+  DB_NAME: "talenttuaapp2025" # Database name
+  PORT: "8080" # Port for your Node.js app
+  ONET_API_KEY: "dGFsZW50dHVhOjY4NTdzaHI="
+  ONET_API_URL: "https://services.onetcenter.org/ws/online"
+  ALLOWED_ORIGINS: "https://frontend-dot-talenttua-web-application.nn.r.appspot.com"
+  NODE_ENV: "production"
+handlers:
+  - url: /.* # This will route all traffic to your backend
+    script: auto

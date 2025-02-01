@@ -16,14 +16,19 @@ const EditableSummary = ({ onSubmit, userData }) => {
   };
 
   return (
-    <div className="border border-gray-200 p-4 rounded-lg">
-      <ul className="text-sm text-gray-800 pl-5">
+    <div className="border border-gray-200 dark:border-neutral-700 p-4 rounded-lg">
+      <ul className="text-sm text-gray-800 dark:text-white pl-5 overflow-scroll max-h-72">
         {Object.entries(editedData).map(
           ([key, value]) =>
             key !== "traitMatrix" &&
             key !== "welcome" && (
-              <li key={key} className="mb-2 text-gray-700 text-sm leading-snug">
-                <span className="text-sm text-black">{formatKey(key)}:</span>{" "}
+              <li
+                key={key}
+                className="mb-2 text-gray-700 text-sm leading-relaxed dark:text-slate-300"
+              >
+                <span className="text-sm text-black font-medium dark:text-white">
+                  {formatKey(key)}:
+                </span>{" "}
                 {key === "jobTitle" && value ? (
                   <span>{value.jobTitle || value.occupation.title}</span>
                 ) : Array.isArray(value) ? (

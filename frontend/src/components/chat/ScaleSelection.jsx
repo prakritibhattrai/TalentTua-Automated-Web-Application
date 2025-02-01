@@ -117,12 +117,16 @@ const ScaleSelection = ({ onSelect, rated = {} }) => {
   };
 
   return (
-    <div className="flex flex-col max-h-screen items-center p-4 rounded-lg border bg-white border-gray-200 w-full mx-auto">
-      <div className="w-full mb-4 text-sm text-blue-600">
+    <div
+      className="flex flex-col max-h-screen items-center p-3 rounded-lg border bg-white border-gray-200
+    
+    dark:border-neutral-700 dark:bg-neutral-900  w-full mx-auto"
+    >
+      <div className="w-full mb-2 text-xs text-blue-600">
         <p className="mb-1">
           Note: The info icon{" "}
           <svg
-            className="inline w-4 h-4 text-blue-500"
+            className="inline w-4 h-4 text-blue-500 "
             xmlns="http://www.w3.org/2000/svg"
             fill="currentColor"
             viewBox="0 0 24 24"
@@ -138,19 +142,22 @@ const ScaleSelection = ({ onSelect, rated = {} }) => {
       </div>
 
       {/* Scrollable list container */}
-      <div className="w-full overflow-y-scroll flex-1">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
+      <div className="w-full overflow-y-scroll max-h-lvh flex-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-5">
           {competencies.map((competency, index) => (
             <div
-              key={competency.competency}
+              key={`${competency.competency}-${index}`}
               ref={competencyRefs.current[index]}
-              className="p-3 border rounded-md shadow-sm bg-gray-50"
+              className="p-3 border rounded-md shadow-sm bg-gray-50 dark:bg-neutral-900 dark:border-neutral-700"
             >
-              <h3 className="text-gray-900 text-sm mb-2 flex justify-between items-center border-b border-gray-200 pb-1">
+              <h3
+                className="text-gray-800 text-sm mb-2 flex justify-between items-center border-b dark:text-white
+          dark:border-neutral-700 border-gray-200 pb-1"
+              >
                 {competency.competency}
                 <button
                   onClick={() => handleMoreInfoClick(competency)}
-                  className="text-blue-600 text-xs underline flex items-center"
+                  className="text-blue-600 text-xs dark:text-white underline flex items-center"
                 >
                   <svg
                     className="w-[16px] h-[16px] text-blue-500"
@@ -167,13 +174,16 @@ const ScaleSelection = ({ onSelect, rated = {} }) => {
                 </button>
               </h3>
 
-              {competency.traits.map((trait) => (
-                <div key={trait.name} className="mb-4">
-                  <p className="text-gray-900 text-xs mb-1">
-                    <span className="text-sm text-gray-900">
+              {competency.traits.map((trait, traitIndex) => (
+                <div
+                  key={`${competency.competency}-${trait.name}-${traitIndex}`}
+                  className="mb-4"
+                >
+                  <p className="text-gray-800 text-xs">
+                    <span className="text-sm text-gray-900 dark:text-white">
                       {trait.name} :{" "}
                     </span>{" "}
-                    <span className="text-gray-800 text-sm">
+                    <span className="text-gray-700 text-[13px] dark:text-white">
                       {trait.description}
                     </span>
                   </p>
@@ -191,8 +201,12 @@ const ScaleSelection = ({ onSelect, rated = {} }) => {
                         }
                         className={`w-5 h-5 rounded text-xs mt-2 border transition-all duration-200 ease-in-out ${
                           ratings[competency.competency][trait.name] === scale
-                            ? "bg-blue-600 text-white border-blue-500"
-                            : "bg-gray-200 text-gray-800 border-gray-300 hover:bg-blue-500 hover:text-white"
+                            ? "bg-blue-600 text-white border-blue-500 dark:bg-slate-900 dark:border-blue-600 focus:bg-blue-600"
+                            : "bg-gray-200 text-gray-800 dark:text-blue-600 border-gray-300 hover:bg-blue-500 dark:bg-neutral-900 dark:border-blue-600 hover:text-white focus:bg-blue-600 dark:hover:bg-blue-600 dark:hover:text-white"
+                        } ${
+                          ratings[competency.competency][trait.name] === scale
+                            ? "ring-2 ring-blue-500"
+                            : ""
                         }`}
                       >
                         {scale}

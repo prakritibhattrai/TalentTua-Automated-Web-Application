@@ -6,7 +6,11 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      screens: {
+        xs: '480px',  // This will create a custom `xs` breakpoint at 480px
+      },
+    },
   },
   plugins: [],
 }

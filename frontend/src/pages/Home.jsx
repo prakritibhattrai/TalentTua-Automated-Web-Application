@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion"; // Import motion from framer-motion
 import logo from "../assets/logo.png";
+import ThemeContext from "../contexts/ThemeContext";
+import { useContext } from "react";
 
 const Home = () => {
   const [inputValue, setInputValue] = useState("");
@@ -18,20 +20,32 @@ const Home = () => {
   };
 
   const handleChange = (event) => {
-    navigate("/chat", { state: { input: inputValue } });
+    navigate("/chat", { darkMode: { darkMode } });
     setInputValue(event.target.value);
   };
+  const { darkMode, toggleDarkMode } = useContext(ThemeContext); // Access context
+
+  // Effect to toggle dark mode on the document's root
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [darkMode]);
+
+  // Toggle function
 
   useEffect(() => {
     const changingTexts = [
-      "🎯 Target the perfect skill-based job matches!",
-      "⚙️ Find opportunities that align with your expertise!",
-      "📍 Personalized job suggestions based on your skills!",
-      "🚧 Identify and bridge your skill gaps!",
-      "🧠 Create an ideal candidate profile with AI-powered insights!",
-      "🌱 Grow your professional network effortlessly!",
-      "🔑 Unlock new hiring opportunities without the resume hassle!",
-      "🌍 Explore a world of skill-based career opportunities!",
+      "🎯 Find your perfect skill match!",
+      "⚙️ Hire with skill, not resumes!",
+      "📍 Personalized job suggestions!",
+      "🚀 Bridge your skill gaps fast!",
+      "🧠 Build your ideal candidate profile!",
+      "🌱 Grow your network effortlessly!",
+      "🔑 Unlock skills-based hiring!",
+      "🌍 Explore endless career paths!",
     ];
 
     let index = 0;
@@ -44,7 +58,10 @@ const Home = () => {
   }, []);
 
   return (
-    <main id="content" className="dark:from-neutral-900 dark:to-neutral-800">
+    <main
+      id="content"
+      className="dark:bg-neutral-900 max-h-screen dark:to-neutral-800"
+    >
       <div className="h-screen flex flex-col pb-6">
         <div className="h-full flex flex-col justify-center">
           <div className="-mt-20 max-w-4xl w-full text-center mx-auto px-4 sm:px-6 lg:px-8">
@@ -85,7 +102,7 @@ const Home = () => {
               animate={{ opacity: 1 }}
               transition={{ duration: 1, delay: 0.5 }}
             >
-              AI-powered automated skilled-based hiring platform.
+              Over 100+ ICPs have been generated already!
             </motion.p>
           </div>
 
@@ -151,11 +168,57 @@ const Home = () => {
 
         {/* Motion Component for Footer */}
         <motion.footer
-          className="mt-auto max-w-4xl text-center mx-auto px-4 sm:px-6 lg:px-8"
+          className="mt-auto flex max-w-4xl text-center mx-auto px-4 gap-6 sm:px-6 lg:px-8"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 1 }}
         >
+          <button
+            className="text-xs flex gap-2 text-gray-600 dark:text-neutral-500 items-start"
+            onClick={(e) => {
+              e.preventDefault();
+              toggleDarkMode();
+            }}
+          >
+            {darkMode && darkMode ? " Theme Light" : "Theme  Dark"}
+            {darkMode && darkMode ? (
+              <svg
+                className="w-[16px] h-[16px] text-gray-800 dark:text-gray-400"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="1.8"
+                  d="M12 5V3m0 18v-2M7.05 7.05 5.636 5.636m12.728 12.728L16.95 16.95M5 12H3m18 0h-2M7.05 16.95l-1.414 1.414M18.364 5.636 16.95 7.05M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z"
+                />
+              </svg>
+            ) : (
+              <svg
+                className="w-[16px] h-[16px] text-gray-800 dark:text-gray-400"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="1.5"
+                  d="M12 21a9 9 0 0 1-.5-17.986V3c-.354.966-.5 1.911-.5 3a9 9 0 0 0 9 9c.239 0 .254.018.488 0A9.004 9.004 0 0 1 12 21Z"
+                />
+              </svg>
+            )}
+          </button>
           <p className="text-xs text-gray-600 dark:text-neutral-500">
             Copyright @ TalentTua Candidate Screening. All rights reserved.
           </p>

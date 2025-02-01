@@ -15,11 +15,15 @@ const CheckboxOptions = ({ optionsToDisplay, onSelect, selected, name }) => {
     }
   }, [selected]);
 
-  const maxSelectionLimit = name === "toolProficiencies" ? 15 : 5;
+  const maxSelectionLimit =
+    name === "toolProficiencies"
+      ? 20
+      : name === "stakeholderEngagement"
+      ? 20
+      : 5;
 
   const handleCheckboxChange = (option, checked) => {
     setWarning(""); // Clear any previous warning
-
     if (checked && selectedOptions.length >= maxSelectionLimit) {
       setWarning(`You can only select up to ${maxSelectionLimit} items.`);
       return;
@@ -39,6 +43,28 @@ const CheckboxOptions = ({ optionsToDisplay, onSelect, selected, name }) => {
   };
 
   const handleSave = () => {
+    if (
+      selectedOptions.length > maxSelectionLimit ||
+      selectedOptions.length === 0
+    ) {
+      setWarning(`You can only select up to ${maxSelectionLimit} items.`);
+      if (maxSelectionLimit === 5 && selectedOptions.length !== 5) {
+        setWarning(`You must select exactly 5 items.`);
+        return;
+      }
+      if (maxSelectionLimit !== 5 && selectedOptions.length === 0) {
+        setWarning(
+          `You must select at least one item or please type and enter your preferred items.`
+        );
+        return;
+      }
+    }
+    if (name === "undesirableTraits" || name === "desirableSoftSkills") {
+      if (selectedOptions.length !== 5) {
+        setWarning(`You must select exactly 5 items for ${name}.`);
+        return;
+      }
+    }
     const optionsToSubmit = [...selectedOptions];
     if (customInput) {
       optionsToSubmit.push(customInput);
@@ -47,14 +73,16 @@ const CheckboxOptions = ({ optionsToDisplay, onSelect, selected, name }) => {
   };
 
   return (
-    <div className="space-y-4 border rounded-lg p-5">
+    <div className="space-y-4 border dark:border-neutral-700 rounded-lg p-5">
       {/* Options */}
-      <div className="grid grid-cols-4 gap-2 max-h-48 overflow-y-auto">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-2 max-h-48 overflow-y-auto">
         {optionsToDisplay.map((option, index) => (
           <label
             key={index}
-            className={`flex items-start space-x-2 px-2 py-1 text-xs transition-all duration-200 cursor-pointer ${
-              selectedOptions.includes(option) ? "" : "bg-white border-gray-300"
+            className={`flex items-start space-x-2 px-2 py-1 text-[13px] transition-all duration-200 cursor-pointer ${
+              selectedOptions.includes(option)
+                ? ""
+                : "bg-white dark:bg-neutral-900 dark:text-white border-gray-300"
             }`}
           >
             <input
@@ -65,14 +93,16 @@ const CheckboxOptions = ({ optionsToDisplay, onSelect, selected, name }) => {
               className="text-blue-500 border-gray-300 checkbox min-h-3.5 min-w-3.5 mt-1"
               style={{ width: "12px", height: "12px" }} // Set fixed size here
             />
-            <span className="text-sm text-gray-700">{option}</span>
+            <span className="text-[13px] font-normal text-gray-700 dark:text-white">
+              {option}
+            </span>
           </label>
         ))}
 
         {/* Custom Option */}
         {customInput && (
           <label
-            className={`flex  space-x-2 px-2 py-1 transition-all text-xs duration-200 cursor-pointer ${
+            className={`flex space-x-2 px-2 py-1 transition-all text-xs duration-200 cursor-pointer ${
               selectedOptions.includes(customInput)
                 ? "bg-blue-100"
                 : "bg-white border-gray-300"
@@ -85,10 +115,9 @@ const CheckboxOptions = ({ optionsToDisplay, onSelect, selected, name }) => {
                 handleCheckboxChange(customInput, e.target.checked)
               }
               checked={selectedOptions.includes(customInput)} // Ensure it reflects selected state
-              className="text-blue-500 h-4 w-4 border-gray-300 focus:ring focus:ring-blue-200"
-              // Set fixed size here
+              className="text-blue-500 h-4 w-4 border-gray-300 dark:bg-neutral-900 focus:ring focus:ring-blue-200"
             />
-            <span className="text-sm text-gray-700">{customInput}</span>
+            <span className="text-[13px] text-gray-700">{customInput}</span>
           </label>
         )}
 
@@ -98,7 +127,7 @@ const CheckboxOptions = ({ optionsToDisplay, onSelect, selected, name }) => {
           .map((option, index) => (
             <label
               key={index}
-              className="grid grid-cols-3 p-4 items-center text-xs space-x-2 gap-2 px-2 py-1 transition-all duration-200 cursor-pointer "
+              className="grid grid-cols-3 p-4 items-center text-xs space-x-2 gap-2 px-2 py-1 transition-all duration-200 cursor-pointer"
             >
               <input
                 type="checkbox"
@@ -108,13 +137,13 @@ const CheckboxOptions = ({ optionsToDisplay, onSelect, selected, name }) => {
                 className="text-blue-500 border-gray-300 checkbox min-h-3.5 min-w-3.5 mt-1"
                 style={{ width: "12px", height: "12px" }} // Set fixed size here
               />
-              <span className="text-sm text-gray-800">{option}</span>
+              <span className="text-[13px] text-gray-800">{option}</span>
             </label>
           ))}
       </div>
 
       {/* Warning Message */}
-      {warning && <p className="text-red-500 text-sm">{warning}</p>}
+      {warning && <p className="text-red-500 text-xs">Oops, {warning}...</p>}
 
       <div className="w-full flex justify-end">
         <div className="flex items-end h-22">
@@ -139,7 +168,7 @@ const CheckboxOptions = ({ optionsToDisplay, onSelect, selected, name }) => {
               }
             }}
             placeholder="Type and Enter"
-            className="p-1.5 border border-gray-400 shadow-sm bg-gray-50 rounded-lg w-60 text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-300"
+            className="p-1.5 border border-gray-400 shadow-sm dark:bg-neutral-800 dark:text-white dark:border-none bg-gray-50 rounded-lg w-full sm:w-60 text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-300"
           />
 
           <div className="mt-2 ml-3">

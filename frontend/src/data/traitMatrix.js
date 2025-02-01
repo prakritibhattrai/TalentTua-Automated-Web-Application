@@ -194,22 +194,6 @@ export const staticData = {
                     , shortDescription: "Happy with current knowledge and practices"
                 }
             ]
-        }
-        ,
-        {
-            competency: "Initiative",
-            traits: [
-                {
-                    name: "Proactive",
-                    description: "Anticipates needs and takes action without being prompted, identifying opportunities and taking initiative to drive progress.",
-                    shortDescription: "Eager to learn and explore."
-                },
-                {
-                    name: "Stable",
-                    description: "Maintains a consistent and reliable approach to their work, ensuring actions are aligned with goals and priorities which provides a sense of calm and grounding to others."
-                    , shortDescription: "Happy with current knowledge and practices"
-                }
-            ]
         }, {
             competency: "Customer Experience",
             traits: [
@@ -347,8 +331,7 @@ export const staticData = {
                     , shortDescription: "Happy with current knowledge and practices"
                 }
             ]
-        }
-        ,
+        },
         {
             competency: "Initiative",
             traits: [
@@ -363,10 +346,7 @@ export const staticData = {
                     , shortDescription: "Happy with current knowledge and practices"
                 }
             ]
-        }
-
-        ,
-
+        },
         {
             competency: "Negotiation",
             traits: [

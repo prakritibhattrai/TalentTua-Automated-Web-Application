@@ -1,0 +1,18 @@
+runtime: nodejs18
+
+service: frontend # This tells GCP that the app is part of the "frontend" service
+
+handlers:
+  - url: /assets
+    static_dir: dist/assets # Serve assets like JS, CSS, images from the dist/assets directory
+
+  - url: /
+    static_files: dist/index.html # Serve the index.html file from dist directory
+    upload: dist/index.html
+
+  - url: /(.+)
+    static_files: dist/\1 # Serve other static files (like JS, CSS, images) from dist
+    upload: dist/(.*)
+
+env_variables:
+  VITE_API_URL: https://talenttua-web-application.nn.r.appspot.com # Example of passing environment variables

@@ -7,17 +7,15 @@ import Layout from "./components/layout";
 import Dashboard from "./pages/Dashboard";
 
 function App() {
-  //const [count, setCount] = useState(0);
-
   return (
     <>
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/" element={<Layout />}>
-            <Route path="chat" element={<ChatPage />} />
-            <Route path="icp" element={<ICPPage />} />
-            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="/chat" element={<ChatPage />} />
+            <Route path="/icp" element={<ICPPage />} />
+            <Route path="/dashboard" element={<Dashboard />} />
           </Route>
         </Routes>
       </Router>

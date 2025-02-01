@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import SaveButton from "./Button";
 import PropTypes from "prop-types";
 import { motion } from "framer-motion";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 const AutoCompleteInput = ({ onSelect }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -32,7 +33,12 @@ const AutoCompleteInput = ({ onSelect }) => {
       try {
         setLoading(true);
         setError(null);
-        const response = await axios.get(`http://localhost:3000/occupations`);
+        const response = await axios.get(`${API_BASE_URL}/occupations`);
+        if (response.data && response.data.jobTitles.length < 0) {
+          setError(
+            "Cannot find the job titles. Please enter your preferred job title below manually."
+          );
+        }
         // Sort and filter the response
         const sortedSuggestions = response.data.jobTitles.sort((a, b) => {
           const startsWithA = a.title
@@ -41,21 +47,28 @@ const AutoCompleteInput = ({ onSelect }) => {
           const startsWithB = b.title
             .toLowerCase()
             .startsWith(searchTerm.toLowerCase());
+
+          // Prioritize titles that start with searchTerm
           if (startsWithA && !startsWithB) return -1;
           if (!startsWithA && startsWithB) return 1;
+
+          // If both start with the search term or neither, sort alphabetically
           return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
         });
 
         cache.current[searchTerm] = sortedSuggestions;
         setSuggestions(sortedSuggestions);
       } catch (err) {
-        setError("Failed to fetch suggestions. Please try again.");
+        setError(
+          "No occupations found. Please enter your preferred job title below manually."
+        );
       } finally {
         setLoading(false);
       }
     };
 
     const debounceFetch = debounce(fetchSuggestions, 500);
+
     debounceFetch();
   }, [searchTerm]);
 
@@ -67,11 +80,22 @@ const AutoCompleteInput = ({ onSelect }) => {
       try {
         setLoading(true);
         const response = await axios.get(
-          `http://localhost:3000/occupations/jobTitles/${selectedOccupation.id}`
+          `${API_BASE_URL}/occupations/jobTitles/${selectedOccupation.id}`
         );
+        if (response.data && response.data.jobTitles.length > 0) {
+          setJobTitles(response.data.jobTitles);
+        } else {
+          setJobTitles([]);
+          setError(
+            "No job titles found. Please enter your preferred job title below."
+          );
+        }
+
         setJobTitles(response.data.jobTitles);
       } catch (err) {
-        setError("Failed to fetch job titles. Please try again.");
+        setError(
+          "No job titles found. Please enter your preferred job title below."
+        );
       } finally {
         setLoading(false);
       }
@@ -122,17 +146,20 @@ const AutoCompleteInput = ({ onSelect }) => {
       <div className="space-y-4 w-full">
         {/* Occupation Search Section */}
         <div className="w-full">
+          {error && <p className="text-red-500 mt-2 text-xs sm:xs">{error}</p>}
           <label
             htmlFor="occupation-input"
-            className="block mb-2 text-sm text-gray-800 dark:text-neutral-200 sm:text-base"
+            className="block mb-2 text-[12px] text-gray-800 dark:text-neutral-200 sm:text-base"
           >
-            Please select the closest occupation:
+            Not seeing the occupation you are looking?
+            <br></br> Fill in the preferred job title field below with the title
+            you are looking to hire for
           </label>
           <div className="relative">
             <input
               id="occupation-input"
               type="text"
-              className="border border-gray-400 shadow-sm dark:border-neutral-700 dark:text-neutral-200 dark:bg-neutral-900 text-sm text-gray-700 rounded-lg p-1 pl-8 w-full focus:ring-1 focus:ring-blue-600 focus:outline-none sm:text-base"
+              className="border border-gray-400 shadow-sm dark:border-neutral-700 placeholder:text-[13px] text-[13px] dark:text-neutral-200 dark:bg-neutral-900 text-sm text-gray-700 rounded-lg p-1 pl-8 w-full focus:ring-1 focus:ring-blue-600 focus:outline-none"
               placeholder="Type, search and select occupation ..."
               value={searchTerm}
               onChange={handleInputChange}
@@ -153,7 +180,7 @@ const AutoCompleteInput = ({ onSelect }) => {
             />
             <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
               <svg
-                className="w-3 h-3 text-gray-500 dark:text-neutral-400 sm:w-4 sm:h-4"
+                className="w-2.5 h-2.5 text-gray-500 dark:text-neutral-400 sm:w-3 sm:h-3"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -173,11 +200,9 @@ const AutoCompleteInput = ({ onSelect }) => {
               </div>
             )}
           </div>
-          {error && (
-            <p className="text-red-500 mt-2 text-sm sm:text-base">{error}</p>
-          )}
+
           {!loading && suggestions.length === 0 && searchTerm.trim() && (
-            <p className="text-gray-500 mt-2 text-sm sm:text-base">
+            <p className="text-red-500 mt-2 text-xs sm:text-xs">
               No results found.
             </p>
           )}
@@ -186,15 +211,21 @@ const AutoCompleteInput = ({ onSelect }) => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="bg-white border text-sm max-w-80 dark:text-neutral-200 border-gray-300 dark:border-neutral-700 dark:bg-neutral-900 rounded-lg shadow-md overflow-auto max-h-40 mt-2 sm:max-w-full"
+              className={`border border-gray-400 shadow-sm dark:border-neutral-700 text-[13px] dark:text-neutral-200 dark:bg-neutral-900 
+                text-sm text-gray-700 rounded-lg p-1 w-full focus:ring-1 focus:ring-blue-600 focus:outline-none 
+                ${
+                  suggestions.length > 0
+                    ? "max-h-36 overflow-scroll"
+                    : "overflow-hidden max-h-0"
+                }`}
             >
               {suggestions.map((suggestion, index) => (
                 <motion.li
-                  key={suggestion.id}
+                  key={index}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className={`px-4 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-neutral-800 dark:hover:border-blue-500 ${
+                  className={`px-4 py-2 cursor-pointer  hover:bg-gray-100 dark:hover:bg-neutral-800 dark:hover:border-blue-500 ${
                     index === highlightedIndex
                       ? "bg-blue-100 dark:bg-neutral-900 dark:text-blue-500 text-blue-500"
                       : ""
@@ -210,66 +241,60 @@ const AutoCompleteInput = ({ onSelect }) => {
           )}
         </div>
       </div>
-
       {/* Job Title Section */}
       {selectedOccupation && (
-        <div className="space-y-6 rounded-lg w-full text-gray-800 dark:border-neutral-700 dark:bg-neutral-900 transition-opacity duration-300 ease-in-out">
-          <div className="w-full">
-            <label
-              htmlFor="job-title"
-              className="block mb-2 text-sm text-gray-800 dark:text-neutral-200 sm:text-base"
-            >
-              Select Job Title for {selectedOccupation?.title || ""}
-            </label>
-            <select
-              id="job-title"
-              className="border border-gray-400 shadow-sm dark:text-neutral-200 text-sm text-gray-700 dark:border-neutral-700 dark:bg-neutral-900 bg-white rounded-lg p-1 w-full focus:ring-1 focus:ring-blue-600 focus:outline-none sm:text-base"
-              value={selectedJobTitle}
-              onChange={handleJobTitleChange}
-            >
-              <option value="">Select a job title</option>
-              {jobTitles &&
-                jobTitles.map((jobTitle) => (
-                  <option key={jobTitle?.id} value={jobTitle?.title}>
-                    {jobTitle.title}
-                  </option>
-                ))}
-            </select>
-          </div>
+        <div className="space-y-2 rounded-lg w-full text-gray-800 dark:border-neutral-700 dark:bg-neutral-900 transition-opacity duration-300 ease-in-out">
+          <label
+            htmlFor="job-title"
+            className="block text-sm text-gray-800 dark:text-neutral-200 sm:text-base"
+          >
+            Select Job Title for {selectedOccupation?.title || ""}
+          </label>
+          <select
+            id="job-title"
+            className="border border-gray-400 shadow-sm dark:border-neutral-700 placeholder:text-[13px] text-[13px] dark:text-neutral-200 dark:bg-neutral-900 text-sm text-gray-700 rounded-lg p-1.5 w-full focus:ring-1 focus:ring-blue-600 focus:outline-none"
+            value={selectedJobTitle}
+            onChange={handleJobTitleChange}
+          >
+            <option value="">Select a job title</option>
+            {jobTitles &&
+              jobTitles.map((jobTitle) => (
+                <option key={jobTitle?.id} value={jobTitle?.title}>
+                  {jobTitle.title}
+                </option>
+              ))}
+          </select>
         </div>
       )}
+      <span className="text-sm text-center p-0 m-0 dark:text-white">Or</span>
 
-      <div className="space-y-4 w-full flex-grow">
-        <div className="w-full">
-          <p className="text-center text-sm text-gray-800 sm:text-base">Or</p>
-          <label
-            htmlFor="custom-job-title"
-            className="block mb-1 text-sm text-gray-700 dark:text-neutral-200 sm:text-base"
-          >
-            Your preferred job title:
-          </label>
-          <div className="relative">
-            <input
-              id="custom-job-title"
-              type="text"
-              className="border border-gray-400 shadow-sm dark:border-neutral-700 dark:text-neutral-200 dark:bg-neutral-900 text-sm text-gray-700 rounded-lg p-1 pl-3 w-full focus:ring-1 focus:ring-blue-600 focus:outline-none sm:text-base"
-              placeholder="Preferred job title ..."
-              value={jobTitle}
-              onChange={(event) => {
-                handleJobTitleChange(event);
-                setJobTitle(event.target.value);
-              }}
-            />
-            {loading && (
-              <div className="absolute inset-y-0 right-3 flex items-center">
-                <div className="spinner border-2 border-blue-600 border-t-transparent rounded-full w-5 h-5 animate-spin"></div>
-              </div>
-            )}
-          </div>
+      <div className=" w-full flex-grow">
+        <label
+          htmlFor="custom-job-title"
+          className="block mb-1 text-sm text-gray-700 dark:text-neutral-200 sm:text-base"
+        >
+          Your preferred job title:
+        </label>
+        <div className="relative">
+          <input
+            id="custom-job-title"
+            type="text"
+            className="border border-gray-400 text-[13px] shadow-sm dark:border-neutral-700 placeholder:text[13px] dark:text-neutral-200 dark:bg-neutral-900 text-gray-700 rounded-lg p-1 pl-3 w-full focus:ring-1 focus:ring-blue-600 focus:outline-none"
+            placeholder="Preferred job title ..."
+            value={jobTitle}
+            onChange={(event) => {
+              handleJobTitleChange(event);
+              setJobTitle(event.target.value);
+            }}
+          />
+          {loading && (
+            <div className="absolute inset-y-0 right-3 flex items-center">
+              <div className="spinner border-2 border-blue-600 border-t-transparent rounded-full w-5 h-5 animate-spin"></div>
+            </div>
+          )}
         </div>
       </div>
-
-      <div className="mt-6 w-full flex justify-end">
+      <div className=" w-full flex justify-end">
         <SaveButton onClick={handleSave} />
       </div>
     </div>

@@ -8,7 +8,7 @@ const SaveButton = ({ onClick, label = "Save", className = "", icon }) => {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={onClick}
-        className={`bg-gray-600 text-white text-sm px-3 py-2 rounded-lg flex items-center ${className}`}
+        className={`bg-gray-600 text-white text-sm px-3 dark:bg-blue-600 py-2 rounded-lg flex items-center ${className}`}
         aria-label="Save Data"
         role="button"
       >
@@ -16,7 +16,7 @@ const SaveButton = ({ onClick, label = "Save", className = "", icon }) => {
           <img src={icon} alt="icon" className="w-3 h-3 me-2" />
         ) : (
           <svg
-            className="w-[16px] h-[16px] text-white mr-1 dark:text-white"
+            className="w-[16px] h-[16px] text-white mr-1 dark:text-white dark:bg-blue-600"
             aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             width="24"

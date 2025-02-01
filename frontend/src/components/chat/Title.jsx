@@ -16,10 +16,10 @@ const Title = () => {
       transition={{ duration: 1 }}
     >
       <h1 className="text-2xl font-bold text-gray-800 sm:text-3xl md:text-3xl lg:text-4xl dark:text-white">
-        Welcome to TalentTua AI
+        Welcome to TalentTua
       </h1>
       <p className="mt-3 text-gray-600 dark:text-neutral-400">
-        Your AI-powered copilot for hiring.
+        Your copilot for skilled based hiring
       </p>
     </motion.div>
   );

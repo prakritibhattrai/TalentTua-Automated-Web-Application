@@ -29,7 +29,6 @@ const JobController = {
             return res.status(200).json(responseData);
 
         } catch (error) {
-            console.error('Error processing job data:', error);
             return res.status(500).json({
                 error: 'An internal server error occurred'
             });
@@ -48,7 +47,6 @@ const JobController = {
             return res.status(200).json(jobs);
 
         } catch (error) {
-            console.error('Error fetching jobs:', error);
             return res.status(500).json({ error: 'Failed to fetch jobs' });
         }
     },
@@ -67,8 +65,14 @@ const JobController = {
                 toolProficiencies,
                 roleDescription
             } = req.body;
+
             const sanitizedData = {
                 jobTitle: jobTitle?.jobTitle?.trim() || jobTitle?.occupation?.title?.trim() || jobTitle?.selectedJobTitle?.trim(),
+                allTitles: [
+                    jobTitle?.jobTitle?.trim() || "",
+                    jobTitle?.occupation?.title?.trim() || "",
+                    jobTitle?.selectedJobTitle?.trim() || ""
+                ].filter(Boolean).join(', '),
                 selectedJobTitle: jobTitle?.selectedJobTitle?.trim() || null,
                 occupation: jobTitle?.occupation?.title?.trim() || null,
                 jobFamily: jobFamily?.trim() || null,
@@ -87,25 +91,28 @@ const JobController = {
                 typeof value === 'object' && value !== null ? JSON.stringify(value) : value
             );
 
-            const connection = db.promise();
-            await connection.beginTransaction();
+            // const connection = db.promise();
+            // await connection.beginTransaction();
 
             try {
-                // Insert sanitized values into the database
-                const [results] = await connection.execute(
-                    `INSERT INTO jobs (
-            job_title, alternate_title, occupation, job_family, industry, seniority_level,
-            stakeholder_engagement, trait_matrix, desirable_soft_skills, undesirable_traits, 
-            tool_proficiencies, role_description
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
-                    sanitizedValues
-                );
-                console.log(results)
-                //const [results] = ["Data inserted successfully"];
-                const occupations = await JobController.fetchJobOccupation(sanitizedData.jobTitle);
+                // Commented out the database insertion code for now
+                // const [results] = await connection.execute(
+                //     `INSERT INTO jobs (
+                //         job_title, alternate_title, occupation, job_family, industry, seniority_level,
+                //         stakeholder_engagement, trait_matrix, desirable_soft_skills, undesirable_traits, 
+                //         tool_proficiencies, role_description
+                //     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+                //     sanitizedValues
+                // );
+
+                // For now, simulate a successful result
+                const results = { insertId: 1 }; // Placeholder for inserted job ID
+
+                // Simulate occupation fetch logic
+                const occupations = await JobController.fetchJobOccupation(sanitizedData.allTitles);
 
                 if (!occupations?.length) {
-                    await connection.commit();
+                    // await connection.commit();
                     return res.status(404).json({
                         error: 'No occupations found for the provided job title',
                         jobId: results?.insertId?.toString() || 'N/A'
@@ -114,7 +121,7 @@ const JobController = {
 
                 const occupationData = await JobController.processOccupationData(occupations);
 
-                await connection.commit();
+                // await connection.commit();
 
                 if (!occupationData) {
                     return res.status(404).json({
@@ -138,18 +145,18 @@ const JobController = {
                 });
 
             } catch (error) {
-                await connection.rollback();
+                // await connection.rollback();
                 throw error;
             }
 
         } catch (error) {
-            console.error('Error in saveJob:', error);
             return res.status(500).json({
                 error: 'An error occurred while saving the job',
                 details: process.env.NODE_ENV === 'development' ? error.message : undefined
             });
         }
     },
+
 
     fetchJobOccupation: async (title) => {
         try {
@@ -168,7 +175,6 @@ const JobController = {
             }
             throw new Error(`No occupations found for job title: ${title}`);
         } catch (error) {
-            console.error('Error fetching job occupation:', error.message);
             throw new Error(`Failed to fetch occupations for job title: ${title}. ${error.message}`);
         }
     },
@@ -193,8 +199,7 @@ const JobController = {
 
             return response.data || null;
         } catch (error) {
-            console.error(`Error fetching job occupation ${type}:`, error.message);
-            return null;
+            res.status(500).json({ error: 'An internal error occurred.', details: apiError });
         }
     },
 

@@ -9,6 +9,7 @@ export const MessageList = ({
   onSubmit,
   userData,
   icpData,
+  messageEndRef,
 }) => (
   <ul className="mt-16 space-y-5">
     {messages &&
@@ -20,6 +21,7 @@ export const MessageList = ({
           onSubmit={onSubmit}
           userData={userData}
           icpData={icpData}
+          messageEndRef={messageEndRef}
         />
       ))}
   </ul>
@@ -33,7 +35,14 @@ MessageList.propTypes = {
   icpData: PropTypes.object.isRequired,
 };
 
-const MessageItem = ({ message, onSelect, onSubmit, userData, icpData }) => {
+const MessageItem = ({
+  message,
+  onSelect,
+  onSubmit,
+  userData,
+  icpData,
+  messageEndRef,
+}) => {
   const isBot = message.sender === "bot";
 
   return (
@@ -47,15 +56,19 @@ const MessageItem = ({ message, onSelect, onSubmit, userData, icpData }) => {
       transition={{ duration: 0.5 }}
     >
       {isBot ? (
-        <BotMessage
-          message={message}
-          onSelect={onSelect}
-          onSubmit={onSubmit}
-          userData={userData}
-          icpData={icpData}
-        />
+        <>
+          <BotMessage
+            message={message}
+            onSelect={onSelect}
+            onSubmit={onSubmit}
+            userData={userData}
+            icpData={icpData}
+          />
+        </>
       ) : (
-        <UserMessage message={message} />
+        <>
+          <UserMessage message={message} />
+        </>
       )}
     </motion.li>
   );
@@ -93,16 +106,16 @@ const UserMessage = ({ message }) => {
     }
     return typeof message.content === "object" ? (
       Array.isArray(message.content) ? (
-        <div className="bg-blue-600 w-fit text-white inline-block dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+        <div className="bg-blue-600 w-fit text-white inline-block dark:bg-gray-800 p-3 rounded-lg shadow-sm">
           {message.content.join(", ")}
         </div>
       ) : (
-        <div className="bg-blue-600 w-fit text-white inline-block dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+        <div className="bg-blue-600 w-fit text-white inline-block dark:bg-gray-800 p-3 rounded-lg shadow-sm">
           {JSON.stringify(message.content)}
         </div>
       )
     ) : (
-      <div className="bg-blue-600 w-fit text-white inline-block dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+      <div className="bg-blue-600 w-fit text-white inline-block dark:bg-gray-800 p-3 rounded-lg shadow-sm">
         {message.content}
       </div>
     );
@@ -119,9 +132,9 @@ const UserMessage = ({ message }) => {
       <div className="max-w-2xl flex gap-x-2 sm:gap-x-4">
         <div className="grow space-y-3">
           <div className="space-y-1.5">
-            <p className="mb-1.5 mt-2 text-sm text-gray-800 dark:text-white break-words max-w-md">
+            <div className="mb-1.5 mt-2 text-sm text-gray-800 dark:text-white break-words max-w-md">
               {renderContent()}
-            </p>
+            </div>
           </div>
         </div>
         <span className="">
