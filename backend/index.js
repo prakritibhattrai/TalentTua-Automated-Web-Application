@@ -1,19 +1,22 @@
 import express from 'express';
 import http from 'http';
-import https from 'https';  // If using HTTPS in production
-import cors from 'cors';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
+import cors from 'cors';
 import jobRoutes from './routes/jobRoutes.js';
 import occupationRoutes from './routes/occupationRoutes.js';
 
 dotenv.config();
 
 const app = express();
+app.options('*', cors());  // This will handle preflight requests for all routes
+app.use(bodyParser.json({ limit: '10mb' }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 
+// CORS configuration
 const allowedOrigins = process.env.ALLOWED_ORIGINS
     ? process.env.ALLOWED_ORIGINS.split(',')
-    : ['https://frontend-dot-talenttua-web-application.nn.r.appspot.com'];
+    : ['https://frontend-dot-talenttua-web-application.nn.r.appspot.com', 'http://localhost:5173', 'http://192.168.1.68:5173'];
 
 app.use(
     cors({
@@ -29,40 +32,16 @@ app.use(
         credentials: true,
     })
 );
-
-// Your routes here
-
-
-// Parse JSON with size limits
-app.use(bodyParser.json({ limit: '10mb' }));
-
-// Parse URL-encoded bodies with size limits
-app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
-
 // Routes
 app.use('/jobs', jobRoutes);
 app.use('/occupations', occupationRoutes);
 
-// Error Handling Middleware
-app.use((err, req, res, next) => {
-    if (process.env.NODE_ENV === 'production') {
-        console.error(err.stack);
-    } else {
-        console.error(err);
-    }
 
-    res.status(500).json({
-        message: 'Something went wrong. Please try again later.',
-    });
-});
-
-// Create server (App Engine handles SSL in production)
+// Start the server (if you need the server running for other purposes)
 const server = http.createServer(app);
-
-// Use environment variable for port (default to 8080)
 const PORT = process.env.PORT || 8080;
 server.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`🚀 Server running on port ${PORT}`);
 });
 
 export default server;

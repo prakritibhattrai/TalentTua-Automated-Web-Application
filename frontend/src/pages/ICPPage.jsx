@@ -1,477 +1,335 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { jsPDF } from "jspdf";
-import html2canvas from "html2canvas";
 import { motion } from "framer-motion";
 import PropTypes from "prop-types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
+// Main page component
 const ICPPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const handleGoBack = () => {
-    navigate(-1); // This takes you to the previous page
-  };
-  const { recruiter, onet } = location.state || {};
-  const niceToHave = onet?.niceToHave || {};
+  const [recruiter, setRecruiter] = useState(null);
+  const [onet, setOnet] = useState(null);
+
+  useEffect(() => {
+    if (location.state?.recruiter && location.state?.onet) {
+      setRecruiter(location.state?.recruiter);
+      setOnet(location.state?.onet);
+    } else {
+      navigate(-1); // Go back if no data is provided
+    }
+  }, [location.state, navigate]);
+
   if (!recruiter || !onet) {
     return (
-      <div className="text-center text-red-600">Invalid data provided</div>
+      <div className="text-center text-red-600 text-sm">
+        Invalid data provided
+      </div>
     );
   }
-  const knowledge = onet?.educationExpertise?.knowledge || [];
 
-  const education = onet?.educationExpertise?.education?.[0] || {
-    name: "Not Specified",
-    description: "No additional details available.",
-  };
+  const {
+    niceToHave = {},
+    educationExpertise = {},
+    keyProficiencies = {},
+  } = onet;
+  const { knowledge = [], job_zone = {}, education = {} } = educationExpertise;
+  const { technicalSkills = {} } = keyProficiencies;
 
-  const toolsAndTechnologies =
-    onet?.keyProficiencies?.technicalSkills?.tools_and_technology || [];
-  //const topDesirableTraits = onet?.desirableSoftSkills || [];
-  const undesirableTraits = recruiter?.undesirableTraits || [];
-  const desirableTraits = recruiter?.desirableSoftSkills || [];
+  const toolsAndTechnologies = technicalSkills.tools_and_technology || [];
   const requiredTools = recruiter?.toolProficiencies || [];
+
   const toolProficiencies = toolsAndTechnologies.filter(
     (tool) => !requiredTools.includes(tool)
   );
-  const mustHaveTraits = [
-    ...new Set([
-      niceToHave?.abilities?.[0]?.name || "Default Ability",
-      niceToHave?.work_styles?.[0]?.name || "Default Work Style",
-      niceToHave?.work_activities?.[0]?.name || "Default Work Activity",
-      niceToHave?.skills?.[0]?.name || "Default Skill",
-      niceToHave?.interests?.[0]?.name || "Default Interest",
-    ]),
-  ];
-
-  useEffect(() => {
-    // Scroll to top when the component mounts
-    window.scrollTo(0, 0);
-  }, []);
-
+  const desirable = recruiter?.desirableSoftSkills || [];
+  const undesirable = recruiter?.undesirableTraits || [];
+  const suggestedNiceToHave = niceToHave;
+  console.log(suggestedNiceToHave);
   return (
     <motion.div
-      className="relative w-full lg:ps-64"
+      className="relative max-w-6xl m-auto lg:ps-64"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
     >
-      <div className="p-6 sm:p-12 lg:py-14 " id="pdf">
-        <button onClick={navigate(-1)}>Go Back to Chat</button>
+      <div className="p-4 sm:p-6 lg:py-8 space-y-6">
+        <button
+          onClick={() => navigate(-1)}
+          className="text-blue-600 mb-4 text-sm"
+        >
+          Go Back to Chat
+        </button>
         <Header recruiter={recruiter} />
-        <div className="max-w-4xl py-10 border dark:border-neutral-700 shadow-sm rounded-lg px-6 xs:text-xs sm:px-8 lg:px-12 mx-auto mt-8 gap-6">
-          <ShareButtons />
-          <ExecutiveSummary recruiter={recruiter} />
-          <TraitsSection
-            title="Essential Traits & Behaviors"
-            traits={desirableTraits}
-          />
-          <TraitsSection
-            title="Nice-to-Have Traits & Behaviors"
-            traits={mustHaveTraits}
-          />
-          <TraitsSection
-            title="Unwanted Traits & Behaviors"
-            traits={undesirableTraits}
-          />
-          <EducationSection
-            education={education}
-            toolProficiencies={toolProficiencies}
-            knowledge={knowledge}
-            requiredTools={requiredTools}
-          />
-          <EndParagraph recruiter={recruiter} />
+        {/* Place the subscribe form right after the header */}
+        <div className="my-10 sm:my-14 flex justify-between border rounded-lg p-6 bg-gradient-to-r from-blue-50 via-indigo-200 to-purple-100 shadow-lg hover:shadow-xl transition-shadow duration-300">
+          <div>
+            <p className="text-base font-semibold text-gray-800 dark:text-neutral-200 ">
+              Log in and start your experience today. Discover and hire top
+              talent with ease!
+            </p>
+          </div>
+
+          <div className="flex items-center">
+            <p className="text-sm font-semibold underline text-blue-600 dark:text-blue-400 cursor-pointer hover:underline transition-colors duration-200">
+              Log in to proceed
+            </p>
+          </div>
         </div>
+
+        <ExecutiveSummary recruiter={recruiter} />
+
+        <SoftSkills
+          suggestedNiceToHave={suggestedNiceToHave}
+          desirable={desirable}
+          undesirable={undesirable}
+        />
+        <EducationSection
+          job_zone={job_zone}
+          education={education}
+          knowledge={knowledge}
+        />
+        <ToolsAndTechnologies
+          technicalSkills={technicalSkills}
+          requiredTools={requiredTools}
+        />
+        <EndParagraph recruiter={recruiter} />
       </div>
     </motion.div>
   );
 };
-function EndParagraph({ recruiter }) {
+function SoftSkills({ suggestedNiceToHave, desirable, undesirable }) {
+  // Flatten the niceToHave data from different sections into one array
+  const allNiceToHave = [
+    ...(suggestedNiceToHave?.work_styles || []),
+    ...(suggestedNiceToHave?.work_values || []),
+    ...(suggestedNiceToHave?.skills || []),
+  ];
+
+  // Remove items that are already in desirable
+  const remainingNiceToHave = allNiceToHave.filter(
+    (trait) => !desirable.includes(trait)
+  );
+
+  // Function to get random items (ensuring no duplicates)
+  const getRandomTraits = (array, count) => {
+    const shuffled = [...array].sort(() => 0.5 - Math.random()); // Shuffle the array
+    return shuffled.slice(0, count); // Get the first `count` elements
+  };
+
+  // Get 6 random traits that are not in desirable
+  const randomSuggestedTraits = getRandomTraits(remainingNiceToHave, 6);
+
   return (
-    <p className="text-sm sm:text-sm md:text-sm lg:text-sm text-gray-800 dark:text-gray-300">
-      This profile serves as a guide to educate you on the total skills,
-      knowledge, abilities, and attitudes required for the role of{" "}
-      {recruiter.jobTitle}. This is not meant to be all inclusive of the many
-      nuanced requirements and responsibilities associated with this role.
-      Rather, it is intended to serve as a reference for completing a
-      skills-based hiring process along with using a framework that
-      mathematically determines the likelihood of required attributes listed
-      here. Contact us at{" "}
-      <Link className="text-blue-600 text-sm sm:text-sm">
-        hello@talenttua.com
-      </Link>{" "}
-      for more information.
-    </p>
+    <div className="border border-gray-200 p-4 rounded-lg text-sm">
+      <h2 className="font-semibold text-gray-800 mb-3">Soft Skills</h2>
+
+      {/* Must-Have Traits */}
+      {desirable && desirable.length > 0 && (
+        <div className="mb-3">
+          <h3 className="text-sm font-semibold text-gray-800">🔹 Must-Have:</h3>
+          <p className="text-gray-700">{desirable.join(", ")}</p>
+        </div>
+      )}
+      {/* Must Not Have Traits */}
+      {undesirable && undesirable.length > 0 && (
+        <div className="mb-3">
+          <h3 className="text-sm font-semibold text-gray-800">
+            🔹 Must Not Have:
+          </h3>
+          <p className="text-gray-700">{undesirable.join(", ")}</p>
+        </div>
+      )}
+      {/* Suggested Traits (Random 6) */}
+      {randomSuggestedTraits.length > 0 && (
+        <div>
+          <h3 className="text-sm font-semibold text-gray-800">
+            🔹 Suggested Must Have:
+          </h3>
+          <p className="text-gray-700">{randomSuggestedTraits.join(", ")}</p>
+        </div>
+      )}
+    </div>
   );
 }
+
+// Executive Summary
+function ExecutiveSummary({ recruiter }) {
+  return (
+    <div className="border border-gray-200 text-sm  p-4 rounded-lg shadow-sm">
+      <h3 className="font-semibold text-gray-800 mb-2">Executive Summary</h3>
+      <p className="text-gray-700">
+        This profile outlines the ideal candidate for a {recruiter.jobTitle}{" "}
+        position, belonging to {recruiter.jobFamily} and {recruiter.industry}.
+      </p>
+    </div>
+  );
+}
+
+// End Paragraph
+function EndParagraph({ recruiter }) {
+  return (
+    <div className="border border-gray-200  p-4 rounded-lg ">
+      <p className="text-gray-800 text-sm">
+        This profile serves as a guide to educate you on the total skills,
+        knowledge, abilities, and attitudes required for the role of{" "}
+        {recruiter.jobTitle}. This is not meant to be all inclusive of the many
+        nuanced requirements and responsibilities associated with this role.
+        Rather, it is intended to serve as a reference for completing a
+        skills-based hiring process along with using a framework that
+        mathematically determines the likelihood of required attributes listed
+        here. Contact us at{" "}
+        <Link className="text-blue-600 hover:underline">
+          hello@talenttua.com
+        </Link>{" "}
+        for more information
+      </p>
+    </div>
+  );
+}
+
+const ToolsAndTechnologies = ({ technicalSkills, requiredTools }) => {
+  if (!technicalSkills) return null;
+
+  const {
+    technologies = [],
+    tools = [],
+    allTechnologies = {},
+  } = technicalSkills;
+
+  // Convert requiredTools into a Set for quick lookup
+  const requiredToolsSet = new Set(
+    requiredTools.map((tool) => tool.toLowerCase())
+  );
+
+  // Filter out duplicates from hot technologies & tools
+  const hotTechnologies = allTechnologies.both_hot_and_in_demand
+    ?.filter((tech) => !requiredToolsSet.has(tech.toLowerCase()))
+    .join(", ");
+
+  const technologyCategories = technologies
+    .map((tech) => tech.title.name)
+    .join(", ");
+
+  const filteredTools = tools
+    .map((tool) => tool.title.name)
+    .filter((tool) => !requiredToolsSet.has(tool.toLowerCase()))
+    .join(", ");
+
+  const requiredToolsFiltered = requiredTools.join(", ");
+
+  return (
+    <div className="border border-gray-200 p-4 rounded-lg text-sm">
+      <h2 className="text-sm font-semibold text-gray-800 mb-4">
+        Tools & Technologies
+      </h2>
+
+      {requiredToolsFiltered && (
+        <div className="mb-4">
+          <h3 className="text-sm font-semibold text-gray-800">🔹 Must Have:</h3>
+          <p className="text-gray-800">{requiredToolsFiltered}</p>
+        </div>
+      )}
+
+      {hotTechnologies && (
+        <div className="mb-4">
+          <h3 className="text-sm font-semibold text-gray-800">Suggested:</h3>
+          <h3 className="text-sm font-semibold text-gray-800 mt-2">
+            🔹 In Demand & Hot:
+          </h3>
+          <p className="text-gray-800">{hotTechnologies}</p>
+        </div>
+      )}
+
+      {technologyCategories && (
+        <div className="mb-4">
+          <h3 className="text-sm font-semibold text-gray-800">
+            🔹 Technology Categories:
+          </h3>
+          <p className="text-gray-800">{technologyCategories}</p>
+        </div>
+      )}
+
+      {filteredTools && (
+        <div>
+          <h3 className="text-sm font-semibold text-gray-800">🔹 Tools:</h3>
+          <p className="text-gray-800">{filteredTools}</p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Education section to display education requirements and expertise
+function EducationSection({ job_zone, education, knowledge }) {
+  return (
+    <div className="border border-gray-200  p-4 text-sm rounded-lg">
+      <h3 className="font-semibold text-gray-800 mb-3">
+        Education & Expertise
+      </h3>
+
+      <div className="mb-3">
+        <h4 className="text-sm font-semibold text-gray-800">
+          🔹Education Level:
+        </h4>
+        <p className="text-gray-800">
+          {job_zone?.education || "Not Specified"}
+        </p>
+      </div>
+
+      <div>
+        <h4 className="text-sm font-semibold text-gray-800">
+          Suggested Knowledge:
+        </h4>
+        <p className="text-gray-700">{knowledge.join(", ")}</p>
+      </div>
+    </div>
+  );
+}
+
+// Header component for the ICP page
+function Header({ recruiter }) {
+  const idealCandidateProfile = recruiter?.jobTitle
+    ? recruiter.jobTitle.charAt(0).toUpperCase() +
+      recruiter.jobTitle.slice(1).toLowerCase()
+    : "";
+  return (
+    <motion.div
+      className="text-center text-sm mb-6"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8 }}
+    >
+      <h1 className="text-xl font-bold text-gray-800 sm:text-2xl dark:text-white">
+        <div>Ideal Candidate Profile: {idealCandidateProfile}</div>
+      </h1>
+      <p className="text-sm text-gray-700 dark:text-neutral-400 mt-3">
+        Outlines the skills, experience, and personality traits of an Ideal
+        Candidate for this role.
+      </p>
+    </motion.div>
+  );
+}
+
+ICPPage.propTypes = {
+  location: PropTypes.shape({
+    state: PropTypes.shape({
+      recruiter: PropTypes.object.isRequired,
+      onet: PropTypes.object.isRequired,
+    }),
+  }).isRequired,
+};
 
 EndParagraph.propTypes = {
   recruiter: PropTypes.shape({
     jobTitle: PropTypes.string.isRequired,
   }).isRequired,
 };
-function exportToPDF() {
-  const element = document.getElementById("pdf"); // Get the entire content
 
-  html2canvas(element, { scale: 2 }).then((canvas) => {
-    // Set scale for better quality
-    const imgData = canvas.toDataURL("image/png");
-    const pdf = new jsPDF("p", "mm", "a4");
-
-    const imgWidth = 210; // A4 width in mm
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-    // Add the first page with content
-    pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
-
-    // Check if the content is taller than the A4 page
-    const pageHeight = pdf.internal.pageSize.height;
-    if (imgHeight > pageHeight) {
-      let remainingHeight = imgHeight - pageHeight;
-      let currentPosition = pageHeight;
-
-      // Add additional pages if necessary
-      while (remainingHeight > 0) {
-        pdf.addPage();
-        pdf.addImage(imgData, "PNG", 0, -currentPosition, imgWidth, imgHeight);
-        remainingHeight -= pageHeight;
-        currentPosition = pageHeight;
-      }
-    }
-
-    // Save the PDF
-    pdf.save("fullProfile.pdf");
-  });
-}
-
-function Header({ recruiter }) {
-  return (
-    <motion.div
-      className="text-center"
-      initial={{ opacity: 0, y: -50 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8 }}
-    >
-      <h1 className="text-2xl font-bold text-gray-800 sm:text-3xl md:text-3xl lg:text-3xl xl:text-3xl dark:text-white">
-        Ideal Candidate Profile: {recruiter.jobTitle}
-      </h1>
-      <p className="mt-3 text-sm sm:text-sm md:text-sm lg:text-sm text-gray-600 dark:text-neutral-400">
-        Outlines the skills, experience, and personality traits of an Ideal
-        Candidate for a job.
-      </p>
-    </motion.div>
-  );
-}
-
-Header.propTypes = {
-  recruiter: PropTypes.shape({
-    jobTitle: PropTypes.string.isRequired,
+ToolsAndTechnologies.propTypes = {
+  technicalSkills: PropTypes.shape({
+    tools_and_technology: PropTypes.arrayOf(PropTypes.object),
   }).isRequired,
-};
-
-function ShareButtons() {
-  return (
-    <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        className={` text-white bg-blue-600 text-sm px-3 py-2 rounded-lg flex items-center `}
-        aria-label="Save Data"
-        role="button"
-      >
-        <svg
-          className="w-3 h-3 sm:w-3 sm:h-3 mr-1 text-white dark:text-white"
-          aria-hidden="true"
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeWidth="2.7"
-            d="M7.926 10.898 15 7.727m-7.074 5.39L15 16.29M8 12a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm12 5.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm0-11a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z"
-          />
-        </svg>
-
-        <span className="text-sm">Share</span>
-      </motion.button>
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        className={` text-white bg-blue-600 text-sm px-3 py-2 rounded-lg flex items-center `}
-        aria-label="Save Data"
-        role="button"
-        onClick={exportToPDF}
-      >
-        <svg
-          className="w-3 h-3 sm:w-3 sm:h-3 me-2 text-white"
-          aria-hidden="true"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-        >
-          <path d="M14.707 7.793a1 1 0 0 0-1.414 0L11 10.086V1.5a1 1 0 0 0-2 0v8.586L6.707 7.793a1 1 0 1 0-1.414 1.414l4 4a1 1 0 0 0 1.416 0l4-4a1 1 0 0 0-.002-1.414Z" />
-          <path d="M18 12h-2.55l-2.975 2.975a3.5 3.5 0 0 1-4.95 0L4.55 12H2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2Zm-3 5a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z" />
-        </svg>
-
-        <span className="text-sm"> View PDF</span>
-      </motion.button>
-    </div>
-  );
-}
-
-function ExecutiveSummary({ recruiter }) {
-  return (
-    <div className="mt-5">
-      <h3 className="text-sm sm:text-sm  lg:text-sm font-semibold text-gray-900 dark:text-white flex items-center">
-        Executive Summary
-      </h3>
-
-      <p className="text-sm sm:text-sm lg:text-sm text-gray-800 dark:text-gray-400 mt-4">
-        This profile outlines the ideal candidate for a {recruiter.jobTitle}{" "}
-        position, belonging to {recruiter.jobFamily} and {recruiter.industry}.
-        This role has the potential to grow and adapt to the company’s future
-        needs and requirements.
-      </p>
-    </div>
-  );
-}
-
-ExecutiveSummary.propTypes = {
-  recruiter: PropTypes.shape({
-    jobTitle: PropTypes.string.isRequired,
-    jobFamily: PropTypes.string.isRequired,
-    industry: PropTypes.string.isRequired,
-  }).isRequired,
-};
-
-function TraitsSection({ title, traits }) {
-  return (
-    <motion.div
-      className="traits-section"
-      initial={{ opacity: 0, x: -50 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.6, delay: 0.3 }}
-    >
-      <h3 className="text-sm font-medium mt-4 text-gray-800 dark:text-gray-200 flex items-center">
-        {title}
-      </h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
-        {traits.length > 0 ? (
-          traits.map((trait, index) => (
-            <motion.div
-              className="flex items-center space-x-2 text-sm text-gray-800 dark:text-gray-400"
-              key={index}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.4, delay: index * 0.1 }}
-            >
-              <svg
-                className="w-[14px] h-[14px] min-h-3 max-h-3 min-w-3 max-w-3 text-gray-800 dark:text-gray-400"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  d="M11.083 5.104c.35-.8 1.485-.8 1.834 0l1.752 4.022a1 1 0 0 0 .84.597l4.463.342c.9.069 1.255 1.2.556 1.771l-3.33 2.723a1 1 0 0 0-.337 1.016l1.03 4.119c.214.858-.71 1.552-1.474 1.106l-3.913-2.281a1 1 0 0 0-1.008 0L7.583 20.8c-.764.446-1.688-.248-1.474-1.106l1.03-4.119A1 1 0 0 0 6.8 14.56l-3.33-2.723c-.698-.571-.342-1.702.557-1.771l4.462-.342a1 1 0 0 0 .84-.597l1.753-4.022Z"
-                />
-              </svg>
-
-              <span>{trait}</span>
-            </motion.div>
-          ))
-        ) : (
-          <p className="mt-3 text-sm text-gray-800 dark:text-gray-400">
-            No traits listed.
-          </p>
-        )}
-      </div>
-    </motion.div>
-  );
-}
-
-TraitsSection.propTypes = {
-  title: PropTypes.string.isRequired,
-  traits: PropTypes.arrayOf(PropTypes.string).isRequired,
-};
-
-function EducationSection({
-  education,
-  toolProficiencies,
-  knowledge,
-  requiredTools,
-}) {
-  return (
-    <>
-      <h3 className="text-sm sm:text-sm font-medium mt-4 text-gray-800 dark:text-gray-200 flex items-center">
-        Education & Expertise :
-      </h3>
-      <div className="p-4">
-        <p className="text-sm sm:text-sm font-medium text-gray-800 dark:text-gray-400">
-          {education.name}
-        </p>
-        <p className="text-sm sm:text-sm mt-1 text-gray-900 dark:text-gray-400">
-          {education.description || ""}
-        </p>
-      </div>
-
-      <h3 className="text-sm sm:text-sm font-medium mt-4 text-gray-800 dark:text-gray-200 flex items-center">
-        Tools Proficiencies required on day 1 :
-      </h3>
-      <div className="p-4">
-        <p className="text-sm sm:text-sm font-medium text-gray-800 dark:text-gray-400">
-          Technology Proficiencies
-        </p>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
-          {requiredTools.length > 0 ? (
-            requiredTools.slice(0, 10).map((name, index) => (
-              <div
-                className="text-sm sm:text-sm flex items-center text-gray-800 dark:text-gray-400"
-                key={index}
-              >
-                {/* Icon with fixed size */}
-                <svg
-                  className="w-[16px] h-[16px] min-h-3 max-h-3 min-w-3 max-w-3 text-gray-800 dark:text-gray-400"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    d="M11.083 5.104c.35-.8 1.485-.8 1.834 0l1.752 4.022a1 1 0 0 0 .84.597l4.463.342c.9.069 1.255 1.2.556 1.771l-3.33 2.723a1 1 0 0 0-.337 1.016l1.03 4.119c.214.858-.71 1.552-1.474 1.106l-3.913-2.281a1 1 0 0 0-1.008 0L7.583 20.8c-.764.446-1.688-.248-1.474-1.106l1.03-4.119A1 1 0 0 0 6.8 14.56l-3.33-2.723c-.698-.571-.342-1.702.557-1.771l4.462-.342a1 1 0 0 0 .84-.597l1.753-4.022Z"
-                  />
-                </svg>
-                <span className="ml-2 w-full">{name || "N/A"}</span>
-              </div>
-            ))
-          ) : (
-            <p className="mt-3 text-sm text-gray-800 dark:text-gray-400">
-              Domain expertise not listed.
-            </p>
-          )}
-        </div>
-      </div>
-
-      <h3 className="text-sm sm:text-sm font-medium mt-4 text-gray-800 dark:text-white">
-        Key Proficiencies :
-      </h3>
-
-      <ul className="p-4">
-        <li>
-          <p className="text-sm sm:text-sm font-medium text-gray-800 dark:text-gray-300">
-            Technical Expertise
-          </p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
-            {toolProficiencies.length > 0 ? (
-              toolProficiencies.slice(0, 10).map((name, index) => (
-                <div
-                  className="text-sm sm:text-sm flex items-center text-gray-800 dark:text-gray-400"
-                  key={index}
-                >
-                  {/* Icon with fixed size */}
-                  <svg
-                    className="w-[16px] h-[16px] min-h-3 min-w-3 max-w-3 max-h-3 text-gray-800 dark:text-gray-400"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      d="M11.083 5.104c.35-.8 1.485-.8 1.834 0l1.752 4.022a1 1 0 0 0 .84.597l4.463.342c.9.069 1.255 1.2.556 1.771l-3.33 2.723a1 1 0 0 0-.337 1.016l1.03 4.119c.214.858-.71 1.552-1.474 1.106l-3.913-2.281a1 1 0 0 0-1.008 0L7.583 20.8c-.764.446-1.688-.248-1.474-1.106l1.03-4.119A1 1 0 0 0 6.8 14.56l-3.33-2.723c-.698-.571-.342-1.702.557-1.771l4.462-.342a1 1 0 0 0 .84-.597l1.753-4.022Z"
-                    />
-                  </svg>
-                  <span className="ml-2 w-full">{name || "N/A"}</span>
-                </div>
-              ))
-            ) : (
-              <p className="mt-3 text-sm text-gray-800 dark:text-gray-400">
-                Domain expertise not listed.
-              </p>
-            )}
-          </div>
-        </li>
-
-        <li>
-          <p className="text-sm sm:text-sm font-medium text-gray-800 dark:text-gray-300">
-            Knowledge and Domain
-          </p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
-            {knowledge.length > 0 ? (
-              knowledge.slice(0, 10).map((name, index) => (
-                <div
-                  className="text-sm sm:text-sm flex items-center text-gray-900 dark:text-gray-400"
-                  key={index}
-                >
-                  {/* Icon */}
-                  <svg
-                    className="w-[14px] h-[14px] min-h-3 min-w-3 max-w-3 max-h-3 text-gray-800 dark:text-gray-400"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="22"
-                    height="22"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      d="M11.083 5.104c.35-.8 1.485-.8 1.834 0l1.752 4.022a1 1 0 0 0 .84.597l4.463.342c.9.069 1.255 1.2.556 1.771l-3.33 2.723a1 1 0 0 0-.337 1.016l1.03 4.119c.214.858-.71 1.552-1.474 1.106l-3.913-2.281a1 1 0 0 0-1.008 0L7.583 20.8c-.764.446-1.688-.248-1.474-1.106l1.03-4.119A1 1 0 0 0 6.8 14.56l-3.33-2.723c-.698-.571-.342-1.702.557-1.771l4.462-.342a1 1 0 0 0 .84-.597l1.753-4.022Z"
-                    />
-                  </svg>
-                  <span className="ml-2">{name.name}</span>
-                </div>
-              ))
-            ) : (
-              <p className="mt-3 text-sm text-gray-900 dark:text-gray-400">
-                Knowledge not listed.
-              </p>
-            )}
-          </div>
-        </li>
-      </ul>
-    </>
-  );
-}
-
-// PropTypes validation
-EducationSection.propTypes = {
-  education: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    description: PropTypes.string,
-  }).isRequired,
-  toolProficiencies: PropTypes.arrayOf(PropTypes.string).isRequired,
-  knowledge: PropTypes.arrayOf(
-    PropTypes.shape({
-      name: PropTypes.string.isRequired,
-    })
-  ).isRequired,
-  requiredTools: PropTypes.arrayOf(PropTypes.string).isRequired,
-};
-
-ICPPage.propTypes = {
-  location: PropTypes.shape({
-    state: PropTypes.shape({
-      recruiter: PropTypes.object,
-      onet: PropTypes.object,
-    }),
-  }),
 };
 
 export default ICPPage;

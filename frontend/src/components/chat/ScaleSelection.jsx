@@ -75,35 +75,35 @@ const ScaleSelection = ({ onSelect, rated = {} }) => {
   };
 
   const handleSave = () => {
-    const incompleteCompetency = competencies.find((competency) =>
-      Object.values(ratings[competency.competency]).some(
-        (rating) =>
-          rating === null ||
-          typeof rating !== "number" ||
-          rating < 1 ||
-          rating > 4
-      )
-    );
+    // const incompleteCompetency = competencies.find((competency) =>
+    //   Object.values(ratings[competency.competency]).some(
+    //     (rating) =>
+    //       rating === null ||
+    //       typeof rating !== "number" ||
+    //       rating < 1 ||
+    //       rating > 4
+    //   )
+    // );
 
-    if (incompleteCompetency) {
-      const index = competencies.findIndex(
-        (comp) => comp.competency === incompleteCompetency.competency
-      );
+    // if (incompleteCompetency) {
+    //   const index = competencies.findIndex(
+    //     (comp) => comp.competency === incompleteCompetency.competency
+    //   );
 
-      if (competencyRefs.current[index]) {
-        competencyRefs.current[index].current.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        });
-      }
+    //   if (competencyRefs.current[index]) {
+    //     competencyRefs.current[index].current.scrollIntoView({
+    //       behavior: "smooth",
+    //       block: "center",
+    //     });
+    //   }
 
-      setError({
-        competency: incompleteCompetency.competency,
-        message: `Please rate all traits under the competency "${incompleteCompetency.competency}" with values between 1 and 4 before saving.`,
-      });
+    //   setError({
+    //     competency: incompleteCompetency.competency,
+    //     message: `Please rate all traits under the competency "${incompleteCompetency.competency}" with values between 1 and 4 before saving.`,
+    //   });
 
-      return;
-    }
+    //   return;
+    // }
 
     onSelect(ratings);
   };
@@ -118,14 +118,15 @@ const ScaleSelection = ({ onSelect, rated = {} }) => {
 
   return (
     <div
-      className="flex flex-col max-h-screen items-center p-3 rounded-lg border bg-white border-gray-200
+      className="flex flex-col max-h-[400px] items-center p-3 rounded-lg border bg-white border-gray-200
     
     dark:border-neutral-700 dark:bg-neutral-900  w-full mx-auto"
     >
-      <div className="w-full mb-2 text-xs text-blue-600">
+      <div className="w-full mb-2 text-xs text-blue-700">
         <p className="mb-1">
-          Note: The info icon{" "}
-          <svg
+          Rate each trait on a scale of 1 (Lowest) to 4 (Highest) based on how
+          well it describes the competency for the role
+          {/* <svg
             className="inline w-4 h-4 text-blue-500 "
             xmlns="http://www.w3.org/2000/svg"
             fill="currentColor"
@@ -136,8 +137,7 @@ const ScaleSelection = ({ onSelect, rated = {} }) => {
               d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm9.008-3.018a1.502 1.502 0 0 1 2.522 1.159v.024a1.44 1.44 0 0 1-1.493 1.418 1 1 0 0 0-1.037.999V14a1 1 0 1 0 2 0v-.539a3.44 3.44 0 0 0 2.529-3.256 3.502 3.502 0 0 0-7-.255 1 1 0 0 0 2 .076c.014-.398.187-.774.48-1.044Zm.982 7.026a1 1 0 1 0 0 2H12a1 1 0 1 0 0-2h-.01Z"
               clipRule="evenodd"
             />
-          </svg>{" "}
-          provides additional information about each competency.
+          </svg>{" "} */}
         </p>
       </div>
 
@@ -155,7 +155,7 @@ const ScaleSelection = ({ onSelect, rated = {} }) => {
           dark:border-neutral-700 border-gray-200 pb-1"
               >
                 {competency.competency}
-                <button
+                {/* <button
                   onClick={() => handleMoreInfoClick(competency)}
                   className="text-blue-600 text-xs dark:text-white underline flex items-center"
                 >
@@ -171,7 +171,7 @@ const ScaleSelection = ({ onSelect, rated = {} }) => {
                       clipRule="evenodd"
                     />
                   </svg>
-                </button>
+                </button> */}
               </h3>
 
               {competency.traits.map((trait, traitIndex) => (
@@ -184,7 +184,7 @@ const ScaleSelection = ({ onSelect, rated = {} }) => {
                       {trait.name} :{" "}
                     </span>{" "}
                     <span className="text-gray-700 text-[13px] dark:text-white">
-                      {trait.description}
+                      {trait.description}:{""}
                     </span>
                   </p>
 

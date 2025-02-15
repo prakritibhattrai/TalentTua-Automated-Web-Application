@@ -26,6 +26,7 @@ const AutoCompleteInput = ({ onSelect }) => {
       }
 
       if (cache.current[searchTerm]) {
+        console.log(cache);
         setSuggestions(cache.current[searchTerm]);
         return;
       }
@@ -39,6 +40,7 @@ const AutoCompleteInput = ({ onSelect }) => {
             "Cannot find the job titles. Please enter your preferred job title below manually."
           );
         }
+        console.log(response.data.jobTitles[0]);
         // Sort and filter the response
         const sortedSuggestions = response.data.jobTitles.sort((a, b) => {
           const startsWithA = a.title
@@ -82,6 +84,7 @@ const AutoCompleteInput = ({ onSelect }) => {
         const response = await axios.get(
           `${API_BASE_URL}/occupations/jobTitles/${selectedOccupation.id}`
         );
+        console.log(response.data);
         if (response.data && response.data.jobTitles.length > 0) {
           setJobTitles(response.data.jobTitles);
         } else {
@@ -125,7 +128,7 @@ const AutoCompleteInput = ({ onSelect }) => {
     // Validation
     if (
       (!selectedOccupation && !selectedJobTitle) ||
-      selectedJobTitle.length >= 255 ||
+      selectedJobTitle?.title?.length >= 255 ||
       selectedOccupation?.title?.length >= 255
     ) {
       setError(
@@ -133,7 +136,7 @@ const AutoCompleteInput = ({ onSelect }) => {
       );
       return;
     }
-
+    console.log(selectedJobTitle);
     onSelect({
       occupation: selectedOccupation,
       jobTitle: jobTitle,
@@ -147,19 +150,33 @@ const AutoCompleteInput = ({ onSelect }) => {
         {/* Occupation Search Section */}
         <div className="w-full">
           {error && <p className="text-red-500 mt-2 text-xs sm:xs">{error}</p>}
+          <div className="text-xs text-blue-600">
+            <p className="font-medium">
+              ℹ️ Note:{" "}
+              <span className="font-normal">
+                Not seeing the occupation you are looking for?{" "}
+              </span>
+            </p>
+            <p>
+              Fill in the{" "}
+              <span className="font-semibold">preferred job title</span> field
+              below with the title you are looking to hire for!
+            </p>
+          </div>
+
           <label
             htmlFor="occupation-input"
-            className="block mb-2 text-[12px] text-gray-800 dark:text-neutral-200 sm:text-base"
+            className="block mb-2 text-[10px] mt-1 text-gray-800 dark:text-neutral-200 sm:text-base"
+            style={{ fontSize: "14px" }}
           >
-            Not seeing the occupation you are looking?
-            <br></br> Fill in the preferred job title field below with the title
-            you are looking to hire for
+            Occupation
+            <br></br>
           </label>
           <div className="relative">
             <input
               id="occupation-input"
               type="text"
-              className="border border-gray-400 shadow-sm dark:border-neutral-700 placeholder:text-[13px] text-[13px] dark:text-neutral-200 dark:bg-neutral-900 text-sm text-gray-700 rounded-lg p-1 pl-8 w-full focus:ring-1 focus:ring-blue-600 focus:outline-none"
+              className="border border-gray-400 shadow-sm dark:border-neutral-700 placeholder:text-[13px] text-[13px] dark:text-neutral-200 dark:bg-neutral-900 text-sm text-gray-700 rounded-lg placeholder:text-neutral-400 p-1.5 pl-8 w-full focus:ring-1 focus:ring-blue-600 focus:outline-none"
               placeholder="Type, search and select occupation ..."
               value={searchTerm}
               onChange={handleInputChange}
@@ -211,7 +228,7 @@ const AutoCompleteInput = ({ onSelect }) => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className={`border border-gray-400 shadow-sm dark:border-neutral-700 text-[13px] dark:text-neutral-200 dark:bg-neutral-900 
+              className={`border border-gray-400 shadow-sm  dark:border-neutral-700 text-[13px] dark:text-neutral-200 dark:bg-neutral-900 
                 text-sm text-gray-700 rounded-lg p-1 w-full focus:ring-1 focus:ring-blue-600 focus:outline-none 
                 ${
                   suggestions.length > 0
@@ -243,43 +260,55 @@ const AutoCompleteInput = ({ onSelect }) => {
       </div>
       {/* Job Title Section */}
       {selectedOccupation && (
-        <div className="space-y-2 rounded-lg w-full text-gray-800 dark:border-neutral-700 dark:bg-neutral-900 transition-opacity duration-300 ease-in-out">
+        <div className=" rounded-lg w-full text-gray-800 dark:border-neutral-700 dark:bg-neutral-900 transition-opacity duration-300 ease-in-out">
           <label
             htmlFor="job-title"
             className="block text-sm text-gray-800 dark:text-neutral-200 sm:text-base"
+            style={{ fontSize: "14px" }}
           >
             Select Job Title for {selectedOccupation?.title || ""}
           </label>
           <select
             id="job-title"
-            className="border border-gray-400 shadow-sm dark:border-neutral-700 placeholder:text-[13px] text-[13px] dark:text-neutral-200 dark:bg-neutral-900 text-sm text-gray-700 rounded-lg p-1.5 w-full focus:ring-1 focus:ring-blue-600 focus:outline-none"
-            value={selectedJobTitle}
-            onChange={handleJobTitleChange}
+            className="border border-gray-400 shadow-sm dark:border-neutral-700 placeholder:text-[13px] 
+  text-[13px] dark:text-neutral-200 dark:bg-neutral-900 text-sm text-gray-700 rounded-lg p-1.5
+  w-full focus:ring-1 focus:ring-blue-600 focus:outline-none overflow-hidden placeholder:text-neutral-400"
+            value={selectedJobTitle?.title || ""}
+            onChange={(e) => {
+              const selectedTitle = e.target.value;
+              const selectedOption = jobTitles.find(
+                (job) => job.title === selectedTitle
+              );
+              setSelectedJobTitle(selectedOption || { title: "" }); // Ensure it's a valid object
+            }}
           >
             <option value="">Select a job title</option>
-            {jobTitles &&
-              jobTitles.map((jobTitle) => (
-                <option key={jobTitle?.id} value={jobTitle?.title}>
-                  {jobTitle.title}
-                </option>
-              ))}
+            {jobTitles.map((jobTitle) => (
+              <option key={jobTitle?.id} value={jobTitle?.title}>
+                {jobTitle.title}
+              </option>
+            ))}
           </select>
         </div>
       )}
-      <span className="text-sm text-center p-0 m-0 dark:text-white">Or</span>
 
       <div className=" w-full flex-grow">
+        <span className="text-xs flex justify-center items-center mx-auto">
+          Or
+        </span>
+
         <label
           htmlFor="custom-job-title"
           className="block mb-1 text-sm text-gray-700 dark:text-neutral-200 sm:text-base"
+          style={{ fontSize: "14px" }}
         >
-          Your preferred job title:
+          Preferred Job Title
         </label>
         <div className="relative">
           <input
             id="custom-job-title"
             type="text"
-            className="border border-gray-400 text-[13px] shadow-sm dark:border-neutral-700 placeholder:text[13px] dark:text-neutral-200 dark:bg-neutral-900 text-gray-700 rounded-lg p-1 pl-3 w-full focus:ring-1 focus:ring-blue-600 focus:outline-none"
+            className="border border-gray-400 placeholder:text-neutral-400 text-[13px] shadow-sm dark:border-neutral-700 placeholder:text[13px] dark:text-neutral-200 dark:bg-neutral-900 text-gray-700 rounded-lg p-1.5 pl-3 w-full focus:ring-1 focus:ring-blue-600 focus:outline-none"
             placeholder="Preferred job title ..."
             value={jobTitle}
             onChange={(event) => {

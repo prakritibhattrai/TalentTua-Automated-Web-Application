@@ -30,27 +30,21 @@ export const staticData = {
         "Arts, entertainment and recreation",
         "Accommodation and food services",
         "Administrative and support services",
-
         "Agriculture, forestry, fishing and hunting",
         "Construction",
         "Educational services",
         "Finance and insurance",
         "Health care and social assistance",
         "Information and cultural industries",
-
         "Mining, quarrying, and oil and gas extraction",
         "Management of companies and enterprises",
         "Manufacturing",
         "Other services (except public administration)",
-
         "Professional, scientific, and technical services",
-
         "Public administration",
         "Real estate and rental and leasing",
         "Retail Trade",
-
         "Transportation and warehousing",
-
         "Utilities",
         "Wholesale trade",
         "Waste management and remediation services",
@@ -438,5 +432,72 @@ export const staticData = {
         "Complacency",
         "Procrastination",
         "Indifference"
+    ],
+
+    "jobTitleSuffixes": [
+        "Engineer", "Architect", "Technician", "Technologist", "Developer", "Designer", "Constructor",
+        "Specialist", "Operator", "Planner", "Manager", "Coordinator", "Supervisor", "Estimator", "Analyst",
+        "Consultant", "Modeler", "Fabricator", "Surveyor", "Inspector", "Scientist", "Strategist",
+
+        "Nurse", "Doctor", "Physician", "Therapist", "Dentist", "Pharmacist", "Radiologist", "Counselor",
+        "Paramedic", "Surgeon", "Psychologist", "Podiatrist", "Optometrist", "Chiropractor", "Veterinarian",
+        "Medical Assistant", "Health Educator", "Dietician", "Occupational Therapist", "Speech Therapist",
+        "Anesthesiologist", "Medical Researcher", "Phlebotomist", "Medical Technologist",
+
+        "Manager", "Director", "Leader", "Supervisor", "Executive", "Chief", "Head", "Coordinator",
+        "Administrator", "President", "Vice President", "Partner", "Owner", "Founder", "Project Manager",
+        "Operations Manager", "General Manager", "Product Manager", "Program Manager", "Strategy Manager",
+        "Sales Manager", "Human Resources Manager", "Brand Manager", "Compliance Manager", "Customer Service Manager",
+
+        "Technician", "Analyst", "Consultant", "Specialist", "Developer", "Architect", "Operator",
+        "Administrator", "Engineer", "Programmer", "Support Engineer", "Network Engineer", "Systems Administrator",
+        "Database Administrator", "Security Analyst", "Web Developer", "DevOps Engineer", "Product Support Specialist",
+        "IT Consultant", "Project Engineer", "Data Scientist", "Cloud Engineer", "UI/UX Designer", "Infrastructure Architect",
+
+        "Designer", "Artist", "Illustrator", "Animator", "Writer", "Producer", "Director", "Editor",
+        "Photographer", "Stylist", "Brand Designer", "Creative Director", "Fashion Designer", "Game Designer",
+        "Art Director", "User Interface Designer", "User Experience Designer", "Graphic Designer", "Copywriter",
+        "Content Creator", "Motion Designer", "Visual Designer", "Multimedia Artist", "Film Director", "Music Producer",
+        "Set Designer", "Sound Designer", "Video Editor",
+
+        "Salesperson", "Representative", "Marketer", "Coordinator", "Consultant", "Specialist", "Manager",
+        "Director", "Marketing Manager", "Product Specialist", "Account Executive", "Sales Associate",
+        "Customer Service Representative", "Marketing Coordinator", "Brand Specialist", "Advertising Executive",
+        "Public Relations Manager", "Business Development Manager", "Event Coordinator", "Social Media Specialist",
+        "Content Strategist", "Sales Director", "Market Research Analyst", "Campaign Manager",
+        "Digital Marketing Specialist", "Affiliate Marketing Manager",
+
+        "Assistant", "Secretary", "Clerk", "Administrator", "Receptionist", "Executive Assistant", "Office Manager",
+        "Administrative Assistant", "HR Assistant", "Legal Assistant", "Project Assistant", "Personal Assistant",
+        "Facilities Manager", "Operations Assistant", "Data Entry Clerk", "Customer Support Assistant",
+        "Executive Secretary", "Office Administrator", "Records Manager", "Business Administrator", "Team Assistant",
+
+        "Teacher", "Professor", "Instructor", "Lecturer", "Trainer", "Tutor", "Counselor", "Educator",
+        "Principal", "Headmaster", "Dean", "Special Education Teacher", "Researcher", "Postdoctoral Fellow",
+        "Lab Assistant", "School Counselor", "Math Teacher", "Science Teacher", "English Teacher", "Art Teacher",
+        "Physical Education Teacher", "Curriculum Developer", "Educational Consultant", "Academic Advisor",
+        "Teaching Assistant", "Academic Coordinator", "Language Instructor",
+
+        "Accountant", "Auditor", "Controller", "Treasurer", "Financial Advisor", "Tax Consultant",
+        "Finance Manager", "Investment Analyst", "Risk Manager", "Credit Analyst", "Actuary", "Bookkeeper",
+        "Payroll Administrator", "Tax Manager", "Compliance Officer", "Insurance Underwriter", "CFO",
+        "Finance Director", "Accounts Payable Clerk", "Investment Banker", "Financial Planner",
+        "Business Valuation Specialist", "Financial Controller",
+
+        "Attorney", "Lawyer", "Counsel", "Legal Advisor", "Paralegal", "Legal Assistant", "Notary", "Mediator",
+        "Litigator", "Legal Consultant", "Contract Manager", "Corporate Lawyer", "Criminal Defense Attorney",
+        "Judge", "Public Defender", "Intellectual Property Lawyer", "Patent Attorney", "Real Estate Lawyer",
+        "Family Lawyer", "Tax Attorney", "Immigration Lawyer",
+
+        "Developer", "Programmer", "Software Engineer", "Network Administrator", "System Administrator",
+        "DevOps Engineer", "Cloud Architect", "QA Engineer", "Technical Support Specialist", "Database Developer",
+        "Full Stack Developer", "Business Intelligence Analyst", "Security Consultant", "Game Developer", "Web Developer",
+        "Application Support Analyst", "IT Specialist", "Systems Analyst", "Technical Project Manager", "Cloud Engineer",
+        "IT Consultant", "IT Project Manager", "Enterprise Architect",
+
+        "Scientist", "Researcher", "Biologist", "Chemist", "Physicist", "Laboratory Technician",
+        "Medical Researcher", "Clinical Researcher", "Geneticist", "Environmental Scientist", "Biochemist",
+        "Biotechnology Researcher", "Postdoctoral Researcher", "Chemical Engineer", "Research Assistant",
+        "Pharmacologist", "Data Scientist", "Health Researcher", "Microbiologist", "Lab Assistant", "Materials Scientist"
     ]
 }

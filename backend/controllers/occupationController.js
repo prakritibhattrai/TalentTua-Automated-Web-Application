@@ -204,6 +204,91 @@ const OccupationController = {
             if (response.data.occupation && response.data.occupation.length > 0) {
                 jobTitles = response.data.occupation.map((item) => ({
                     title: item.title,
+                    id: item.code
+                }));
+            }
+        } catch (apiError) {
+            return res.status(500).json({ error: 'An internal error occurred.', details: apiError });
+
+
+        }
+
+        // If no results from the API, fallback to the database
+        if (jobTitles.length === 0) {
+            const query = `
+        SELECT DISTINCT reported_job_title AS title 
+        FROM sample_of_reported_titles 
+        WHERE onetsoc_code = ?
+        UNION
+        SELECT DISTINCT alternate_title AS title 
+        FROM alternate_titles 
+        WHERE onetsoc_code = ?
+    `;
+
+            try {
+                const [results] = await db.promise().query(query, [occupation_id, occupation_id]);
+
+                if (results.length > 0) {
+                    jobTitles = results.map((row) => ({ title: row.title }));
+                }
+            } catch (dbError) {
+
+                // Return error only if both API and database fail
+                return res.status(500).json({ error: 'Failed to fetch job titles from both database and external API.' });
+            }
+        }
+
+        // If no results were found from both sources, return an error
+        if (jobTitles.length === 0) {
+            return res.status(404).json({ error: 'No job titles found for the provided occupation ID.' });
+        }
+
+        // Cache the job titles for this occupation_id
+        jobTitlesByOccupationCache[occupation_id] = jobTitles;
+
+        // Return the results with a success message
+        res.json({
+            jobTitles,
+            message: `Fetched ${jobTitles.length} unique job titles for occupation ID ${occupation_id}.`,
+            status: 200,
+            success: true,
+        });
+    },
+    getjobTitleByOccupationId1: async (req, res) => {
+        const { occupation_id } = req.params;
+
+        // Validate that occupation_id is provided
+        if (!occupation_id) {
+            return res.status(400).json({ error: 'Occupation ID is required.' });
+        }
+
+        // Check if the job titles for this occupation_id are already cached
+        if (jobTitlesByOccupationCache[occupation_id]) {
+            return res.json({
+                jobTitles: jobTitlesByOccupationCache[occupation_id],
+                message: `Fetched job titles for occupation ID ${occupation_id} from cache.`,
+                status: 200,
+                success: true,
+            });
+        }
+
+        let jobTitles = [];
+
+        // First, attempt to fetch from the external API
+        try {
+            const url = `${process.env.ONET_API_URL}/occupations/${occupation_id}/summary/related_occupations`;
+            const response = await axios.get(url, {
+                headers: {
+                    Authorization: `Basic ${process.env.ONET_API_KEY}`,
+                },
+                timeout: 5000,
+            });
+
+
+            if (response.data.occupation && response.data.occupation.length > 0) {
+                jobTitles = response.data.occupation.map((item) => ({
+                    title: item.title,
+                    id: item.code
                 }));
             }
         } catch (apiError) {

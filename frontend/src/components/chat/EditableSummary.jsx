@@ -26,11 +26,11 @@ const EditableSummary = ({ onSubmit, userData }) => {
                 key={key}
                 className="mb-2 text-gray-700 text-sm leading-relaxed dark:text-slate-300"
               >
-                <span className="text-sm text-black font-medium dark:text-white">
+                <span className="text-sm text-gray-800 font-medium dark:text-white">
                   {formatKey(key)}:
                 </span>{" "}
                 {key === "jobTitle" && value ? (
-                  <span>{value.jobTitle || value.occupation.title}</span>
+                  <span>{value.jobTitle || value.occupation.title || ""}</span>
                 ) : Array.isArray(value) ? (
                   value.length > 0 ? (
                     <>{value.join(", ")}</>

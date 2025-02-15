@@ -53,6 +53,16 @@ const BotMessage = ({
           >
             {message.content || ""}
           </motion.p>
+          <motion.ul
+            className="text-sm text-gray-700 mt-2 dark:text-gray-300"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3, delay: 0.3 }}
+          >
+            <li className="text-sm text-gray-800 dark:text-white">
+              {message?.answer ? "-" + message?.answer : ""}
+            </li>
+          </motion.ul>
         </motion.div>
 
         {/* Various message handling components */}
@@ -67,12 +77,17 @@ const BotMessage = ({
               {/* Buttons for Yes/No selection */}
               <motion.button
                 onClick={() => onSelect("yes")}
-                className="border border-gray-400 gap-1 hover:bg-blue-500 shadow-md max-w-24 rounded-lg px-6 py-2 text-sm bg-blue-600 text-white dark:bg-neutral-900 dark:text-white dark:border-neutral-700 flex items-center w-full sm:w-auto"
+                className="border border-gray-400 gap-1 hover:bg-blue-500 shadow-md rounded-lg px-6 py-2 text-sm bg-blue-600 text-white dark:bg-neutral-900 dark:text-white dark:border-neutral-700 flex items-center w-full sm:w-auto"
                 whileTap={{ scale: 0.95 }}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: "0px 0px 8px rgba(0, 0, 0, 0.2)",
+                }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
               >
+                Get Started
                 <svg
                   className="w-[18px] h-[18px] text-white dark:text-white"
                   aria-hidden="true"
@@ -87,13 +102,12 @@ const BotMessage = ({
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth="2"
-                    d="M7 11c.889-.086 1.416-.543 2.156-1.057a22.323 22.323 0 0 0 3.958-5.084 1.6 1.6 0 0 1 .582-.628 1.549 1.549 0 0 1 1.466-.087c.205.095.388.233.537.406a1.64 1.64 0 0 1 .384 1.279l-1.388 4.114M7 11H4v6.5A1.5 1.5 0 0 0 5.5 19v0A1.5 1.5 0 0 0 7 17.5V11Zm6.5-1h4.915c.286 0 .372.014.626.15.254.135.472.332.637.572a1.874 1.874 0 0 1 .215 1.673l-2.098 6.4C17.538 19.52 17.368 20 16.12 20c-2.303 0-4.79-.943-6.67-1.475"
+                    d="M19 12H5m14 0-4 4m4-4-4-4"
                   />
                 </svg>
-                Yes
               </motion.button>
 
-              <motion.button
+              {/* <motion.button
                 onClick={() => onSelect("no")}
                 className="border border-gray-400 gap-1 hover:bg-blue-500  max-w-24 shadow-md rounded-lg px-6 py-2 text-sm bg-blue-600 text-white dark:bg-neutral-900 dark:text-white dark:border-neutral-700 flex items-center w-full sm:w-auto"
                 whileTap={{ scale: 0.95 }}
@@ -119,7 +133,7 @@ const BotMessage = ({
                   />
                 </svg>
                 No
-              </motion.button>
+              </motion.button> */}
             </motion.div>
           </>
         )}
@@ -217,6 +231,7 @@ const BotMessage = ({
 BotMessage.propTypes = {
   message: PropTypes.shape({
     content: PropTypes.string,
+    answer: PropTypes.string,
     name: PropTypes.string,
     inputType: PropTypes.string,
     message: PropTypes.shape({

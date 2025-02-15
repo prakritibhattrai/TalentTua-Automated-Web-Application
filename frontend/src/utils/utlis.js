@@ -1,4 +1,5 @@
 export function cosineSimilarity(str1, str2) {
+    console.log(str1, str2)
     const tokenize = (str) =>
         str
             .toLowerCase()

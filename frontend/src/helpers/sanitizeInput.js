@@ -10,7 +10,7 @@ export const validateData = (data) => {
 
     if (!data?.jobTitle?.jobTitle?.trim() &&
         !data?.jobTitle?.occupation?.title?.trim() &&
-        !data?.jobTitle?.selectedJobTitle?.trim()) {
+        !data?.jobTitle?.selectedJobTitle?.title?.trim()) {
         errors.push("Job title is required.");
     }
 

@@ -92,7 +92,8 @@ const UserMessage = ({ message }) => {
             Occupation: {occupation?.title}
           </p>
           <p className="text-sm text-white dark:text-white break-words">
-            Job Title : {selectedJobTitle || jobTitle || occupation?.title}
+            Job Title :{" "}
+            {selectedJobTitle?.title || jobTitle || occupation?.title}
           </p>
         </div>
       );

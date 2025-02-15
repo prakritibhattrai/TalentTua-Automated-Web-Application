@@ -20,10 +20,10 @@ function ChatPage() {
   const questions = [
     {
       name: "welcome",
-      question: `At TalentTua we are experts when it comes to finding incredibly talented candidates that match your unique
-         Ideal Candidate Profile (ICP). What is an ICP you may ask? It is simple, we take day one hard skills needed 
-         for the role, level of experience, and most importantly the soft skills that relate to the role and have you 
-         customize what your open role requires.`,
+      question:
+        "At TalentTua we are experts when it comes to finding incredibly talented candidates that match your unique Ideal Candidate Profile (ICP). What is an ICP you may ask?",
+      answer:
+        "It is simple we take day one hard skills needed for the role, level of experience, and most importantly the soft skills that relate to the role and have you customize what your open role requires.",
       option: ["Yes", "No"],
       inputType: "text",
       validate: "required",
@@ -130,6 +130,7 @@ function ChatPage() {
     {
       heading: "Welcome to TalentTua AI. Your AI-powered copilot for hiring...",
       content: questions[0].question,
+      answer: questions[0].answer,
       inputType: questions[0].inputType,
       name: questions[0].name,
       sender: "bot",
@@ -158,7 +159,6 @@ function ChatPage() {
   const handleUserAction = async (userInput) => {
     try {
       setBotTyping(true);
-
       // Check if input is provided
       if (
         !userInput ||
@@ -224,34 +224,31 @@ function ChatPage() {
             });
 
             const data = await response.json();
+            console.log(data);
+
             if (data) {
-              if (
-                data?.keyProficiencies?.technicalSkills?.tools_and_technology
-              ) {
+              if (data?.keyProficiencies?.technicalSkills) {
                 setResults((prev) => ({
                   ...prev,
-                  toolsProficiencies:
-                    data.keyProficiencies.technicalSkills.tools_and_technology,
+                  toolsProficiencies: data.keyProficiencies?.technicalSkills,
                 }));
               }
 
               if (
                 data?.niceToHave?.work_styles ||
+                data?.niceToHave?.work_values ||
                 data?.niceToHave?.interests ||
-                data?.niceToHave?.abilities
+                data?.niceToHave?.abilities ||
+                data?.niceToHave?.skills
               ) {
                 setResults((prev) => ({
                   ...prev,
                   work_styles: [
-                    ...(data?.niceToHave?.work_styles?.map(
-                      (style) => style.name
-                    ) || []),
-                    ...(data?.niceToHave?.interests.map(
-                      (style) => style.name
-                    ) || []),
-                    ...(data?.niceToHave?.abilities.map(
-                      (style) => style.name
-                    ) || []),
+                    ...(data?.niceToHave?.work_styles || []),
+                    ...(data?.niceToHave?.interests || []),
+                    ...(data?.niceToHave?.abilities || []),
+                    ...(data?.niceToHave?.skills || []),
+                    ...(data?.niceToHave?.work_values || []),
                   ],
                 }));
               }
@@ -261,7 +258,7 @@ function ChatPage() {
           }
 
           if (currentQuestion.name === "welcome") {
-            if (userInput == "no") {
+            if (userInput === "No") {
               setMessages((prev) => [
                 ...prev,
                 {
@@ -429,7 +426,7 @@ function ChatPage() {
           }
 
           const responseData = await response.json();
-
+          console.log(responseData);
           if (!responseData) {
             // If ICP generation fails, show an error
             throw new Error("ICP generation failed. Please try again.");
@@ -614,7 +611,7 @@ function ChatPage() {
             >
               {currentStep > 0 && (
                 <motion.button
-                  className="go-back-button text-blue-700 shadow-sm font-medium dark:bg-neutral-900 dark:text-blue-600 border dark:border-blue-600 border-gray-400 text-sm px-3 py-1 rounded-tl-lg rounded-bl-lg bg-gray-50 dark:hover:bg-neutral-900 hover:bg-gray-200 transition-all"
+                  className="go-back-button text-gray-700 shadow-sm font-medium dark:bg-neutral-900 dark:text-blue-600 border dark:border-blue-600 border-gray-400 text-sm px-3 py-1 rounded-tl-lg rounded-bl-lg bg-gray-50 dark:hover:bg-neutral-900 hover:bg-gray-200 transition-all"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={handleGoBack}
@@ -624,7 +621,7 @@ function ChatPage() {
               )}
               {currentStep < questions.length - 1 && (
                 <motion.button
-                  className="next-button text-blue-700  shadow-sm font-medium dark:bg-neutral-900 dark:text-blue-600 border dark:border-blue-600 border-gray-400 text-sm px-3 py-1 rounded-tr-lg rounded-br-lg bg-gray-50 dark:hover:bg-neutral-900 hover:bg-gray-200 transition-all"
+                  className="next-button text-gray-700  shadow-sm font-medium dark:bg-neutral-900 dark:text-blue-600 border dark:border-blue-600 border-gray-400 text-sm px-3 py-1 rounded-tr-lg rounded-br-lg bg-gray-50 dark:hover:bg-neutral-900 hover:bg-gray-200 transition-all"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => handleUserAction(input)}

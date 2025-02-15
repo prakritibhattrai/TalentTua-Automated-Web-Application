@@ -1,19 +1,22 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 
 const ICP = ({ icpData }) => {
+  const navigate = useNavigate();
+
+  const handleNavigate = () => {
+    navigate("/icp", { state: icpData });
+  };
+
   return (
-    <>
-      <div className=" mt-4">
-        <Link
-          to="/icp"
-          state={icpData}
-          className="text-sm xs:text-sm text-blue-600 transition-colors"
-        >
-          View ICP Details
-        </Link>
-      </div>
-    </>
+    <div className="mt-4">
+      <button
+        onClick={handleNavigate}
+        className="text-sm xs:text-sm text-blue-600 transition-colors"
+      >
+        View ICP Details
+      </button>
+    </div>
   );
 };
 

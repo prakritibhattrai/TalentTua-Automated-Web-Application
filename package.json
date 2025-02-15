@@ -1,5 +1,10 @@
 {
   "dependencies": {
-    "helmet": "^8.0.0"
+    "@xenova/transformers": "^2.17.2",
+    "helmet": "^8.0.0",
+    "jaro-winkler": "^0.2.8",
+    "leven": "^4.0.0",
+    "natural": "^8.0.1",
+    "tf-idf": "^1.0.0"
   }
 }
